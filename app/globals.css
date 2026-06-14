@@ -2377,9 +2377,9 @@ meter {
   display: grid;
   gap: 1rem;
   align-content: start;
-  border: 1px solid var(--line);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: var(--radius);
-  background: #fffdf6;
+  background: rgba(0, 0, 0, 0.2);
   padding: 1.1rem;
 }
 
@@ -2425,9 +2425,9 @@ meter {
 
 .expression-panel div,
 .disease-section article {
-  border: 1px solid var(--line);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: var(--radius);
-  background: rgba(248, 242, 232, 0.68);
+  background: rgba(0, 0, 0, 0.2);
   padding: 0.85rem;
 }
 
