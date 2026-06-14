@@ -35,8 +35,8 @@ export function DayNightCanvas() {
       // we still add it to the array so the index math doesn't break.
       loadedImages.push(img);
     }
-
-    setImages(loadedImages);
+    // Avoid calling setState synchronously in an effect
+    Promise.resolve().then(() => setImages(loadedImages));
   }, []);
 
   // 2. Draw the correct frame to the canvas based on masterHour

@@ -255,9 +255,17 @@ export function TwoProcessModel() {
             max="48"
             step="0.5"
             value={hoursAwake}
-            onChange={(e) => setHoursAwake(Number(e.currentTarget.value))}
-            onInput={(e) => setHoursAwake(Number(e.currentTarget.value))}
-            style={{ width: "100%", cursor: "grab" }}
+            onChange={(e) => {
+              const val = Number(e.currentTarget.value);
+              setHoursAwake(val);
+              e.currentTarget.style.setProperty("--value", ((val / 48) * 100).toString());
+            }}
+            onInput={(e) => {
+              const val = Number(e.currentTarget.value);
+              setHoursAwake(val);
+              e.currentTarget.style.setProperty("--value", ((val / 48) * 100).toString());
+            }}
+            style={{ "--value": (hoursAwake / 48) * 100, width: "100%", cursor: "grab" } as React.CSSProperties}
           />
         </label>
       </div>

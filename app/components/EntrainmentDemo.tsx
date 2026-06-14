@@ -117,20 +117,25 @@ export function EntrainmentDemo() {
               max="26"
               step="1"
               value={lightOff}
-              onChange={(e) =>
+              onChange={(e) => {
+                const val = Number(e.currentTarget.value);
                 setSignalState((current) => ({
                   ...current,
                   sourceHour: masterHour,
-                  lightOff: Number(e.currentTarget.value),
-                }))
-              }
-              onInput={(e) =>
+                  lightOff: val,
+                }));
+                e.currentTarget.style.setProperty("--value", (((val - 19) / 7) * 100).toString());
+              }}
+              onInput={(e) => {
+                const val = Number(e.currentTarget.value);
                 setSignalState((current) => ({
                   ...current,
                   sourceHour: masterHour,
-                  lightOff: Number(e.currentTarget.value),
-                }))
-              }
+                  lightOff: val,
+                }));
+                e.currentTarget.style.setProperty("--value", (((val - 19) / 7) * 100).toString());
+              }}
+              style={{ "--value": ((lightOff - 19) / 7) * 100, cursor: "grab" } as React.CSSProperties}
             />
           </label>
           <label
@@ -153,20 +158,25 @@ export function EntrainmentDemo() {
               max="24"
               step="1"
               value={lastMeal}
-              onChange={(e) =>
+              onChange={(e) => {
+                const val = Number(e.currentTarget.value);
                 setSignalState((current) => ({
                   ...current,
                   sourceHour: masterHour,
-                  lastMeal: Number(e.currentTarget.value),
-                }))
-              }
-              onInput={(e) =>
+                  lastMeal: val,
+                }));
+                e.currentTarget.style.setProperty("--value", (((val - 17) / 7) * 100).toString());
+              }}
+              onInput={(e) => {
+                const val = Number(e.currentTarget.value);
                 setSignalState((current) => ({
                   ...current,
                   sourceHour: masterHour,
-                  lastMeal: Number(e.currentTarget.value),
-                }))
-              }
+                  lastMeal: val,
+                }));
+                e.currentTarget.style.setProperty("--value", (((val - 17) / 7) * 100).toString());
+              }}
+              style={{ "--value": ((lastMeal - 17) / 7) * 100, cursor: "grab" } as React.CSSProperties}
             />
           </label>
         </div>
