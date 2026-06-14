@@ -1,12 +1,12 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useRef } from "react";
 import {
-  ArrowRight,
   ExternalLink,
   Network,
   Search,
   ShieldQuestion,
+  RotateCcw,
 } from "lucide-react";
 import {
   circadianDataSources,
@@ -18,12 +18,15 @@ import type {
   ClockGeneCategory,
   ClockGeneNode,
 } from "../content/site-data";
+import { GenePlayerCard } from "./GenePlayerCard";
 
 const categoryLabels: Record<ClockGeneCategory, string> = {
   corePositive: "Core positive",
   coreNegative: "Core negative",
   secondaryLoop: "Secondary loop",
   accessoryRegulator: "Accessory regulator",
+  organSystem: "Organ system",
+  downstreamTarget: "Downstream target",
 };
 
 const edgeLabels: Record<ClockEdgeType, string> = {
@@ -69,6 +72,52 @@ export function GeneNetwork() {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<ClockGeneCategory | "all">("all");
   const [tab, setTab] = useState<"network" | "sources">("network");
+
+  // Dragging state
+  const svgRef = useRef<SVGSVGElement>(null);
+  const [draggedNodeId, setDraggedNodeId] = useState<string | null>(null);
+  const [nodePositions, setNodePositions] = useState<Record<string, { x: number; y: number }>>(() => {
+    const initial: Record<string, { x: number; y: number }> = {};
+    clockGeneNodes.forEach((node) => {
+      initial[node.id] = { x: node.x, y: node.y };
+    });
+    return initial;
+  });
+
+  const handlePointerDown = (e: React.PointerEvent<SVGGElement>, id: string) => {
+    e.target.setPointerCapture(e.pointerId);
+    setDraggedNodeId(id);
+    setSelectedId(id);
+  };
+
+  const handlePointerMove = (e: React.PointerEvent<SVGSVGElement>) => {
+    if (!draggedNodeId || !svgRef.current) return;
+    const svg = svgRef.current;
+    const pt = svg.createSVGPoint();
+    pt.x = e.clientX;
+    pt.y = e.clientY;
+    const cursorPt = pt.matrixTransform(svg.getScreenCTM()?.inverse());
+
+    setNodePositions((prev) => ({
+      ...prev,
+      [draggedNodeId]: { x: cursorPt.x, y: cursorPt.y },
+    }));
+  };
+
+  const handlePointerUp = (e: React.PointerEvent<SVGGElement | SVGSVGElement>) => {
+    if (draggedNodeId) {
+      e.target.releasePointerCapture(e.pointerId);
+      setDraggedNodeId(null);
+    }
+  };
+
+  const handleResetLayout = () => {
+    const initial: Record<string, { x: number; y: number }> = {};
+    clockGeneNodes.forEach((node) => {
+      initial[node.id] = { x: node.x, y: node.y };
+    });
+    setNodePositions(initial);
+  };
 
   const selected = nodeById(selectedId) ?? clockGeneNodes[0];
 
@@ -143,6 +192,15 @@ export function GeneNetwork() {
                 </option>
               ))}
             </select>
+            <button 
+              type="button" 
+              onClick={handleResetLayout} 
+              className="reset-button"
+              style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'transparent', border: '1px solid #374151', color: '#9ca3af', padding: '0.5rem 1rem', borderRadius: '6px', cursor: 'pointer', fontSize: '0.875rem' }}
+              title="Reset layout to original curated positions"
+            >
+              <RotateCcw size={14} /> Reset
+            </button>
           </div>
         ) : null}
       </div>
@@ -171,7 +229,15 @@ export function GeneNetwork() {
                 </span>
               ))}
             </div>
-            <svg viewBox="0 0 100 100" role="img">
+            <svg 
+              viewBox="0 0 100 100" 
+              role="img"
+              ref={svgRef}
+              onPointerMove={handlePointerMove}
+              onPointerUp={handlePointerUp}
+              onPointerLeave={handlePointerUp}
+              style={{ touchAction: 'none' }}
+            >
               <title>Core clock gene regulatory network</title>
               <defs>
                 <marker
@@ -186,10 +252,14 @@ export function GeneNetwork() {
                 </marker>
               </defs>
               {clockGeneEdges.map((edge) => {
-                const source = nodeById(edge.source);
-                const target = nodeById(edge.target);
-                if (!source || !target) return null;
-                const visible = visibleIds.has(source.id) && visibleIds.has(target.id);
+                const sourceNode = nodeById(edge.source);
+                const targetNode = nodeById(edge.target);
+                if (!sourceNode || !targetNode) return null;
+                
+                const source = nodePositions[edge.source] || { x: sourceNode.x, y: sourceNode.y };
+                const target = nodePositions[edge.target] || { x: targetNode.x, y: targetNode.y };
+
+                const visible = visibleIds.has(edge.source) && visibleIds.has(edge.target);
                 const active =
                   edge.source === focusId ||
                   edge.target === focusId ||
@@ -209,6 +279,7 @@ export function GeneNetwork() {
                 );
               })}
               {clockGeneNodes.map((node) => {
+                const pos = nodePositions[node.id] || { x: node.x, y: node.y };
                 const isVisible = visibleIds.has(node.id);
                 const active = activeIds.has(node.id);
                 return (
@@ -219,9 +290,10 @@ export function GeneNetwork() {
                     } ${active ? "related" : ""} ${isVisible ? "" : "muted-node"}`}
                     onMouseEnter={() => setHoveredId(node.id)}
                     onMouseLeave={() => setHoveredId(null)}
-                    onClick={() => setSelectedId(node.id)}
+                    onPointerDown={(e) => handlePointerDown(e, node.id)}
                     role="button"
                     tabIndex={0}
+                    style={{ cursor: draggedNodeId === node.id ? 'grabbing' : 'grab' }}
                     onKeyDown={(event) => {
                       if (event.key === "Enter" || event.key === " ") {
                         event.preventDefault();
@@ -229,8 +301,8 @@ export function GeneNetwork() {
                       }
                     }}
                   >
-                    <circle cx={node.x} cy={node.y} r={node.id === selected.id ? 4.2 : 3.4} />
-                    <text x={node.x} y={node.y - 5.2}>
+                    <circle cx={pos.x} cy={pos.y} r={node.id === selected.id ? 4.2 : 3.4} />
+                    <text x={pos.x} y={pos.y - 5.2} style={{ pointerEvents: 'none' }}>
                       {node.symbol}
                     </text>
                   </g>
@@ -247,95 +319,15 @@ export function GeneNetwork() {
             </div>
           </section>
 
-          <aside className="gene-player-card">
-            <div className="player-top">
-              <span className={categoryClass(selected.category)}>
-                {categoryLabels[selected.category]}
-              </span>
-              <strong>{selected.chromosome}</strong>
-            </div>
-            <h3>{selected.symbol}</h3>
-            <p className="aliases">{selected.aliases.join(" / ")}</p>
-            <h4>{selected.title}</h4>
-            <p>{selected.description}</p>
-
-            <div className="expression-panel">
-              <div>
-                <span>Expression pattern</span>
-                <p>{selected.expressionPattern}</p>
-              </div>
-              <div>
-                <span>Rhythmic peak</span>
-                <p>{selected.peakTime}</p>
-              </div>
-            </div>
-
-            <div className="chip-section">
-              <span>Tissue distribution</span>
-              <div>
-                {selected.tissues.map((tissue) => (
-                  <button
-                    type="button"
-                    key={tissue}
-                    onClick={() => setQuery(tissue)}
-                    title={`Search ${tissue}`}
-                  >
-                    {tissue}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="disease-section">
-              <span>Disease associations</span>
-              {selected.diseaseAssociations.map((association) => (
-                <article key={association.disease}>
-                  <strong>{association.disease}</strong>
-                  <p>{association.mechanism}</p>
-                  <small>{association.sources.join(" · ")}</small>
-                </article>
-              ))}
-            </div>
-
-            <div className="interaction-section">
-              <span>Key interactions</span>
-              {relatedEdges.map((edge) => {
-                const neighborId =
-                  edge.source === selected.id ? edge.target : edge.source;
-                const neighbor = nodeById(neighborId);
-                if (!neighbor) return null;
-                return (
-                  <button
-                    type="button"
-                    key={edge.id}
-                    onClick={() => setSelectedId(neighbor.id)}
-                    className={edgeClass(edge.type)}
-                  >
-                    <span>
-                      {edge.source === selected.id ? "Regulates" : "Regulated by"}{" "}
-                      <strong>{neighbor.symbol}</strong>
-                    </span>
-                    <ArrowRight size={15} aria-hidden="true" />
-                  </button>
-                );
-              })}
-            </div>
-
-            <div className="external-links">
-              <a href={selected.externalLinks.ncbiGene} target="_blank" rel="noreferrer">
-                NCBI Gene <ExternalLink size={14} aria-hidden="true" />
-              </a>
-              <a href={selected.externalLinks.uniProt} target="_blank" rel="noreferrer">
-                UniProt <ExternalLink size={14} aria-hidden="true" />
-              </a>
-              <a href={selected.externalLinks.circaKb} target="_blank" rel="noreferrer">
-                CircaKB <ExternalLink size={14} aria-hidden="true" />
-              </a>
-              <a href={selected.externalLinks.circaDb} target="_blank" rel="noreferrer">
-                CIRCA <ExternalLink size={14} aria-hidden="true" />
-              </a>
-            </div>
-          </aside>
+          <GenePlayerCard
+            key={selected.id}
+            selected={selected}
+            relatedEdges={relatedEdges}
+            nodeById={nodeById}
+            setSelectedId={setSelectedId}
+            edgeClass={edgeClass}
+            setQuery={setQuery}
+          />
         </div>
       )}
     </div>

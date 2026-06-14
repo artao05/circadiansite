@@ -15,6 +15,7 @@ import { EntrainmentDemo } from "./components/EntrainmentDemo";
 import { GeneNetwork } from "./components/GeneNetwork";
 import { OxaliplatinTimeline } from "./components/OxaliplatinTimeline";
 import { RhythmLab } from "./components/RhythmLab";
+import { TwoProcessModel } from "./components/TwoProcessModel";
 import {
   chapters,
   citations,
@@ -151,6 +152,7 @@ export default function Home() {
             </p>
           </article>
         </div>
+        <TwoProcessModel />
       </section>
 
       <section className="content-band rhythm-band">

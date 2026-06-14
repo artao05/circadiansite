@@ -7,6 +7,13 @@ export type DrugExposureProfile = {
   copy: string;
 };
 
+export type DrugAbsorptionOption = {
+  id: string;
+  label: string;
+  multiplier: number;
+  copy: string;
+};
+
 export type TargetRhythmProfile = {
   label: string;
   peakHour: number;
@@ -21,6 +28,11 @@ export type CurvePoint = {
   exposure: number;
   target: number;
   overlap: number;
+};
+
+export type WindowExposureSummary = {
+  points: { hour: number; exposure: number }[];
+  score: number;
 };
 
 function clamp01(value: number) {
@@ -60,10 +72,14 @@ export function buildTimingCurve(
   doseHour: number,
   exposureProfile: DrugExposureProfile,
   rhythm: TargetRhythmProfile,
+  options: { exposureMultiplier?: number } = {},
 ) {
+  const exposureMultiplier = options.exposureMultiplier ?? 1;
   const points: CurvePoint[] = Array.from({ length: 97 }, (_, index) => {
     const hour = index / 4;
-    const exposure = exposureAtHour(hour, doseHour, exposureProfile);
+    const exposure = clamp01(
+      exposureAtHour(hour, doseHour, exposureProfile) * exposureMultiplier,
+    );
     const target = targetAtHour(hour, rhythm);
     return {
       hour,
@@ -80,6 +96,36 @@ export function buildTimingCurve(
   };
 }
 
+export function exposureWindowScore(
+  doseHour: number,
+  exposureProfile: DrugExposureProfile,
+  windowStartHour: number,
+  windowEndHour: number,
+  options: { exposureMultiplier?: number } = {},
+): WindowExposureSummary {
+  const exposureMultiplier = options.exposureMultiplier ?? 1;
+  const duration =
+    windowEndHour > windowStartHour
+      ? windowEndHour - windowStartHour
+      : windowEndHour + 24 - windowStartHour;
+  const sampleCount = Math.max(1, Math.round(duration * 4));
+  const points = Array.from({ length: sampleCount + 1 }, (_, index) => {
+    const hour = (windowStartHour + (duration * index) / sampleCount) % 24;
+    return {
+      hour,
+      exposure: clamp01(
+        exposureAtHour(hour, doseHour, exposureProfile) * exposureMultiplier,
+      ),
+    };
+  });
+  const exposureArea = points.reduce((sum, point) => sum + point.exposure, 0);
+
+  return {
+    points,
+    score: Math.round((exposureArea / points.length) * 100),
+  };
+}
+
 export function interpretOverlap(score: number, interpretation: {
   low: string;
   medium: string;
@@ -89,4 +135,3 @@ export function interpretOverlap(score: number, interpretation: {
   if (score >= 24) return interpretation.medium;
   return interpretation.low;
 }
-

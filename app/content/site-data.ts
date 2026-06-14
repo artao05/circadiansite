@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import type {
+  DrugAbsorptionOption,
   DrugExposureProfile,
   TargetRhythmProfile,
 } from "../lib/drug-timing-model";
@@ -45,18 +46,25 @@ export type Claim = {
   beginnerPhrasing: string;
 };
 
-export type BodyRhythm = {
+export type OrganClockEvent = {
   hour: number;
   label: string;
-  system: string;
   copy: string;
-  tone: "light" | "metabolic" | "immune" | "cardio" | "sleep" | "drug";
+};
+
+export type OrganClock = {
+  id: string;
+  name: string;
+  iconName: "Brain" | "Activity" | "HeartPulse" | "Shield";
+  tone: "light" | "metabolic" | "cardio" | "immune";
+  events: OrganClockEvent[];
 };
 
 export type MedicineExample = {
   name: string;
   icon: LucideIcon;
   visualMode: "interactive" | "planned";
+  labVariant?: "curve" | "acid-pump" | "day-runway" | "night-window";
   bodyTarget: {
     organ: string;
     action: string;
@@ -69,6 +77,7 @@ export type MedicineExample = {
     presets: { label: string; hour: number }[];
   };
   exposureProfiles: DrugExposureProfile[];
+  absorptionOptions?: DrugAbsorptionOption[];
   targetRhythm: TargetRhythmProfile;
   overlapLabel: string;
   interpretation: {
@@ -99,7 +108,9 @@ export type ClockGeneCategory =
   | "corePositive"
   | "coreNegative"
   | "secondaryLoop"
-  | "accessoryRegulator";
+  | "accessoryRegulator"
+  | "organSystem"
+  | "downstreamTarget";
 
 export type ClockEdgeType =
   | "activation"
@@ -142,6 +153,7 @@ export type ClockGeneEdge = {
   label: string;
   description: string;
   sources: string[];
+  pdbId?: string;
 };
 
 export type CircadianDataSource = {
@@ -344,49 +356,51 @@ export const claimMatrix: Claim[] = [
   },
 ];
 
-export const bodyRhythms: BodyRhythm[] = [
+export const organClocks: OrganClock[] = [
   {
-    hour: 5,
-    label: "Pre-wake ramp",
-    system: "Cardiovascular",
-    copy: "Heart rate and blood pressure tend to rise before waking, preparing the body for activity.",
-    tone: "cardio",
-  },
-  {
-    hour: 8,
-    label: "Light resets the day",
-    system: "Brain clock",
-    copy: "Morning light is a strong timing cue for the central circadian system.",
+    id: "brain",
+    name: "Brain (SCN)",
+    iconName: "Brain",
     tone: "light",
+    events: [
+      { hour: 8, label: "Cortisol peak & light entrainment", copy: "Morning light provides the strongest timing cue, while cortisol peaks to support wakefulness." },
+      { hour: 14, label: "Mid-afternoon dip", copy: "The central pacemaker exhibits a natural dip in alerting signals in the early afternoon." },
+      { hour: 21, label: "Melatonin onset (DLMO)", copy: "Dim light melatonin onset signals the biological night, preparing the brain for sleep architecture." },
+    ]
   },
   {
-    hour: 12,
-    label: "Metabolic daytime",
-    system: "Liver and gut",
-    copy: "Food timing helps peripheral clocks align digestion, glucose handling, and metabolism.",
+    id: "metabolism",
+    name: "Metabolism (Liver/Gut)",
+    iconName: "Activity",
     tone: "metabolic",
+    events: [
+      { hour: 10, label: "Peak glucose handling", copy: "Insulin sensitivity and glucose tolerance are generally highest in the first half of the day." },
+      { hour: 16, label: "Peak drug metabolism", copy: "Many liver enzymes, like CYP3A4, peak in the late afternoon, affecting how long drugs stay active." },
+      { hour: 23, label: "Fasting & repair mode", copy: "The gut slows motility and the liver shifts from storing nutrients to mobilizing them for overnight maintenance." },
+    ]
   },
   {
-    hour: 16,
-    label: "Drug handling window",
-    system: "Pharmacology",
-    copy: "Some drug targets, detox pathways, and toxicities vary over 24 hours.",
-    tone: "drug",
+    id: "cardio",
+    name: "Cardiovascular",
+    iconName: "HeartPulse",
+    tone: "cardio",
+    events: [
+      { hour: 5, label: "Pre-wake blood pressure ramp", copy: "Blood pressure and heart rate surge before waking, which correlates with a morning peak in cardiovascular events." },
+      { hour: 17, label: "Peak athletic efficiency", copy: "Cardiovascular efficiency and muscle strength often peak in the late afternoon." },
+      { hour: 2, label: "Deep sleep blood pressure dip", copy: "A healthy cardiovascular system exhibits a 10-20% drop in blood pressure during deep sleep." },
+    ]
   },
   {
-    hour: 20,
-    label: "Immune evening",
-    system: "Immune tone",
-    copy: "Immune signals can fluctuate by time of day, changing symptoms and responses.",
+    id: "immune",
+    name: "Immune System",
+    iconName: "Shield",
     tone: "immune",
-  },
-  {
-    hour: 23,
-    label: "Night signal",
-    system: "Sleep biology",
-    copy: "Darkness supports the night program: sleep pressure, melatonin signaling, and repair-oriented physiology.",
-    tone: "sleep",
-  },
+    events: [
+      { hour: 8, label: "Adaptive cellular patrol", copy: "T-cells and other adaptive immune cells often peak in circulation in the morning, ready for encounters." },
+      { hour: 20, label: "Inflammatory tone shift", copy: "Pro-inflammatory cytokines often rise in the evening, which is why fever and asthma symptoms can worsen at night." },
+      { hour: 2, label: "Tissue repair", copy: "Innate immune cells move into tissues overnight to clear debris and promote repair while the body rests." },
+    ]
+  }
 ];
 
 export const medicineExamples: MedicineExample[] = [
@@ -394,6 +408,7 @@ export const medicineExamples: MedicineExample[] = [
     name: "Short-acting statins",
     icon: Pill,
     visualMode: "interactive",
+    labVariant: "curve",
     bodyTarget: {
       organ: "Liver",
       action: "Cholesterol synthesis pathway",
@@ -511,11 +526,17 @@ export const medicineExamples: MedicineExample[] = [
   {
     name: "Anticoagulants",
     icon: HeartPulse,
-    visualMode: "planned",
+    visualMode: "interactive",
+    labVariant: "curve",
     bodyTarget: {
       organ: "Blood vessels",
       action: "Absorption and morning availability",
-      route: ["tablet", "meal-assisted absorption", "bloodstream", "morning risk window"],
+      route: [
+        "tablet",
+        "gut absorption",
+        "bloodstream",
+        "morning risk window",
+      ],
     },
     doseWindow: {
       minHour: 6,
@@ -534,7 +555,21 @@ export const medicineExamples: MedicineExample[] = [
         halfLifeHours: 9,
         peakHours: 3,
         tailHours: 22,
-        copy: "A future visual can show meal-linked absorption and morning availability.",
+        copy: "This simplified curve rises after dosing and stays visible into the next morning.",
+      },
+    ],
+    absorptionOptions: [
+      {
+        id: "with-meal",
+        label: "With meal",
+        multiplier: 1,
+        copy: "The meal-linked setting shows stronger modeled absorption before the drug circulates.",
+      },
+      {
+        id: "lighter-absorption",
+        label: "Lighter absorption",
+        multiplier: 0.58,
+        copy: "The lighter setting lowers the curve to show how less absorption can reduce morning availability.",
       },
     ],
     targetRhythm: {
@@ -543,13 +578,13 @@ export const medicineExamples: MedicineExample[] = [
       widthHours: 5,
       baseline: 0.2,
       amplitude: 0.65,
-      copy: "A future visual can show availability before a morning risk window.",
+      copy: "The target rhythm is shown as a simplified morning window, not a personal risk prediction.",
     },
     overlapLabel: "Projected morning availability",
     interpretation: {
-      low: "Low modeled availability.",
-      medium: "Moderate modeled availability.",
-      high: "Higher modeled availability.",
+      low: "Low modeled morning availability: the exposure curve is weak or fading during the morning window.",
+      medium: "Moderate modeled morning availability: some exposure carries into the morning window.",
+      high: "Higher modeled morning availability: exposure lines up with more of the morning window.",
     },
     sources: ["smith-2019"],
     safetyCaveat:
@@ -566,11 +601,12 @@ export const medicineExamples: MedicineExample[] = [
   {
     name: "Acid reflux medicines",
     icon: Stethoscope,
-    visualMode: "planned",
+    visualMode: "interactive",
+    labVariant: "acid-pump",
     bodyTarget: {
       organ: "Stomach",
-      action: "Acid pump activation around meals",
-      route: ["tablet", "stomach lining", "acid pumps", "meal window"],
+      action: "PPI-style pump timing before a meal",
+      route: ["tablet", "drug ready", "stomach wall", "active pumps"],
     },
     doseWindow: {
       minHour: 5,
@@ -584,44 +620,53 @@ export const medicineExamples: MedicineExample[] = [
     },
     exposureProfiles: [
       {
-        id: "meal-prep",
-        label: "Pre-meal activation",
+        id: "first-meal",
+        label: "First-meal prep",
+        halfLifeHours: 5,
+        peakHours: 0.75,
+        tailHours: 9,
+        copy: "The first-meal model treats the pump window after fasting as the clearest timing target.",
+      },
+      {
+        id: "later-meal",
+        label: "Later-meal comparison",
         halfLifeHours: 4,
-        peakHours: 1,
-        tailHours: 12,
-        copy: "A future visual can show drug presence before meal-triggered pump activation.",
+        peakHours: 1.2,
+        tailHours: 9,
+        copy: "The later-meal comparison lowers pump availability to show why the first meal after fasting is visually different.",
       },
     ],
     targetRhythm: {
-      label: "Meal-triggered acid pump activity",
+      label: "First-meal pump activation",
       peakHour: 8,
       widthHours: 4,
-      baseline: 0.2,
-      amplitude: 0.72,
-      copy: "A future visual can show the first-meal pump-activation window.",
+      baseline: 0.12,
+      amplitude: 0.86,
+      copy: "For a PPI-style example, the target is active stomach-wall pumps around the first meal after fasting.",
     },
-    overlapLabel: "Projected pre-meal target overlap",
+    overlapLabel: "Projected pump-window readiness",
     interpretation: {
-      low: "Low modeled pre-meal overlap.",
-      medium: "Moderate modeled pre-meal overlap.",
-      high: "Higher modeled pre-meal overlap.",
+      low: "Low pump-window readiness in this simplified model: the dose is not ready before many pumps activate.",
+      medium: "Moderate pump-window readiness in this simplified model: some drug is ready near the pump window.",
+      high: "Higher pump-window readiness in this simplified model: drug presence is ready before more meal-triggered pumps activate.",
     },
     sources: ["smith-2019"],
     safetyCaveat:
       "Reflux medication timing differs by drug class and label; this site is educational.",
     labelCue: "Often timed before the first meal in educational examples.",
     whyTimingAppears:
-      "Some reflux medicines work best when acid pumps are about to be activated by food.",
+      "For some proton-pump inhibitor labels, timing is tied to active stomach pumps around the first meal after fasting.",
     morningLens:
-      "Before breakfast can align drug action with active stomach pumps for specific classes.",
+      "Before breakfast can place the drug before a concentrated first-meal pump window in this PPI-style example.",
     eveningLens:
-      "Evening timing can be appropriate in some cases, especially if symptoms or labels point there.",
+      "Later timing is useful as a comparison because the first-meal pump window may already have passed.",
     sourceId: "smith-2019",
   },
   {
     name: "ADHD medicines",
     icon: Brain,
-    visualMode: "planned",
+    visualMode: "interactive",
+    labVariant: "day-runway",
     bodyTarget: {
       organ: "Brain / wake systems",
       action: "Daytime focus with sleep-side-effect boundary",
@@ -639,12 +684,20 @@ export const medicineExamples: MedicineExample[] = [
     },
     exposureProfiles: [
       {
-        id: "alerting",
-        label: "Alerting effect",
-        halfLifeHours: 5,
+        id: "shorter",
+        label: "Shorter effect",
+        halfLifeHours: 4,
         peakHours: 3,
-        tailHours: 16,
-        copy: "A future visual can show intended daytime effect versus a sleep-interference window.",
+        tailHours: 13,
+        copy: "The shorter-effect model fades earlier, making the sleep-boundary crossing easier to see.",
+      },
+      {
+        id: "longer",
+        label: "Longer effect",
+        halfLifeHours: 7,
+        peakHours: 4,
+        tailHours: 18,
+        copy: "The longer-effect model stretches farther into the evening in this simplified view.",
       },
     ],
     targetRhythm: {
@@ -653,13 +706,13 @@ export const medicineExamples: MedicineExample[] = [
       widthHours: 8,
       baseline: 0.18,
       amplitude: 0.7,
-      copy: "A future visual can show how alerting medicines can conflict with sleep timing.",
+      copy: "The visual treats alerting effect as helpful in the daytime lane and increasingly awkward near the sleep boundary.",
     },
     overlapLabel: "Projected daytime alignment",
     interpretation: {
-      low: "Low modeled daytime alignment.",
-      medium: "Moderate modeled daytime alignment.",
-      high: "Higher modeled daytime alignment.",
+      low: "Low daytime coverage in this simplified model: the effect misses much of the daytime lane.",
+      medium: "Moderate daytime coverage in this simplified model: useful effect and sleep boundary are both in view.",
+      high: "Higher daytime coverage in this simplified model: effect sits mostly in the daytime lane.",
     },
     sources: ["smith-2019"],
     safetyCaveat:
@@ -676,7 +729,8 @@ export const medicineExamples: MedicineExample[] = [
   {
     name: "Sleep aids",
     icon: Moon,
-    visualMode: "planned",
+    visualMode: "interactive",
+    labVariant: "night-window",
     bodyTarget: {
       organ: "Sleep systems",
       action: "Desired sleep-window alignment",
@@ -694,12 +748,20 @@ export const medicineExamples: MedicineExample[] = [
     },
     exposureProfiles: [
       {
-        id: "sleep-window",
-        label: "Sleep-window effect",
-        halfLifeHours: 4,
+        id: "shorter-tail",
+        label: "Shorter tail",
+        halfLifeHours: 3,
         peakHours: 1,
-        tailHours: 10,
-        copy: "A future visual can show drug effect aligned to the intended sleep window.",
+        tailHours: 8,
+        copy: "The shorter-tail model concentrates effect near the intended sleep window.",
+      },
+      {
+        id: "longer-tail",
+        label: "Longer tail",
+        halfLifeHours: 6,
+        peakHours: 1.5,
+        tailHours: 13,
+        copy: "The longer-tail model makes next-morning residue more visible.",
       },
     ],
     targetRhythm: {
@@ -708,13 +770,13 @@ export const medicineExamples: MedicineExample[] = [
       widthHours: 7,
       baseline: 0.08,
       amplitude: 0.88,
-      copy: "A future visual can show the simple case: dose effect should overlap the planned sleep window.",
+      copy: "The visual treats the intended sleep window as the target and the morning zone as residue to notice.",
     },
     overlapLabel: "Projected sleep-window alignment",
     interpretation: {
-      low: "Low modeled sleep-window alignment.",
-      medium: "Moderate modeled sleep-window alignment.",
-      high: "Higher modeled sleep-window alignment.",
+      low: "Low sleep-window alignment in this simplified model: the effect lands outside much of the intended sleep window.",
+      medium: "Moderate sleep-window alignment in this simplified model: some effect lands in the sleep window.",
+      high: "Higher sleep-window alignment in this simplified model: effect arrives close to the intended sleep window.",
     },
     sources: ["smith-2019"],
     safetyCaveat:
@@ -1498,6 +1560,62 @@ export const clockGeneNodes: ClockGeneNode[] = [
     },
     sources: ["ncbi-clock-table", "cgdb"],
   },
+  {
+    id: "ORGAN_LIVER",
+    symbol: "Liver",
+    aliases: ["Hepatic system"],
+    category: "organSystem",
+    chromosome: "N/A",
+    x: 80,
+    y: 80,
+    title: "Hepatic Circadian Output",
+    description: "The liver is a major peripheral oscillator, driven by the central clock but also entrained heavily by feeding behavior.",
+    expressionPattern: "Organ-level rhythmic metabolic regulation",
+    peakTime: "Variable by feeding schedule",
+    tissues: ["Liver"],
+    diseaseAssociations: [
+      {
+        disease: "Metabolic Syndrome",
+        mechanism: "Desynchronization between the liver clock and the SCN can drive metabolic dysfunction.",
+        sources: ["Circadian Medicine"],
+      }
+    ],
+    externalLinks: {
+      ncbiGene: "",
+      uniProt: "",
+      circaKb: "",
+      circaDb: "",
+    },
+    sources: ["general-biology"],
+  },
+  {
+    id: "DBP",
+    symbol: "DBP",
+    aliases: ["D site-binding protein"],
+    category: "downstreamTarget",
+    chromosome: "19q13.3",
+    x: 20,
+    y: 80,
+    title: "D site-binding protein",
+    description: "A PAR bZIP transcription factor that is directly regulated by the core clock and drives rhythmic expression of downstream output genes.",
+    expressionPattern: "High amplitude, robust daily oscillation",
+    peakTime: "Late afternoon",
+    tissues: ["Liver", "Kidney", "Brain"],
+    diseaseAssociations: [
+      {
+        disease: "Sleep disorders",
+        mechanism: "Disruptions in DBP and other PAR bZIPs affect sleep consolidation and EEG delta power.",
+        sources: ["NCBI"],
+      }
+    ],
+    externalLinks: {
+      ncbiGene: "https://www.ncbi.nlm.nih.gov/gene/1628",
+      uniProt: "https://www.uniprot.org/uniprotkb/Q10586/entry",
+      circaKb: "",
+      circaDb: "",
+    },
+    sources: ["ncbi-clock-table"],
+  }
 ];
 
 export const clockGeneEdges: ClockGeneEdge[] = [
@@ -1510,6 +1628,7 @@ export const clockGeneEdges: ClockGeneEdge[] = [
     description:
       "CLOCK and BMAL1 form the positive transcriptional complex.",
     sources: ["reactome-clock", "ncbi-clock-table"],
+    pdbId: "4F3L",
   },
   {
     id: "NPAS2-ARNTL",
@@ -1632,6 +1751,24 @@ export const clockGeneEdges: ClockGeneEdge[] = [
       "TIMELESS is represented as an accessory bridge into negative-loop timing and genome-maintenance biology.",
     sources: ["ncbi-clock-table"],
   },
+  {
+    id: "ARNTL-DBP",
+    source: "ARNTL",
+    target: "DBP",
+    type: "activation",
+    label: "transcriptional activation",
+    description: "BMAL1/CLOCK activates transcription of DBP.",
+    sources: ["NCBI core clock table"],
+  },
+  {
+    id: "ARNTL-ORGAN_LIVER",
+    source: "ARNTL",
+    target: "ORGAN_LIVER",
+    type: "regulation",
+    label: "downstream regulation",
+    description: "The core clock directly drives metabolic rhythms in the liver.",
+    sources: ["General biology"],
+  }
 ];
 
 export const workflowSteps: WorkflowStep[] = [
