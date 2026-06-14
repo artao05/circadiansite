@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { organClocks } from "../content/site-data";
 import { Activity, Brain, HeartPulse, Shield } from "lucide-react";
+import { useCircadianTime } from "./CircadianTimeProvider";
 
 function circularDistance(a: number, b: number) {
   const distance = Math.abs(a - b);
@@ -10,8 +11,23 @@ function circularDistance(a: number, b: number) {
 }
 
 export function BodyClockTimeline() {
+  const { hour: masterHour } = useCircadianTime();
   const [activeOrganId, setActiveOrganId] = useState(organClocks[0].id);
-  const [hour, setHour] = useState(8);
+  const [timeState, setTimeState] = useState({
+    sourceHour: masterHour,
+    hour: masterHour,
+  });
+  const hour =
+    timeState.sourceHour === masterHour ? timeState.hour : masterHour;
+  const handleHourInput = (nextHour: number) =>
+    setTimeState({
+      sourceHour: masterHour,
+      hour: nextHour,
+    });
+
+  if (timeState.sourceHour !== masterHour) {
+    setTimeState({ sourceHour: masterHour, hour: masterHour });
+  }
 
   const activeOrgan = useMemo(() => {
     return organClocks.find(o => o.id === activeOrganId) || organClocks[0];
@@ -172,7 +188,8 @@ export function BodyClockTimeline() {
             min="0"
             max="23"
             value={hour}
-            onChange={(event) => setHour(Number(event.target.value))}
+            onChange={(event) => handleHourInput(Number(event.currentTarget.value))}
+            onInput={(event) => handleHourInput(Number(event.currentTarget.value))}
           />
         </label>
       </div>
@@ -211,4 +228,3 @@ export function BodyClockTimeline() {
     </div>
   );
 }
-

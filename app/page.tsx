@@ -25,6 +25,8 @@ import {
   timingSignals,
   workflowSteps,
 } from "./content/site-data";
+import { CircadianTimeProvider } from "./components/CircadianTimeProvider";
+import { MasterCircadianClock } from "./components/MasterCircadianClock";
 
 function CitationPill({ id }: { id: string }) {
   return <span className="citation-pill">{id}</span>;
@@ -60,6 +62,7 @@ export default function Home() {
     chapters;
 
   return (
+    <CircadianTimeProvider>
     <main>
       <nav className="report-nav" aria-label="Report chapters">
         <a className="brand-mark" href="#top" aria-label="Go to top">
@@ -91,26 +94,7 @@ export default function Home() {
             <a href="#medicine">Medication examples</a>
           </div>
         </div>
-        <div className="hero-visual" aria-label="Twenty four hour biological cycle">
-          <div className="day-night-ring">
-            <div className="sun-dot" />
-            <div className="moon-dot" />
-            <div className="ring-core">
-              <span>24h</span>
-              <strong>living time</strong>
-            </div>
-          </div>
-          <div className="physiology-lanes">
-            {["blood pressure", "metabolism", "immune tone", "sleepiness"].map(
-              (label, index) => (
-                <div className="lane" key={label}>
-                  <span>{label}</span>
-                  <i style={{ width: `${48 + index * 12}%` }} />
-                </div>
-              ),
-            )}
-          </div>
-        </div>
+        <MasterCircadianClock />
         <div className="hero-stats">
           {heroStats.map((stat) => (
             <div key={stat.label}>
@@ -308,5 +292,6 @@ export default function Home() {
         </div>
       </footer>
     </main>
+    </CircadianTimeProvider>
   );
 }

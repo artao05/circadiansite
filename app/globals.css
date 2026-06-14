@@ -13,6 +13,22 @@
   --green: #8bcf7f;
   --violet: #9f8cff;
   --card: rgba(255, 252, 246, 0.88);
+  --selected-bg: #101820;
+  --selected-fg: #fff9ef;
+  --hero-bg-1: #101820;
+  --hero-bg-2: #152630;
+  --hero-aura: rgba(84, 214, 194, 0.2);
+  --hero-copy-muted: rgba(255, 249, 239, 0.78);
+  --nav-bg: rgba(16, 24, 32, 0.82);
+  --visual-panel-bg: rgba(255, 252, 246, 0.72);
+  --control-bg: #fff9ef;
+  --opening-bg: #fff9ef;
+  --rhythm-bg: #eef6f2;
+  --sync-bg: #f5ebda;
+  --medicine-bg: #fdf1ef;
+  --genes-bg: #edf7e9;
+  --oxal-bg: #111c24;
+  --time-glow: rgba(84, 214, 194, 0.28);
   --radius: 8px;
 }
 
@@ -37,6 +53,9 @@ body {
   background: var(--paper);
   color: var(--ink);
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  transition:
+    background 450ms ease,
+    color 450ms ease;
 }
 
 button,
@@ -55,6 +74,15 @@ main {
   overflow: clip;
 }
 
+.circadian-shell {
+  min-height: 100vh;
+  background: var(--paper);
+  color: var(--ink);
+  transition:
+    background 450ms ease,
+    color 450ms ease;
+}
+
 .report-nav {
   position: fixed;
   top: 0;
@@ -66,7 +94,7 @@ main {
   justify-content: space-between;
   gap: 1rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.14);
-  background: rgba(16, 24, 32, 0.82);
+  background: var(--nav-bg);
   color: #fff9ef;
   padding: 0.7rem clamp(1rem, 3vw, 2rem);
   backdrop-filter: blur(16px);
@@ -110,10 +138,11 @@ main {
   gap: clamp(2rem, 5vw, 5rem);
   padding: 8rem clamp(1.1rem, 5vw, 5rem) 3rem;
   background:
-    linear-gradient(90deg, rgba(16, 24, 32, 0.95), rgba(21, 38, 48, 0.88)),
-    radial-gradient(circle at 75% 30%, rgba(247, 178, 103, 0.18), transparent 34%),
-    #101820;
+    linear-gradient(90deg, color-mix(in srgb, var(--hero-bg-1) 95%, transparent), color-mix(in srgb, var(--hero-bg-2) 88%, transparent)),
+    radial-gradient(circle at 75% 30%, var(--hero-aura), transparent 34%),
+    var(--hero-bg-1);
   color: #fff9ef;
+  transition: background 450ms ease;
 }
 
 .hero-copy {
@@ -143,7 +172,7 @@ main {
 .hero-copy > p:not(.kicker) {
   max-width: 660px;
   margin: 1.6rem 0 0;
-  color: rgba(255, 249, 239, 0.78);
+  color: var(--hero-copy-muted);
   font-size: 1.18rem;
   line-height: 1.7;
 }
@@ -167,7 +196,7 @@ main {
 
 .hero-actions a:first-child {
   background: #fff5e5;
-  color: var(--ink);
+  color: #101820;
 }
 
 .hero-visual {
@@ -176,6 +205,159 @@ main {
   display: grid;
   align-content: center;
   gap: 2rem;
+}
+
+.master-clock {
+  align-content: center;
+  gap: 1rem;
+}
+
+.master-clock-header,
+.master-clock-caption {
+  width: min(78vw, 430px);
+  margin-inline: auto;
+}
+
+.master-clock-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  color: rgba(255, 249, 239, 0.72);
+  font-size: 0.82rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.master-clock-header span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.master-clock-header strong {
+  color: #fff9ef;
+}
+
+.master-clock-face {
+  position: relative;
+  display: grid;
+  width: min(78vw, 430px);
+  aspect-ratio: 1;
+  margin-inline: auto;
+  place-items: center;
+  cursor: pointer;
+  touch-action: none;
+}
+
+.master-clock-ring {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 999px;
+  background:
+    conic-gradient(from -90deg, var(--amber) 0 22%, var(--cyan) 32% 50%, var(--ink-soft) 62% 86%, var(--coral) 94% 100%);
+  box-shadow:
+    inset 0 0 0 28px color-mix(in srgb, var(--hero-bg-1) 84%, transparent),
+    0 0 60px var(--time-glow);
+  transition:
+    background 450ms ease,
+    box-shadow 450ms ease;
+}
+
+.master-clock-ring::before {
+  content: "";
+  position: absolute;
+  inset: 9%;
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 70% 34%, rgba(255, 249, 239, 0.16), transparent 12%),
+    conic-gradient(from calc(var(--master-angle) - 26deg), transparent 0 74%, rgba(255, 249, 239, 0.18) 78% 83%, transparent 88% 100%);
+  mix-blend-mode: screen;
+}
+
+.master-clock-hand {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 44%;
+  height: 3px;
+  border-radius: 999px;
+  background: rgba(255, 249, 239, 0.86);
+  box-shadow: 0 0 22px var(--time-glow);
+  transform: translateY(-50%) rotate(calc(var(--master-angle) - 90deg));
+  transform-origin: left center;
+  transition: transform 220ms ease;
+}
+
+.master-sun-dot,
+.master-moon-dot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  transform: translate(-50%, -50%) rotate(calc(var(--master-angle) - 90deg)) translateX(min(36vw, 184px));
+  transform-origin: center;
+  transition:
+    background 450ms ease,
+    box-shadow 450ms ease,
+    transform 220ms ease;
+}
+
+.master-sun-dot {
+  background: var(--amber);
+  box-shadow: 0 0 34px color-mix(in srgb, var(--amber) 85%, transparent);
+}
+
+.master-moon-dot {
+  width: 22px;
+  height: 22px;
+  background: #d8e7ff;
+  box-shadow: 0 0 26px rgba(216, 231, 255, 0.6);
+  transform: translate(-50%, -50%) rotate(calc(var(--master-angle) + 90deg)) translateX(min(36vw, 184px));
+}
+
+.master-clock-caption {
+  display: grid;
+  gap: 0.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.07);
+  padding: 0.85rem 1rem;
+}
+
+.master-clock-caption strong {
+  color: #fff9ef;
+  font-size: 1rem;
+}
+
+.master-clock-caption p {
+  margin: 0;
+  color: var(--hero-copy-muted);
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+.master-scrubber {
+  display: grid;
+  width: min(78vw, 430px);
+  margin-inline: auto;
+  gap: 0.55rem;
+}
+
+.master-scrubber span {
+  color: rgba(255, 249, 239, 0.72);
+  font-size: 0.78rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.master-scrubber input {
+  accent-color: var(--amber);
 }
 
 .day-night-ring {
@@ -200,7 +382,7 @@ main {
   align-content: center;
   border-radius: 999px;
   background: #fff5e5;
-  color: var(--ink);
+  color: #101820;
   text-align: center;
 }
 
@@ -288,33 +470,37 @@ main {
 .content-band {
   padding: clamp(4rem, 8vw, 7rem) clamp(1.1rem, 5vw, 5rem);
   border-top: 1px solid var(--line);
+  transition:
+    background 450ms ease,
+    color 450ms ease,
+    border-color 450ms ease;
 }
 
 .opening-band,
 .body-band,
 .workflow-band {
-  background: #fff9ef;
+  background: var(--opening-bg);
 }
 
 .rhythm-band {
-  background: #eef6f2;
+  background: var(--rhythm-bg);
 }
 
 .sync-band {
-  background: #f5ebda;
+  background: var(--sync-bg);
 }
 
 .medicine-band {
-  background: #fdf1ef;
+  background: var(--medicine-bg);
 }
 
 .oxaliplatin-band {
-  background: #111c24;
+  background: var(--oxal-bg);
   color: #fff9ef;
 }
 
 .genes-band {
-  background: #edf7e9;
+  background: var(--genes-bg);
 }
 
 .evidence-band {
@@ -376,6 +562,10 @@ main {
   border-radius: var(--radius);
   background: var(--card);
   padding: 1.2rem;
+  transition:
+    background 450ms ease,
+    border-color 450ms ease,
+    color 450ms ease;
 }
 
 .opening-grid h3,
@@ -422,7 +612,11 @@ main {
 .visual-panel {
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  background: rgba(255, 252, 246, 0.72);
+  background: var(--visual-panel-bg);
+  transition:
+    background 450ms ease,
+    border-color 450ms ease,
+    color 450ms ease;
 }
 
 .rhythm-lab,
@@ -462,7 +656,8 @@ main {
   place-items: center;
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  background: #fff9ef;
+  background: var(--control-bg);
+  color: var(--ink);
   cursor: pointer;
 }
 
@@ -506,8 +701,12 @@ main {
   align-content: start;
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  background: #fff9ef;
+  background: var(--control-bg);
   padding: 1.2rem;
+  transition:
+    background 450ms ease,
+    border-color 450ms ease,
+    color 450ms ease;
 }
 
 .range-control {
@@ -556,7 +755,7 @@ input[type="range"] {
   gap: 0.5rem;
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  background: #fff9ef;
+  background: var(--control-bg);
   padding: 0.75rem 0.9rem;
   color: var(--ink);
 }
@@ -568,8 +767,8 @@ input[type="range"] {
 
 .medicine-tabs button.selected,
 .mode-toolbar button.selected {
-  background: var(--ink);
-  color: #fff9ef;
+  background: var(--selected-bg);
+  color: var(--selected-fg);
 }
 
 .entrainment-visual {
@@ -630,14 +829,14 @@ input[type="range"] {
   top: 50%;
   width: 1.1rem;
   height: 1.1rem;
-  border: 3px solid #fff9ef;
+  border: 3px solid var(--control-bg);
   border-radius: 999px;
   background: var(--ink);
   transform: translate(-50%, -50%);
 }
 
 .explain-panel {
-  background: #fff9ef;
+  background: var(--control-bg);
 }
 
 .clock-face {
@@ -653,8 +852,8 @@ input[type="range"] {
   aspect-ratio: 1;
   border: 1px solid rgba(16, 24, 32, 0.18);
   border-radius: 999px;
-  background: conic-gradient(from -90deg, #f7b267, #fff9ef, #54d6c2, #111c24, #f7b267);
-  box-shadow: inset 0 0 0 44px rgba(255, 249, 239, 0.84);
+  background: conic-gradient(from -90deg, var(--amber), var(--control-bg), var(--cyan), var(--hero-bg-1), var(--amber));
+  box-shadow: inset 0 0 0 44px color-mix(in srgb, var(--control-bg) 84%, transparent);
 }
 
 .clock-node {
@@ -667,7 +866,7 @@ input[type="range"] {
   place-items: center;
   border: 1px solid rgba(16, 24, 32, 0.16);
   border-radius: 999px;
-  background: #fff9ef;
+  background: var(--control-bg);
   color: var(--ink);
   font-size: 0.78rem;
   font-weight: 900;
@@ -675,8 +874,8 @@ input[type="range"] {
 }
 
 .clock-node.current {
-  background: var(--ink);
-  color: #fff9ef;
+  background: var(--selected-bg);
+  color: var(--selected-fg);
 }
 
 .range-control.compact {
@@ -762,7 +961,7 @@ meter {
   border: 1px solid var(--line);
   border-radius: var(--radius);
   padding: 1rem;
-  background: rgba(255, 249, 239, 0.84);
+  background: color-mix(in srgb, var(--control-bg) 84%, transparent);
 }
 
 .timing-lenses span {
@@ -771,7 +970,7 @@ meter {
 }
 
 .safety-note {
-  background: #fff9ef;
+  background: var(--control-bg);
 }
 
 .safety-note strong {
@@ -821,7 +1020,7 @@ meter {
 .lab-readout,
 .planned-visual {
   padding: 1.1rem;
-  background: #fffdf6;
+  background: var(--visual-panel-bg);
 }
 
 .body-drug-map {
@@ -1109,7 +1308,7 @@ meter {
 .profile-toggle button {
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  background: #fff9ef;
+  background: var(--control-bg);
   color: var(--ink);
   cursor: pointer;
   padding: 0.62rem 0.75rem;
@@ -1118,8 +1317,8 @@ meter {
 
 .preset-row button.selected,
 .profile-toggle button.selected {
-  background: var(--ink);
-  color: #fff9ef;
+  background: var(--selected-bg);
+  color: var(--selected-fg);
 }
 
 .absorption-control {
@@ -1173,7 +1372,7 @@ meter {
   display: grid;
   gap: 1rem;
   padding: 1.1rem;
-  background: #fffdf6;
+  background: var(--visual-panel-bg);
 }
 
 .wake-body-panel,
@@ -1181,7 +1380,7 @@ meter {
   display: grid;
   gap: 1rem;
   padding: 1.1rem;
-  background: #fffdf6;
+  background: var(--visual-panel-bg);
 }
 
 .runway-track,
@@ -1192,7 +1391,7 @@ meter {
   border-radius: var(--radius);
   background:
     repeating-linear-gradient(90deg, rgba(16, 24, 32, 0.06) 0 1px, transparent 1px calc(100% / 24)),
-    #fff9ef;
+    var(--control-bg);
   overflow: hidden;
 }
 
@@ -1813,7 +2012,7 @@ meter {
   gap: 0.5rem;
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  background: #fffdf6;
+  background: var(--control-bg);
   color: var(--ink);
   padding: 0.75rem 0.9rem;
 }
@@ -1823,8 +2022,8 @@ meter {
 }
 
 .segmented-control button.selected {
-  background: var(--ink);
-  color: #fff9ef;
+  background: var(--selected-bg);
+  color: var(--selected-fg);
 }
 
 .network-filters input,
@@ -1846,8 +2045,8 @@ meter {
 .network-canvas {
   padding: 1rem;
   background:
-    linear-gradient(135deg, rgba(255, 253, 246, 0.94), rgba(239, 247, 233, 0.88)),
-    #fffdf6;
+    linear-gradient(135deg, color-mix(in srgb, var(--control-bg) 94%, transparent), color-mix(in srgb, var(--genes-bg) 88%, transparent)),
+    var(--control-bg);
 }
 
 .legend-row,
@@ -1953,7 +2152,7 @@ meter {
 }
 
 .edge-legend span {
-  background: #fffdf6;
+  background: var(--control-bg);
   color: var(--muted);
 }
 

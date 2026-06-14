@@ -2,10 +2,37 @@
 
 import { useMemo, useState } from "react";
 import { SunMedium, Utensils } from "lucide-react";
+import { useCircadianTime } from "./CircadianTimeProvider";
+
+function clampHour(hour: number, min: number, max: number) {
+  return Math.min(max, Math.max(min, hour));
+}
 
 export function EntrainmentDemo() {
-  const [lightOff, setLightOff] = useState<number>(21); // 21 = 9 PM
-  const [lastMeal, setLastMeal] = useState<number>(19); // 19 = 7 PM
+  const { hour: masterHour } = useCircadianTime();
+  const syncedLightOff = clampHour(masterHour, 19, 26);
+  const syncedLastMeal = clampHour(masterHour, 17, 24);
+  const [signalState, setSignalState] = useState({
+    sourceHour: masterHour,
+    lightOff: syncedLightOff,
+    lastMeal: syncedLastMeal,
+  });
+  const lightOff =
+    signalState.sourceHour === masterHour
+      ? signalState.lightOff
+      : syncedLightOff;
+  const lastMeal =
+    signalState.sourceHour === masterHour
+      ? signalState.lastMeal
+      : syncedLastMeal;
+
+  if (signalState.sourceHour !== masterHour) {
+    setSignalState({
+      sourceHour: masterHour,
+      lightOff: syncedLightOff,
+      lastMeal: syncedLastMeal,
+    });
+  }
 
   const formatTime = (val: number) => {
     if (val >= 24) return `${val - 24}:00 AM`;
@@ -70,7 +97,20 @@ export function EntrainmentDemo() {
               type="range"
               min="19" max="26" step="1"
               value={lightOff}
-              onChange={(e) => setLightOff(Number(e.target.value))}
+              onChange={(e) =>
+                setSignalState((current) => ({
+                  ...current,
+                  sourceHour: masterHour,
+                  lightOff: Number(e.currentTarget.value),
+                }))
+              }
+              onInput={(e) =>
+                setSignalState((current) => ({
+                  ...current,
+                  sourceHour: masterHour,
+                  lightOff: Number(e.currentTarget.value),
+                }))
+              }
             />
           </label>
           <label className="range-control" style={{ flex: 1, minWidth: '200px' }}>
@@ -82,7 +122,20 @@ export function EntrainmentDemo() {
               type="range"
               min="17" max="24" step="1"
               value={lastMeal}
-              onChange={(e) => setLastMeal(Number(e.target.value))}
+              onChange={(e) =>
+                setSignalState((current) => ({
+                  ...current,
+                  sourceHour: masterHour,
+                  lastMeal: Number(e.currentTarget.value),
+                }))
+              }
+              onInput={(e) =>
+                setSignalState((current) => ({
+                  ...current,
+                  sourceHour: masterHour,
+                  lastMeal: Number(e.currentTarget.value),
+                }))
+              }
             />
           </label>
         </div>

@@ -23,6 +23,7 @@ import {
   interpretOverlap,
 } from "../lib/drug-timing-model";
 import type { CurvePoint, DrugExposureProfile } from "../lib/drug-timing-model";
+import { useCircadianTime } from "./CircadianTimeProvider";
 
 const graphWidth = 760;
 const graphHeight = 330;
@@ -109,14 +110,40 @@ function getInitialProfile(example: (typeof medicineExamples)[number]) {
   return example.exposureProfiles[0];
 }
 
+function clampHour(hour: number, min: number, max: number) {
+  return Math.min(max, Math.max(min, hour));
+}
+
 function useDrugProfile(example: (typeof medicineExamples)[number]) {
-  const [doseHour, setDoseHour] = useState(example.doseWindow.defaultHour);
+  const { hour: masterHour } = useCircadianTime();
+  const syncedDoseHour = clampHour(
+    masterHour,
+    example.doseWindow.minHour,
+    example.doseWindow.maxHour,
+  );
+  const [doseState, setDoseState] = useState({
+    sourceHour: masterHour,
+    doseHour: syncedDoseHour,
+  });
   const [profileId, setProfileId] = useState(getInitialProfile(example).id);
   const profile =
     example.exposureProfiles.find((item) => item.id === profileId) ??
     getInitialProfile(example);
+  const doseHour =
+    doseState.sourceHour === masterHour ? doseState.doseHour : syncedDoseHour;
 
-  return { doseHour, setDoseHour, profile, profileId, setProfileId };
+  if (doseState.sourceHour !== masterHour) {
+    setDoseState({ sourceHour: masterHour, doseHour: syncedDoseHour });
+  }
+
+  return {
+    doseHour,
+    setDoseHour: (nextHour: number) =>
+      setDoseState({ sourceHour: masterHour, doseHour: nextHour }),
+    profile,
+    profileId,
+    setProfileId,
+  };
 }
 
 function DoseControls({
@@ -148,7 +175,8 @@ function DoseControls({
           max={example.doseWindow.maxHour}
           step="1"
           value={doseHour}
-          onChange={(event) => setDoseHour(Number(event.target.value))}
+          onChange={(event) => setDoseHour(Number(event.currentTarget.value))}
+          onInput={(event) => setDoseHour(Number(event.currentTarget.value))}
         />
       </div>
       <div className="preset-row" aria-label="Dose time presets">

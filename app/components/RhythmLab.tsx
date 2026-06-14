@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import * as d3 from "d3";
 import { RotateCcw } from "lucide-react";
+import { useCircadianTime } from "./CircadianTimeProvider";
 
 type Control = {
   key: keyof RhythmState;
@@ -32,7 +33,22 @@ const controls: Control[] = [
 ];
 
 export function RhythmLab() {
-  const [state, setState] = useState<RhythmState>(initialState);
+  const { hour: masterHour } = useCircadianTime();
+  const [syncedMasterHour, setSyncedMasterHour] = useState(masterHour);
+  const [state, setState] = useState<RhythmState>({
+    ...initialState,
+    phase: masterHour,
+  });
+  const effectiveState = useMemo(
+    () =>
+      syncedMasterHour === masterHour ? state : { ...state, phase: masterHour },
+    [masterHour, state, syncedMasterHour],
+  );
+
+  if (syncedMasterHour !== masterHour) {
+    setSyncedMasterHour(masterHour);
+    setState((current) => ({ ...current, phase: masterHour }));
+  }
 
   const chart = useMemo(() => {
     const width = 860;
@@ -55,9 +71,9 @@ export function RhythmLab() {
 
     const generateCurve = (interp: d3.ScaleLinear<number, number, never>, mean: number) => {
       return d3.range(0, 49, 0.5).map((t) => {
-        const normTime = ((t % state.period) / state.period) * 24;
+        const normTime = ((t % effectiveState.period) / effectiveState.period) * 24;
         const baseVal = interp(normTime);
-        const scale = state.amplitude / 34;
+        const scale = effectiveState.amplitude / 34;
         const rhythm = mean + (baseVal - mean) * scale;
         return { t, value: Math.max(0, Math.min(104, rhythm)) };
       });
@@ -68,7 +84,7 @@ export function RhythmLab() {
     const melatoninPoints = generateCurve(melatoninInterp, mMean);
 
     const referencePoints = d3.range(0, 49, 0.5).map((t) => {
-      const rhythm = 50 + state.amplitude * Math.sin(((t - 6) / state.period) * Math.PI * 2);
+    const rhythm = 50 + effectiveState.amplitude * Math.sin(((t - 6) / effectiveState.period) * Math.PI * 2);
       return { t, value: Math.max(0, Math.min(104, rhythm)) };
     });
 
@@ -78,16 +94,16 @@ export function RhythmLab() {
       .y((d) => y(d.value))
       .curve(d3.curveMonotoneX);
     
-    const phaseT = state.phase;
-    const normPhase = ((phaseT % state.period) / state.period) * 24;
-    const scaleAmp = state.amplitude / 34;
+    const phaseT = effectiveState.phase;
+    const normPhase = ((phaseT % effectiveState.period) / effectiveState.period) * 24;
+    const scaleAmp = effectiveState.amplitude / 34;
     
     const phaseMarker = {
       x: x(phaseT),
       cbtY: y(cbMean + (cbtInterp(normPhase) - cbMean) * scaleAmp),
       cortisolY: y(coMean + (cortisolInterp(normPhase) - coMean) * scaleAmp),
       melatoninY: y(mMean + (melatoninInterp(normPhase) - mMean) * scaleAmp),
-      refY: y(Math.max(0, Math.min(104, 50 + state.amplitude * Math.sin(((phaseT - 6) / state.period) * Math.PI * 2))))
+      refY: y(Math.max(0, Math.min(104, 50 + effectiveState.amplitude * Math.sin(((phaseT - 6) / effectiveState.period) * Math.PI * 2))))
     };
     
     return { 
@@ -98,7 +114,7 @@ export function RhythmLab() {
       refPath: line(referencePoints) ?? "",
       x, y, phaseMarker
     };
-  }, [state]);
+  }, [effectiveState]);
 
   return (
     <div className="interactive-block rhythm-lab">
@@ -209,7 +225,7 @@ export function RhythmLab() {
             <span>
               {control.label}
               <strong>
-                {state[control.key]}
+                {effectiveState[control.key]}
                 {control.unit}
               </strong>
             </span>
@@ -218,11 +234,17 @@ export function RhythmLab() {
               min={control.min}
               max={control.max}
               step={control.step}
-              value={state[control.key]}
+              value={effectiveState[control.key]}
               onChange={(event) =>
                 setState((current) => ({
                   ...current,
-                  [control.key]: Number(event.target.value),
+                  [control.key]: Number(event.currentTarget.value),
+                }))
+              }
+              onInput={(event) =>
+                setState((current) => ({
+                  ...current,
+                  [control.key]: Number(event.currentTarget.value),
                 }))
               }
             />
@@ -236,4 +258,3 @@ export function RhythmLab() {
     </div>
   );
 }
-

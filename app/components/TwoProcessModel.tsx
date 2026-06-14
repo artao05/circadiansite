@@ -150,7 +150,8 @@ export function TwoProcessModel() {
             max="48"
             step="0.5"
             value={hoursAwake}
-            onChange={(e) => setHoursAwake(Number(e.target.value))}
+            onChange={(e) => setHoursAwake(Number(e.currentTarget.value))}
+            onInput={(e) => setHoursAwake(Number(e.currentTarget.value))}
             style={{ width: '100%', cursor: 'grab' }}
           />
         </label>
