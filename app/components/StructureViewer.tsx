@@ -22,7 +22,8 @@ export function StructureViewer({
       const link = document.createElement("link");
       link.id = "pdbe-molstar-css";
       link.rel = "stylesheet";
-      link.href = "https://cdn.jsdelivr.net/npm/pdbe-molstar@3.2.0/build/pdbe-molstar-light.css";
+      link.href =
+        "https://cdn.jsdelivr.net/npm/pdbe-molstar@3.2.0/build/pdbe-molstar-light.css";
       document.head.appendChild(link);
     }
 
@@ -30,7 +31,8 @@ export function StructureViewer({
     if (!document.getElementById("pdbe-molstar-js")) {
       const script = document.createElement("script");
       script.id = "pdbe-molstar-js";
-      script.src = "https://cdn.jsdelivr.net/npm/pdbe-molstar@3.2.0/build/pdbe-molstar-plugin.js";
+      script.src =
+        "https://cdn.jsdelivr.net/npm/pdbe-molstar@3.2.0/build/pdbe-molstar-plugin.js";
       script.async = true;
       script.onload = () => setIsLoaded(true);
       document.body.appendChild(script);
@@ -39,7 +41,9 @@ export function StructureViewer({
       if ((window as any).PDBeMolstarPlugin) {
         setTimeout(() => setIsLoaded(true), 0);
       } else {
-        const script = document.getElementById("pdbe-molstar-js") as HTMLScriptElement;
+        const script = document.getElementById(
+          "pdbe-molstar-js",
+        ) as HTMLScriptElement;
         script.addEventListener("load", () => setIsLoaded(true));
       }
     }
@@ -48,8 +52,8 @@ export function StructureViewer({
   useEffect(() => {
     if (uniprotId && !pdbId) {
       fetch(`https://alphafold.ebi.ac.uk/api/prediction/${uniprotId}`)
-        .then(r => r.json())
-        .then(data => {
+        .then((r) => r.json())
+        .then((data) => {
           if (data && data.length > 0) {
             setAfUrl(data[0].cifUrl);
           }
@@ -61,22 +65,29 @@ export function StructureViewer({
   useEffect(() => {
     if (!isLoaded || !viewerRef.current) return;
     if (uniprotId && !pdbId && !afUrl) return; // Wait until afUrl is fetched
-    
+
     // Clear previous viewer if any
     viewerRef.current.innerHTML = "";
-    
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const viewerInstance = new (window as any).PDBeMolstarPlugin();
     const options = {
       moleculeId: pdbId ? pdbId.toLowerCase() : undefined,
-      customData: afUrl ? {
-        url: afUrl,
-        format: "cif",
-      } : undefined,
+      customData: afUrl
+        ? {
+            url: afUrl,
+            format: "cif",
+          }
+        : undefined,
       alphafoldView: uniprotId && !pdbId ? true : false,
       bgColor: { r: 10, g: 10, b: 10 },
       hideControls: true,
-      hideCanvasControls: ["selection", "animation", "controlToggle", "controlInfo"],
+      hideCanvasControls: [
+        "selection",
+        "animation",
+        "controlToggle",
+        "controlInfo",
+      ],
     };
 
     viewerInstance.render(viewerRef.current, options);
@@ -87,8 +98,8 @@ export function StructureViewer({
   return (
     <div
       className={`structure-viewer-container ${
-        isExpanded 
-          ? "fixed inset-0 z-50 bg-[#0a0a0a] p-8 flex flex-col" 
+        isExpanded
+          ? "fixed inset-0 z-50 bg-[#0a0a0a] p-8 flex flex-col"
           : "relative h-64 mt-4 rounded-lg overflow-hidden border border-white/10 bg-[#0a0a0a]"
       }`}
     >
@@ -104,10 +115,14 @@ export function StructureViewer({
           {isExpanded ? <Minimize size={14} /> : <Maximize size={14} />}
         </button>
       </div>
-      <div 
-        ref={viewerRef} 
-        className={isExpanded ? "flex-1 mt-8 relative" : "h-[calc(100%-2.25rem)] w-full mt-9 relative"} 
-        style={{ position: 'relative' }}
+      <div
+        ref={viewerRef}
+        className={
+          isExpanded
+            ? "flex-1 mt-8 relative"
+            : "h-[calc(100%-2.25rem)] w-full mt-9 relative"
+        }
+        style={{ position: "relative" }}
       />
     </div>
   );

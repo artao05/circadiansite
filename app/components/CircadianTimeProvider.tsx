@@ -45,7 +45,8 @@ function getCircadianTheme(hour: number): CircadianTheme {
     return {
       phase: "morning",
       label: "Morning",
-      caption: "Warm light, rising cortisol, and systems shifting toward activity.",
+      caption:
+        "Warm light, rising cortisol, and systems shifting toward activity.",
       variables: {
         "--ink": "#17202a",
         "--ink-soft": "#263446",
@@ -83,7 +84,8 @@ function getCircadianTheme(hour: number): CircadianTheme {
     return {
       phase: "midday",
       label: "Midday",
-      caption: "Crisp contrast, high signal, and physiology in active daylight.",
+      caption:
+        "Crisp contrast, high signal, and physiology in active daylight.",
       variables: {
         "--ink": "#101820",
         "--ink-soft": "#1d2a35",
@@ -121,7 +123,8 @@ function getCircadianTheme(hour: number): CircadianTheme {
     return {
       phase: "evening",
       label: "Evening",
-      caption: "Lower light, warmer edges, and the body preparing to shift states.",
+      caption:
+        "Lower light, warmer edges, and the body preparing to shift states.",
       variables: {
         "--ink": "#161922",
         "--ink-soft": "#252332",
@@ -223,7 +226,9 @@ export function CircadianTimeProvider({ children }: { children: ReactNode }) {
 export function useCircadianTime() {
   const context = useContext(CircadianTimeContext);
   if (!context) {
-    throw new Error("useCircadianTime must be used inside CircadianTimeProvider");
+    throw new Error(
+      "useCircadianTime must be used inside CircadianTimeProvider",
+    );
   }
   return context;
 }

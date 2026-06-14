@@ -111,7 +111,13 @@ main {
   width: 0.82rem;
   height: 0.82rem;
   border-radius: 999px;
-  background: conic-gradient(from 90deg, var(--amber), var(--cyan), var(--coral), var(--amber));
+  background: conic-gradient(
+    from 90deg,
+    var(--amber),
+    var(--cyan),
+    var(--coral),
+    var(--amber)
+  );
 }
 
 .report-nav div {
@@ -138,7 +144,11 @@ main {
   gap: clamp(2rem, 5vw, 5rem);
   padding: 8rem clamp(1.1rem, 5vw, 5rem) 3rem;
   background:
-    linear-gradient(90deg, color-mix(in srgb, var(--hero-bg-1) 95%, transparent), color-mix(in srgb, var(--hero-bg-2) 88%, transparent)),
+    linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--hero-bg-1) 95%, transparent),
+      color-mix(in srgb, var(--hero-bg-2) 88%, transparent)
+    ),
     radial-gradient(circle at 75% 30%, var(--hero-aura), transparent 34%),
     var(--hero-bg-1);
   color: #fff9ef;
@@ -257,8 +267,13 @@ main {
   aspect-ratio: 1;
   border: 1px solid rgba(255, 255, 255, 0.22);
   border-radius: 999px;
-  background:
-    conic-gradient(from -90deg, var(--amber) 0 22%, var(--cyan) 32% 50%, var(--ink-soft) 62% 86%, var(--coral) 94% 100%);
+  background: conic-gradient(
+    from -90deg,
+    var(--amber) 0 22%,
+    var(--cyan) 32% 50%,
+    var(--ink-soft) 62% 86%,
+    var(--coral) 94% 100%
+  );
   box-shadow:
     inset 0 0 0 28px color-mix(in srgb, var(--hero-bg-1) 84%, transparent),
     0 0 60px var(--time-glow);
@@ -273,8 +288,17 @@ main {
   inset: 9%;
   border-radius: 999px;
   background:
-    radial-gradient(circle at 70% 34%, rgba(255, 249, 239, 0.16), transparent 12%),
-    conic-gradient(from calc(var(--master-angle) - 26deg), transparent 0 74%, rgba(255, 249, 239, 0.18) 78% 83%, transparent 88% 100%);
+    radial-gradient(
+      circle at 70% 34%,
+      rgba(255, 249, 239, 0.16),
+      transparent 12%
+    ),
+    conic-gradient(
+      from calc(var(--master-angle) - 26deg),
+      transparent 0 74%,
+      rgba(255, 249, 239, 0.18) 78% 83%,
+      transparent 88% 100%
+    );
   mix-blend-mode: screen;
 }
 
@@ -300,7 +324,8 @@ main {
   width: 28px;
   height: 28px;
   border-radius: 999px;
-  transform: translate(-50%, -50%) rotate(calc(var(--master-angle) - 90deg)) translateX(min(36vw, 184px));
+  transform: translate(-50%, -50%) rotate(calc(var(--master-angle) - 90deg))
+    translateX(min(36vw, 184px));
   transform-origin: center;
   transition:
     background 450ms ease,
@@ -318,7 +343,8 @@ main {
   height: 22px;
   background: #d8e7ff;
   box-shadow: 0 0 26px rgba(216, 231, 255, 0.6);
-  transform: translate(-50%, -50%) rotate(calc(var(--master-angle) + 90deg)) translateX(min(36vw, 184px));
+  transform: translate(-50%, -50%) rotate(calc(var(--master-angle) + 90deg))
+    translateX(min(36vw, 184px));
 }
 
 .master-clock-caption {
@@ -367,8 +393,13 @@ main {
   margin-inline: auto;
   border: 1px solid rgba(255, 255, 255, 0.22);
   border-radius: 999px;
-  background:
-    conic-gradient(from -90deg, #f7b267 0 22%, #54d6c2 32% 50%, #1d2a35 62% 86%, #ff6b6b 94% 100%);
+  background: conic-gradient(
+    from -90deg,
+    #f7b267 0 22%,
+    #54d6c2 32% 50%,
+    #1d2a35 62% 86%,
+    #ff6b6b 94% 100%
+  );
   box-shadow: inset 0 0 0 28px rgba(16, 24, 32, 0.84);
   animation: slow-spin 42s linear infinite;
 }
@@ -812,7 +843,12 @@ input[type="range"] {
   position: relative;
   height: 2.4rem;
   border-radius: 999px;
-  background: linear-gradient(90deg, rgba(84, 214, 194, 0.32), rgba(247, 178, 103, 0.2), rgba(255, 107, 107, 0.3));
+  background: linear-gradient(
+    90deg,
+    rgba(84, 214, 194, 0.32),
+    rgba(247, 178, 103, 0.2),
+    rgba(255, 107, 107, 0.3)
+  );
 }
 
 .zero-line {
@@ -852,8 +888,16 @@ input[type="range"] {
   aspect-ratio: 1;
   border: 1px solid rgba(16, 24, 32, 0.18);
   border-radius: 999px;
-  background: conic-gradient(from -90deg, var(--amber), var(--control-bg), var(--cyan), var(--hero-bg-1), var(--amber));
-  box-shadow: inset 0 0 0 44px color-mix(in srgb, var(--control-bg) 84%, transparent);
+  background: conic-gradient(
+    from -90deg,
+    var(--amber),
+    var(--control-bg),
+    var(--cyan),
+    var(--hero-bg-1),
+    var(--amber)
+  );
+  box-shadow: inset 0 0 0 44px
+    color-mix(in srgb, var(--control-bg) 84%, transparent);
 }
 
 .clock-node {
@@ -1061,18 +1105,52 @@ meter {
 
 .liver-torso {
   background:
-    radial-gradient(circle at 62% 56%, rgba(255, 107, 107, var(--target-alpha)) 0 22%, transparent 25%),
-    radial-gradient(circle at 42% 48%, rgba(247, 178, 103, var(--absorption-alpha)) 0 18%, transparent 21%),
-    linear-gradient(180deg, rgba(255, 249, 239, 0.95), rgba(248, 242, 232, 0.78));
+    radial-gradient(
+      circle at 62% 56%,
+      rgba(255, 107, 107, var(--target-alpha)) 0 22%,
+      transparent 25%
+    ),
+    radial-gradient(
+      circle at 42% 48%,
+      rgba(247, 178, 103, var(--absorption-alpha)) 0 18%,
+      transparent 21%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(255, 249, 239, 0.95),
+      rgba(248, 242, 232, 0.78)
+    );
 }
 
 .vascular-torso {
   background:
-    radial-gradient(ellipse at 50% 52%, rgba(84, 214, 194, var(--target-alpha)) 0 18%, transparent 19%),
-    linear-gradient(108deg, transparent 0 31%, rgba(255, 107, 107, 0.42) 31% 34%, transparent 34% 100%),
-    linear-gradient(72deg, transparent 0 39%, rgba(84, 214, 194, 0.44) 39% 42%, transparent 42% 100%),
-    radial-gradient(circle at 39% 55%, rgba(247, 178, 103, var(--absorption-alpha)) 0 18%, transparent 21%),
-    linear-gradient(180deg, rgba(255, 249, 239, 0.95), rgba(248, 242, 232, 0.78));
+    radial-gradient(
+      ellipse at 50% 52%,
+      rgba(84, 214, 194, var(--target-alpha)) 0 18%,
+      transparent 19%
+    ),
+    linear-gradient(
+      108deg,
+      transparent 0 31%,
+      rgba(255, 107, 107, 0.42) 31% 34%,
+      transparent 34% 100%
+    ),
+    linear-gradient(
+      72deg,
+      transparent 0 39%,
+      rgba(84, 214, 194, 0.44) 39% 42%,
+      transparent 42% 100%
+    ),
+    radial-gradient(
+      circle at 39% 55%,
+      rgba(247, 178, 103, var(--absorption-alpha)) 0 18%,
+      transparent 21%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(255, 249, 239, 0.95),
+      rgba(248, 242, 232, 0.78)
+    );
 }
 
 .gut-node,
@@ -1390,7 +1468,11 @@ meter {
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background:
-    repeating-linear-gradient(90deg, rgba(16, 24, 32, 0.06) 0 1px, transparent 1px calc(100% / 24)),
+    repeating-linear-gradient(
+      90deg,
+      rgba(16, 24, 32, 0.06) 0 1px,
+      transparent 1px calc(100% / 24)
+    ),
     var(--control-bg);
   overflow: hidden;
 }
@@ -1439,7 +1521,12 @@ meter {
   top: 5.7rem;
   height: 2.4rem;
   border-radius: 999px;
-  background: linear-gradient(90deg, rgba(255, 107, 107, 0.16), rgba(255, 107, 107, 0.78), rgba(247, 178, 103, 0.34));
+  background: linear-gradient(
+    90deg,
+    rgba(255, 107, 107, 0.16),
+    rgba(255, 107, 107, 0.78),
+    rgba(247, 178, 103, 0.34)
+  );
   box-shadow: 0 0 30px rgba(255, 107, 107, 0.24);
 }
 
@@ -1520,8 +1607,16 @@ meter {
   border: 1px solid var(--line);
   border-radius: 999px;
   background:
-    radial-gradient(circle, rgba(255, 107, 107, var(--wake-glow, 0.35)) 0 26%, transparent 27%),
-    radial-gradient(circle at 48% 40%, rgba(84, 214, 194, 0.32), transparent 50%),
+    radial-gradient(
+      circle,
+      rgba(255, 107, 107, var(--wake-glow, 0.35)) 0 26%,
+      transparent 27%
+    ),
+    radial-gradient(
+      circle at 48% 40%,
+      rgba(84, 214, 194, 0.32),
+      transparent 50%
+    ),
     #fff9ef;
   box-shadow: 0 0 42px rgba(255, 107, 107, var(--wake-glow, 0.35));
   color: var(--ink);
@@ -1572,8 +1667,16 @@ meter {
 
 .night-window-track {
   background:
-    linear-gradient(90deg, rgba(247, 178, 103, 0.14) 0 25%, transparent 25% 100%),
-    repeating-linear-gradient(90deg, rgba(255, 249, 239, 0.14) 0 1px, transparent 1px calc(100% / 24)),
+    linear-gradient(
+      90deg,
+      rgba(247, 178, 103, 0.14) 0 25%,
+      transparent 25% 100%
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(255, 249, 239, 0.14) 0 1px,
+      transparent 1px calc(100% / 24)
+    ),
     #111c24;
 }
 
@@ -1604,7 +1707,12 @@ meter {
 }
 
 .night-effect {
-  background: linear-gradient(90deg, rgba(84, 214, 194, 0.1), rgba(84, 214, 194, 0.8), rgba(247, 178, 103, 0.28));
+  background: linear-gradient(
+    90deg,
+    rgba(84, 214, 194, 0.1),
+    rgba(84, 214, 194, 0.8),
+    rgba(247, 178, 103, 0.28)
+  );
   box-shadow: 0 0 34px rgba(84, 214, 194, 0.28);
 }
 
@@ -1623,7 +1731,11 @@ meter {
 
 .moon-core {
   background:
-    radial-gradient(circle at 45% 42%, rgba(84, 214, 194, 0.34), transparent 38%),
+    radial-gradient(
+      circle at 45% 42%,
+      rgba(84, 214, 194, 0.34),
+      transparent 38%
+    ),
     radial-gradient(circle, rgba(17, 28, 36, 0.88), rgba(17, 28, 36, 0.72)),
     #111c24;
   box-shadow: 0 0 46px rgba(84, 214, 194, 0.24);
@@ -1658,8 +1770,16 @@ meter {
   border: 2px solid rgba(16, 24, 32, 0.16);
   border-radius: 46% 35% 50% 42%;
   background:
-    radial-gradient(circle at 34% 34%, rgba(247, 178, 103, 0.22), transparent 27%),
-    radial-gradient(circle at 66% 55%, rgba(255, 107, 107, 0.15), transparent 35%),
+    radial-gradient(
+      circle at 34% 34%,
+      rgba(247, 178, 103, 0.22),
+      transparent 27%
+    ),
+    radial-gradient(
+      circle at 66% 55%,
+      rgba(255, 107, 107, 0.15),
+      transparent 35%
+    ),
     linear-gradient(145deg, #fff9ef, #f4d4c8 58%, #f9b9a5);
   box-shadow: inset 0 0 0 18px rgba(255, 249, 239, 0.42);
   overflow: visible;
@@ -1685,7 +1805,11 @@ meter {
   border: 2px solid rgba(84, 214, 194, 0.36);
   border-radius: 48% 36% 50% 43%;
   background:
-    radial-gradient(circle at 56% 44%, rgba(84, 214, 194, 0.22), transparent var(--drug-ready)),
+    radial-gradient(
+      circle at 56% 44%,
+      rgba(84, 214, 194, 0.22),
+      transparent var(--drug-ready)
+    ),
     rgba(84, 214, 194, 0.08);
   box-shadow: 0 0 34px rgba(84, 214, 194, 0.18);
 }
@@ -1762,7 +1886,11 @@ meter {
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background:
-    repeating-linear-gradient(90deg, rgba(16, 24, 32, 0.06) 0 1px, transparent 1px calc(100% / 24)),
+    repeating-linear-gradient(
+      90deg,
+      rgba(16, 24, 32, 0.06) 0 1px,
+      transparent 1px calc(100% / 24)
+    ),
     #fff9ef;
   overflow: hidden;
 }
@@ -1792,7 +1920,12 @@ meter {
 .meal-drug-effect {
   top: 7.1rem;
   height: 2.4rem;
-  background: linear-gradient(90deg, rgba(84, 214, 194, 0.16), rgba(84, 214, 194, 0.78), rgba(247, 178, 103, 0.28));
+  background: linear-gradient(
+    90deg,
+    rgba(84, 214, 194, 0.16),
+    rgba(84, 214, 194, 0.78),
+    rgba(247, 178, 103, 0.28)
+  );
   box-shadow: 0 0 30px rgba(84, 214, 194, 0.24);
 }
 
@@ -1889,8 +2022,17 @@ meter {
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background:
-    linear-gradient(90deg, transparent 0 49%, rgba(16, 24, 32, 0.12) 49% 50%, transparent 50%),
-    repeating-linear-gradient(90deg, rgba(16, 24, 32, 0.06) 0 1px, transparent 1px 14%),
+    linear-gradient(
+      90deg,
+      transparent 0 49%,
+      rgba(16, 24, 32, 0.12) 49% 50%,
+      transparent 50%
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(16, 24, 32, 0.06) 0 1px,
+      transparent 1px 14%
+    ),
     #fff9ef;
   overflow: hidden;
 }
@@ -1908,12 +2050,23 @@ meter {
 
 .planned-mini-graph i {
   bottom: 16%;
-  background: linear-gradient(90deg, transparent, rgba(255, 107, 107, 0.22), rgba(255, 107, 107, 0.7), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 107, 107, 0.22),
+    rgba(255, 107, 107, 0.7),
+    transparent
+  );
 }
 
 .planned-mini-graph b {
   bottom: 26%;
-  background: linear-gradient(90deg, rgba(84, 214, 194, 0.12), rgba(84, 214, 194, 0.72), rgba(84, 214, 194, 0.12));
+  background: linear-gradient(
+    90deg,
+    rgba(84, 214, 194, 0.12),
+    rgba(84, 214, 194, 0.72),
+    rgba(84, 214, 194, 0.12)
+  );
 }
 
 .planned-visual p {
@@ -2045,7 +2198,11 @@ meter {
 .network-canvas {
   padding: 1rem;
   background:
-    linear-gradient(135deg, color-mix(in srgb, var(--control-bg) 94%, transparent), color-mix(in srgb, var(--genes-bg) 88%, transparent)),
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--control-bg) 94%, transparent),
+      color-mix(in srgb, var(--genes-bg) 88%, transparent)
+    ),
     var(--control-bg);
 }
 
@@ -2115,7 +2272,10 @@ meter {
   stroke: rgba(16, 24, 32, 0.2);
   stroke-linecap: round;
   stroke-width: 0.42;
-  transition: opacity 0.2s ease, stroke 0.2s ease, stroke-width 0.2s ease;
+  transition:
+    opacity 0.2s ease,
+    stroke 0.2s ease,
+    stroke-width 0.2s ease;
 }
 
 .network-edge.active {
@@ -2181,7 +2341,10 @@ meter {
   stroke-width: 1.4;
   filter: drop-shadow(0 5px 7px rgba(16, 24, 32, 0.22));
   opacity: 0.92;
-  transition: r 0.2s ease, opacity 0.2s ease, stroke 0.2s ease;
+  transition:
+    r 0.2s ease,
+    opacity 0.2s ease,
+    stroke 0.2s ease;
 }
 
 .network-node text {

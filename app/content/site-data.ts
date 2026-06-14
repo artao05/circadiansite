@@ -302,7 +302,8 @@ export const claimMatrix: Claim[] = [
     source: "smith-2019; cederroth-2019",
     evidenceType: "Beginner review and chronomedicine review",
     confidence: "High",
-    caveat: "The relevant direction and timing depend on the drug, patient, target, and label.",
+    caveat:
+      "The relevant direction and timing depend on the drug, patient, target, and label.",
     visualUse: "Medication timing comparison panel",
     beginnerPhrasing:
       "For some medicines, the hour matters because the body is doing different jobs across the day.",
@@ -313,7 +314,8 @@ export const claimMatrix: Claim[] = [
     source: "smith-2019",
     evidenceType: "Educational review",
     confidence: "High",
-    caveat: "Precise internal phase usually requires biomarkers or validated models.",
+    caveat:
+      "Precise internal phase usually requires biomarkers or validated models.",
     visualUse: "Rhythm lab phase control and entrainment demo",
     beginnerPhrasing:
       "Your phone may say morning, but your body clock can be early, late, or shifted.",
@@ -363,10 +365,22 @@ export const organClocks: OrganClock[] = [
     iconName: "Brain",
     tone: "light",
     events: [
-      { hour: 8, label: "Cortisol peak & light entrainment", copy: "Morning light provides the strongest timing cue, while cortisol peaks to support wakefulness." },
-      { hour: 14, label: "Mid-afternoon dip", copy: "The central pacemaker exhibits a natural dip in alerting signals in the early afternoon." },
-      { hour: 21, label: "Melatonin onset (DLMO)", copy: "Dim light melatonin onset signals the biological night, preparing the brain for sleep architecture." },
-    ]
+      {
+        hour: 8,
+        label: "Cortisol peak & light entrainment",
+        copy: "Morning light provides the strongest timing cue, while cortisol peaks to support wakefulness.",
+      },
+      {
+        hour: 14,
+        label: "Mid-afternoon dip",
+        copy: "The central pacemaker exhibits a natural dip in alerting signals in the early afternoon.",
+      },
+      {
+        hour: 21,
+        label: "Melatonin onset (DLMO)",
+        copy: "Dim light melatonin onset signals the biological night, preparing the brain for sleep architecture.",
+      },
+    ],
   },
   {
     id: "metabolism",
@@ -374,10 +388,22 @@ export const organClocks: OrganClock[] = [
     iconName: "Activity",
     tone: "metabolic",
     events: [
-      { hour: 10, label: "Peak glucose handling", copy: "Insulin sensitivity and glucose tolerance are generally highest in the first half of the day." },
-      { hour: 16, label: "Peak drug metabolism", copy: "Many liver enzymes, like CYP3A4, peak in the late afternoon, affecting how long drugs stay active." },
-      { hour: 23, label: "Fasting & repair mode", copy: "The gut slows motility and the liver shifts from storing nutrients to mobilizing them for overnight maintenance." },
-    ]
+      {
+        hour: 10,
+        label: "Peak glucose handling",
+        copy: "Insulin sensitivity and glucose tolerance are generally highest in the first half of the day.",
+      },
+      {
+        hour: 16,
+        label: "Peak drug metabolism",
+        copy: "Many liver enzymes, like CYP3A4, peak in the late afternoon, affecting how long drugs stay active.",
+      },
+      {
+        hour: 23,
+        label: "Fasting & repair mode",
+        copy: "The gut slows motility and the liver shifts from storing nutrients to mobilizing them for overnight maintenance.",
+      },
+    ],
   },
   {
     id: "cardio",
@@ -385,10 +411,22 @@ export const organClocks: OrganClock[] = [
     iconName: "HeartPulse",
     tone: "cardio",
     events: [
-      { hour: 5, label: "Pre-wake blood pressure ramp", copy: "Blood pressure and heart rate surge before waking, which correlates with a morning peak in cardiovascular events." },
-      { hour: 17, label: "Peak athletic efficiency", copy: "Cardiovascular efficiency and muscle strength often peak in the late afternoon." },
-      { hour: 2, label: "Deep sleep blood pressure dip", copy: "A healthy cardiovascular system exhibits a 10-20% drop in blood pressure during deep sleep." },
-    ]
+      {
+        hour: 5,
+        label: "Pre-wake blood pressure ramp",
+        copy: "Blood pressure and heart rate surge before waking, which correlates with a morning peak in cardiovascular events.",
+      },
+      {
+        hour: 17,
+        label: "Peak athletic efficiency",
+        copy: "Cardiovascular efficiency and muscle strength often peak in the late afternoon.",
+      },
+      {
+        hour: 2,
+        label: "Deep sleep blood pressure dip",
+        copy: "A healthy cardiovascular system exhibits a 10-20% drop in blood pressure during deep sleep.",
+      },
+    ],
   },
   {
     id: "immune",
@@ -396,11 +434,23 @@ export const organClocks: OrganClock[] = [
     iconName: "Shield",
     tone: "immune",
     events: [
-      { hour: 8, label: "Adaptive cellular patrol", copy: "T-cells and other adaptive immune cells often peak in circulation in the morning, ready for encounters." },
-      { hour: 20, label: "Inflammatory tone shift", copy: "Pro-inflammatory cytokines often rise in the evening, which is why fever and asthma symptoms can worsen at night." },
-      { hour: 2, label: "Tissue repair", copy: "Innate immune cells move into tissues overnight to clear debris and promote repair while the body rests." },
-    ]
-  }
+      {
+        hour: 8,
+        label: "Adaptive cellular patrol",
+        copy: "T-cells and other adaptive immune cells often peak in circulation in the morning, ready for encounters.",
+      },
+      {
+        hour: 20,
+        label: "Inflammatory tone shift",
+        copy: "Pro-inflammatory cytokines often rise in the evening, which is why fever and asthma symptoms can worsen at night.",
+      },
+      {
+        hour: 2,
+        label: "Tissue repair",
+        copy: "Innate immune cells move into tissues overnight to clear debris and promote repair while the body rests.",
+      },
+    ],
+  },
 ];
 
 export const medicineExamples: MedicineExample[] = [
@@ -453,7 +503,8 @@ export const medicineExamples: MedicineExample[] = [
     overlapLabel: "Projected overlap with nighttime synthesis",
     interpretation: {
       low: "Low overlap in this simplified model: the drug curve is mostly fading before the target rhythm rises.",
-      medium: "Moderate overlap in this simplified model: some active drug is present during the target window.",
+      medium:
+        "Moderate overlap in this simplified model: some active drug is present during the target window.",
       high: "Higher overlap in this simplified model: active drug presence lines up with more of the target rhythm.",
     },
     sources: ["smith-2019"],
@@ -475,7 +526,12 @@ export const medicineExamples: MedicineExample[] = [
     bodyTarget: {
       organ: "Pancreas / bloodstream",
       action: "Overnight glucose coverage",
-      route: ["injection", "subcutaneous depot", "bloodstream", "glucose control"],
+      route: [
+        "injection",
+        "subcutaneous depot",
+        "bloodstream",
+        "glucose control",
+      ],
     },
     doseWindow: {
       minHour: 6,
@@ -531,12 +587,7 @@ export const medicineExamples: MedicineExample[] = [
     bodyTarget: {
       organ: "Blood vessels",
       action: "Absorption and morning availability",
-      route: [
-        "tablet",
-        "gut absorption",
-        "bloodstream",
-        "morning risk window",
-      ],
+      route: ["tablet", "gut absorption", "bloodstream", "morning risk window"],
     },
     doseWindow: {
       minHour: 6,
@@ -583,7 +634,8 @@ export const medicineExamples: MedicineExample[] = [
     overlapLabel: "Projected morning availability",
     interpretation: {
       low: "Low modeled morning availability: the exposure curve is weak or fading during the morning window.",
-      medium: "Moderate modeled morning availability: some exposure carries into the morning window.",
+      medium:
+        "Moderate modeled morning availability: some exposure carries into the morning window.",
       high: "Higher modeled morning availability: exposure lines up with more of the morning window.",
     },
     sources: ["smith-2019"],
@@ -647,7 +699,8 @@ export const medicineExamples: MedicineExample[] = [
     overlapLabel: "Projected pump-window readiness",
     interpretation: {
       low: "Low pump-window readiness in this simplified model: the dose is not ready before many pumps activate.",
-      medium: "Moderate pump-window readiness in this simplified model: some drug is ready near the pump window.",
+      medium:
+        "Moderate pump-window readiness in this simplified model: some drug is ready near the pump window.",
       high: "Higher pump-window readiness in this simplified model: drug presence is ready before more meal-triggered pumps activate.",
     },
     sources: ["smith-2019"],
@@ -711,13 +764,15 @@ export const medicineExamples: MedicineExample[] = [
     overlapLabel: "Projected daytime alignment",
     interpretation: {
       low: "Low daytime coverage in this simplified model: the effect misses much of the daytime lane.",
-      medium: "Moderate daytime coverage in this simplified model: useful effect and sleep boundary are both in view.",
+      medium:
+        "Moderate daytime coverage in this simplified model: useful effect and sleep boundary are both in view.",
       high: "Higher daytime coverage in this simplified model: effect sits mostly in the daytime lane.",
     },
     sources: ["smith-2019"],
     safetyCaveat:
       "ADHD medication timing depends on product formulation, symptoms, side effects, and prescriber guidance.",
-    labelCue: "Morning use can reduce insomnia risk for some stimulant medicines.",
+    labelCue:
+      "Morning use can reduce insomnia risk for some stimulant medicines.",
     whyTimingAppears:
       "A useful daytime effect can become a nighttime side effect if alerting action persists.",
     morningLens:
@@ -775,15 +830,15 @@ export const medicineExamples: MedicineExample[] = [
     overlapLabel: "Projected sleep-window alignment",
     interpretation: {
       low: "Low sleep-window alignment in this simplified model: the effect lands outside much of the intended sleep window.",
-      medium: "Moderate sleep-window alignment in this simplified model: some effect lands in the sleep window.",
+      medium:
+        "Moderate sleep-window alignment in this simplified model: some effect lands in the sleep window.",
       high: "Higher sleep-window alignment in this simplified model: effect arrives close to the intended sleep window.",
     },
     sources: ["smith-2019"],
     safetyCaveat:
       "Sleep-aid timing and next-day impairment warnings depend on the exact product label.",
     labelCue: "The simple case: take before the intended sleep window.",
-    whyTimingAppears:
-      "The target effect is explicitly tied to sleep timing.",
+    whyTimingAppears: "The target effect is explicitly tied to sleep timing.",
     morningLens:
       "Morning use would usually conflict with the desired sleep window.",
     eveningLens:
@@ -871,7 +926,8 @@ export const circadianDataSources: CircadianDataSource[] = [
     name: "Reactome Circadian Clock",
     purpose:
       "Human pathway relationships for BMAL1:CLOCK activation and feedback-loop regulation.",
-    status: "Used in v1 to curate activation, repression, and regulation edges.",
+    status:
+      "Used in v1 to curate activation, repression, and regulation edges.",
     url: "https://reactome.org/content/detail/R-HSA-9931510",
   },
   {
@@ -1323,8 +1379,7 @@ export const clockGeneNodes: ClockGeneNode[] = [
     title: "Clock output amplifier",
     description:
       "DBP is activated by BMAL1:CLOCK and helps drive D-box output genes, linking core timing to downstream physiology.",
-    expressionPattern:
-      "Strong rhythmic output transcript in many tissues.",
+    expressionPattern: "Strong rhythmic output transcript in many tissues.",
     peakTime: "Day to early evening in many mammalian tissues",
     tissues: ["liver", "kidney", "heart", "brain"],
     diseaseAssociations: [
@@ -1540,8 +1595,7 @@ export const clockGeneNodes: ClockGeneNode[] = [
     title: "Clock and genome-stability bridge",
     description:
       "TIMELESS is listed among selected mammalian clock-related genes and links timing biology with cell-cycle and genome-maintenance processes.",
-    expressionPattern:
-      "Rhythmicity varies by tissue and cell-cycle context.",
+    expressionPattern: "Rhythmicity varies by tissue and cell-cycle context.",
     peakTime: "Dataset dependent",
     tissues: ["proliferating tissues", "immune cells", "epithelia"],
     diseaseAssociations: [
@@ -1569,16 +1623,18 @@ export const clockGeneNodes: ClockGeneNode[] = [
     x: 80,
     y: 80,
     title: "Hepatic Circadian Output",
-    description: "The liver is a major peripheral oscillator, driven by the central clock but also entrained heavily by feeding behavior.",
+    description:
+      "The liver is a major peripheral oscillator, driven by the central clock but also entrained heavily by feeding behavior.",
     expressionPattern: "Organ-level rhythmic metabolic regulation",
     peakTime: "Variable by feeding schedule",
     tissues: ["Liver"],
     diseaseAssociations: [
       {
         disease: "Metabolic Syndrome",
-        mechanism: "Desynchronization between the liver clock and the SCN can drive metabolic dysfunction.",
+        mechanism:
+          "Desynchronization between the liver clock and the SCN can drive metabolic dysfunction.",
         sources: ["Circadian Medicine"],
-      }
+      },
     ],
     externalLinks: {
       ncbiGene: "",
@@ -1597,16 +1653,18 @@ export const clockGeneNodes: ClockGeneNode[] = [
     x: 20,
     y: 80,
     title: "D site-binding protein",
-    description: "A PAR bZIP transcription factor that is directly regulated by the core clock and drives rhythmic expression of downstream output genes.",
+    description:
+      "A PAR bZIP transcription factor that is directly regulated by the core clock and drives rhythmic expression of downstream output genes.",
     expressionPattern: "High amplitude, robust daily oscillation",
     peakTime: "Late afternoon",
     tissues: ["Liver", "Kidney", "Brain"],
     diseaseAssociations: [
       {
         disease: "Sleep disorders",
-        mechanism: "Disruptions in DBP and other PAR bZIPs affect sleep consolidation and EEG delta power.",
+        mechanism:
+          "Disruptions in DBP and other PAR bZIPs affect sleep consolidation and EEG delta power.",
         sources: ["NCBI"],
-      }
+      },
     ],
     externalLinks: {
       ncbiGene: "https://www.ncbi.nlm.nih.gov/gene/1628",
@@ -1615,7 +1673,7 @@ export const clockGeneNodes: ClockGeneNode[] = [
       circaDb: "",
     },
     sources: ["ncbi-clock-table"],
-  }
+  },
 ];
 
 export const clockGeneEdges: ClockGeneEdge[] = [
@@ -1625,8 +1683,7 @@ export const clockGeneEdges: ClockGeneEdge[] = [
     target: "ARNTL",
     type: "regulation",
     label: "heterodimer",
-    description:
-      "CLOCK and BMAL1 form the positive transcriptional complex.",
+    description: "CLOCK and BMAL1 form the positive transcriptional complex.",
     sources: ["reactome-clock", "ncbi-clock-table"],
     pdbId: "4F3L",
   },
@@ -1766,9 +1823,10 @@ export const clockGeneEdges: ClockGeneEdge[] = [
     target: "ORGAN_LIVER",
     type: "regulation",
     label: "downstream regulation",
-    description: "The core clock directly drives metabolic rhythms in the liver.",
+    description:
+      "The core clock directly drives metabolic rhythms in the liver.",
     sources: ["General biology"],
-  }
+  },
 ];
 
 export const workflowSteps: WorkflowStep[] = [

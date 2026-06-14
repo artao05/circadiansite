@@ -57,14 +57,20 @@ export function exposureAtHour(
   const rise = clamp01(elapsed / Math.max(profile.peakHours, 0.25));
   const decayElapsed = Math.max(0, elapsed - profile.peakHours);
   const decay = Math.pow(0.5, decayElapsed / profile.halfLifeHours);
-  const tailFade = elapsed > profile.tailHours ? Math.max(0, 1 - (elapsed - profile.tailHours) / 4) : 1;
+  const tailFade =
+    elapsed > profile.tailHours
+      ? Math.max(0, 1 - (elapsed - profile.tailHours) / 4)
+      : 1;
   return clamp01(rise * decay * tailFade);
 }
 
 export function targetAtHour(hour: number, rhythm: TargetRhythmProfile) {
   const rawDistance = Math.abs(hour - rhythm.peakHour);
   const distance = Math.min(rawDistance, 24 - rawDistance);
-  const shaped = Math.max(0, Math.cos((distance / rhythm.widthHours) * (Math.PI / 2)));
+  const shaped = Math.max(
+    0,
+    Math.cos((distance / rhythm.widthHours) * (Math.PI / 2)),
+  );
   return clamp01(rhythm.baseline + rhythm.amplitude * shaped);
 }
 
@@ -126,11 +132,14 @@ export function exposureWindowScore(
   };
 }
 
-export function interpretOverlap(score: number, interpretation: {
-  low: string;
-  medium: string;
-  high: string;
-}) {
+export function interpretOverlap(
+  score: number,
+  interpretation: {
+    low: string;
+    medium: string;
+    high: string;
+  },
+) {
   if (score >= 45) return interpretation.high;
   if (score >= 24) return interpretation.medium;
   return interpretation.low;

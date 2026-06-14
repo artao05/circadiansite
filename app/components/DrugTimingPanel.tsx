@@ -44,7 +44,10 @@ function yForValue(value: number) {
   );
 }
 
-function linePath(points: CurvePoint[], key: "exposure" | "target" | "overlap") {
+function linePath(
+  points: CurvePoint[],
+  key: "exposure" | "target" | "overlap",
+) {
   return points
     .map((point, index) => {
       const command = index === 0 ? "M" : "L";
@@ -236,9 +239,13 @@ function DrugVisualLab({
   const estimatedPeak = (doseHour + profile.peakHours) % 24;
   const overlapTone = Math.max(18, Math.min(92, model.overlapScore));
   const targetKind = bodyTargetKind(example);
-  const absorptionTone = absorption ? 0.22 + absorption.multiplier * 0.36 : 0.42;
+  const absorptionTone = absorption
+    ? 0.22 + absorption.multiplier * 0.36
+    : 0.42;
   const profileLabel =
-    example.exposureProfiles.length > 1 ? "Drug duration profile" : "Exposure profile";
+    example.exposureProfiles.length > 1
+      ? "Drug duration profile"
+      : "Exposure profile";
 
   return (
     <div className="drug-lab-grid">
@@ -307,9 +314,9 @@ function DrugVisualLab({
       </section>
 
       <section className="visual-panel timing-graph-panel">
-          <div className="lab-panel-heading">
-            <div>
-              <p className="kicker">Projection graph</p>
+        <div className="lab-panel-heading">
+          <div>
+            <p className="kicker">Projection graph</p>
             <h3>{example.overlapLabel}</h3>
           </div>
           <span>{model.overlapScore}% overlap</span>
@@ -349,7 +356,11 @@ function DrugVisualLab({
                 y2={graphHeight - graphMargin.bottom}
                 className="chart-grid"
               />
-              <text x={xForHour(hour)} y={graphHeight - 18} className="chart-label">
+              <text
+                x={xForHour(hour)}
+                y={graphHeight - 18}
+                className="chart-label"
+              >
                 {hour === 24 ? "24h" : `${hour}h`}
               </text>
             </g>
@@ -366,8 +377,14 @@ function DrugVisualLab({
           ))}
           <path d={areaPath(model.points)} className="overlap-area" />
           <path d={linePath(model.points, "target")} className="target-curve" />
-          <path d={linePath(model.points, "exposure")} className="exposure-curve" />
-          <path d={linePath(model.points, "overlap")} className="overlap-curve" />
+          <path
+            d={linePath(model.points, "exposure")}
+            className="exposure-curve"
+          />
+          <path
+            d={linePath(model.points, "overlap")}
+            className="overlap-curve"
+          />
           <line
             x1={xForHour(doseHour)}
             x2={xForHour(doseHour)}
@@ -468,7 +485,10 @@ function DayRunwayLab({
           <span>{daytime.score}% daytime coverage</span>
         </div>
 
-        <div className="runway-track" aria-label="Day runway medication timing visual">
+        <div
+          className="runway-track"
+          aria-label="Day runway medication timing visual"
+        >
           <div className="runway-zone morning-zone" />
           <div className="runway-zone focus-zone" />
           <div className="runway-zone winddown-zone" />
@@ -484,13 +504,22 @@ function DayRunwayLab({
               }}
             />
           ))}
-          <span className="runway-marker dose" style={{ left: timelinePercent(doseHour) }}>
+          <span
+            className="runway-marker dose"
+            style={{ left: timelinePercent(doseHour) }}
+          >
             dose
           </span>
-          <span className="runway-marker peak" style={{ left: timelinePercent(estimatedPeak) }}>
+          <span
+            className="runway-marker peak"
+            style={{ left: timelinePercent(estimatedPeak) }}
+          >
             peak
           </span>
-          <span className="runway-marker sleep" style={{ left: timelinePercent(21) }}>
+          <span
+            className="runway-marker sleep"
+            style={{ left: timelinePercent(21) }}
+          >
             sleep
           </span>
           <div className="runway-labels" aria-hidden="true">
@@ -590,7 +619,10 @@ function NightWindowLab({
           <span>{alignment.score}% sleep-window alignment</span>
         </div>
 
-        <div className="night-window-track" aria-label="Night-window medication timing visual">
+        <div
+          className="night-window-track"
+          aria-label="Night-window medication timing visual"
+        >
           <div className="night-zone evening" />
           <div className="night-zone sleep-main" />
           <div className="night-zone sleep-late" />
@@ -605,13 +637,22 @@ function NightWindowLab({
               }}
             />
           ))}
-          <span className="night-marker dose" style={{ left: timelinePercent(doseHour) }}>
+          <span
+            className="night-marker dose"
+            style={{ left: timelinePercent(doseHour) }}
+          >
             dose
           </span>
-          <span className="night-marker peak" style={{ left: timelinePercent(estimatedPeak) }}>
+          <span
+            className="night-marker peak"
+            style={{ left: timelinePercent(estimatedPeak) }}
+          >
             peak
           </span>
-          <span className="night-marker wake" style={{ left: timelinePercent(7) }}>
+          <span
+            className="night-marker wake"
+            style={{ left: timelinePercent(7) }}
+          >
             wake
           </span>
           <div className="night-labels" aria-hidden="true">
@@ -642,7 +683,9 @@ function NightWindowLab({
           </div>
           <div
             className="dawn-residue"
-            style={{ "--residue": `${Math.max(8, residue.score)}%` } as CSSProperties}
+            style={
+              { "--residue": `${Math.max(8, residue.score)}%` } as CSSProperties
+            }
           >
             <Sunrise size={20} />
           </div>
@@ -790,7 +833,10 @@ function AcidPumpLab({
           </div>
           <Utensils size={24} aria-hidden="true" />
         </div>
-        <div className="meal-strip" aria-label="Meal timing strip for reflux medication">
+        <div
+          className="meal-strip"
+          aria-label="Meal timing strip for reflux medication"
+        >
           <div className="fasting-band" />
           <div
             className="pump-window-band"
@@ -938,7 +984,11 @@ export function DrugTimingPanel() {
 
   return (
     <div className="interactive-block medicine-panel">
-      <div className="medicine-tabs" role="tablist" aria-label="Medication examples">
+      <div
+        className="medicine-tabs"
+        role="tablist"
+        aria-label="Medication examples"
+      >
         {medicineExamples.map((item) => {
           const ItemIcon = item.icon;
           return (
