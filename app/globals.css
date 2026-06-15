@@ -2790,3 +2790,48 @@ meter {
     flex-direction: column;
   }
 }
+
+/* Custom Tooltip */
+.custom-tooltip {
+  position: relative;
+}
+
+.custom-tooltip .tooltip-text {
+  visibility: hidden;
+  width: 260px;
+  background-color: var(--hero-bg-1);
+  color: #f3f4f6;
+  text-align: left;
+  border-radius: 6px;
+  padding: 10px 12px;
+  position: absolute;
+  z-index: 50;
+  bottom: 150%;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity 0.2s, visibility 0.2s, bottom 0.2s;
+  font-size: 0.85rem;
+  font-weight: 500;
+  pointer-events: none;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  line-height: 1.4;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.custom-tooltip .tooltip-text::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -6px;
+  border-width: 6px;
+  border-style: solid;
+  border-color: var(--hero-bg-1) transparent transparent transparent;
+}
+
+.custom-tooltip:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+  bottom: 125%;
+}

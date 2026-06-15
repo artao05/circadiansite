@@ -508,8 +508,9 @@ export function RhythmLab() {
             <span>
               <div style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}>
                 {control.label}
-                <div title={control.description} style={{ display: "inline-flex", cursor: "help", color: "var(--muted)", opacity: 0.7 }}>
+                <div className="custom-tooltip" style={{ display: "inline-flex", cursor: "help", color: "var(--muted)", opacity: 0.7 }}>
                   <Info size={14} />
+                  <div className="tooltip-text">{control.description}</div>
                 </div>
               </div>
               <strong>
