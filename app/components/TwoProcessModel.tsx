@@ -87,8 +87,8 @@ export function TwoProcessModel() {
         </h3>
         <p style={{ color: "#4b5563", fontSize: "1.125rem", lineHeight: 1.6 }}>
           Your need for sleep is driven by two competing forces: the{" "}
-          <strong>Homeostat</strong> (which tracks how long you&apos;ve been
-          awake) and the <strong>Circadian Clock</strong> (which generates
+          <strong style={{ color: "var(--violet)", backgroundColor: "color-mix(in srgb, var(--violet) 15%, transparent)", padding: "0.2rem 0.5rem", borderRadius: "6px" }}>Homeostat</strong> (which tracks how long you&apos;ve been
+          awake) and the <strong style={{ color: "var(--amber)", backgroundColor: "color-mix(in srgb, var(--amber) 15%, transparent)", padding: "0.2rem 0.5rem", borderRadius: "6px" }}>Circadian Clock</strong> (which generates
           alerting signals regardless of your sleep debt).
         </p>
       </div>
@@ -112,12 +112,12 @@ export function TwoProcessModel() {
             background: "rgba(16, 24, 32, 0.65)",
             backdropFilter: "blur(12px)",
             WebkitBackdropFilter: "blur(12px)",
-            padding: "1.25rem",
-            borderRadius: "12px",
+            padding: "1.5rem",
+            borderRadius: "16px",
             border: "1px solid rgba(255,255,255,0.1)",
-            maxWidth: "260px",
+            maxWidth: "340px",
             color: "#f3f4f6",
-            fontSize: "0.875rem",
+            fontSize: "1rem",
             boxShadow: "0 8px 32px rgba(0,0,0,0.2)",
             zIndex: 10,
             transition: "all 0.3s ease",
@@ -129,8 +129,8 @@ export function TwoProcessModel() {
                 style={{
                   color: "#f59e0b",
                   display: "block",
-                  marginBottom: "0.25rem",
-                  fontSize: "0.75rem",
+                  marginBottom: "0.4rem",
+                  fontSize: "0.85rem",
                   textTransform: "uppercase",
                   letterSpacing: "1px",
                 }}
@@ -147,8 +147,8 @@ export function TwoProcessModel() {
                 style={{
                   color: "#a855f7",
                   display: "block",
-                  marginBottom: "0.25rem",
-                  fontSize: "0.75rem",
+                  marginBottom: "0.4rem",
+                  fontSize: "0.85rem",
                   textTransform: "uppercase",
                   letterSpacing: "1px",
                 }}
@@ -165,8 +165,8 @@ export function TwoProcessModel() {
                 style={{
                   color: "#10b981",
                   display: "block",
-                  marginBottom: "0.25rem",
-                  fontSize: "0.75rem",
+                  marginBottom: "0.4rem",
+                  fontSize: "0.85rem",
                   textTransform: "uppercase",
                   letterSpacing: "1px",
                 }}
