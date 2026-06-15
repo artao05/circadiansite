@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import * as d3 from "d3";
-import { RotateCcw } from "lucide-react";
+import { Info, RotateCcw } from "lucide-react";
 import { useCircadianTime } from "./CircadianTimeProvider";
 
 type Control = {
@@ -12,6 +12,7 @@ type Control = {
   max: number;
   step: number;
   unit: string;
+  description: string;
 };
 
 type RhythmState = {
@@ -27,8 +28,8 @@ const initialState: RhythmState = {
 };
 
 const controls: Control[] = [
-  { key: "period", label: "Period", min: 16, max: 32, step: 1, unit: "h" },
-  { key: "amplitude", label: "Amplitude", min: 5, max: 48, step: 1, unit: "" },
+  { key: "period", label: "Period", min: 16, max: 32, step: 1, unit: "h", description: "The length of one complete cycle. In humans, this naturally runs slightly longer than 24 hours." },
+  { key: "amplitude", label: "Amplitude", min: 5, max: 48, step: 1, unit: "", description: "The strength or height of the rhythm. A larger amplitude means a stronger biological signal." },
   {
     key: "phase",
     label: "Current Time (Phase)",
@@ -36,6 +37,7 @@ const controls: Control[] = [
     max: 48,
     step: 0.5,
     unit: "h",
+    description: "Where the rhythm is in its cycle right now. Shifting this is what causes jet lag."
   },
 ];
 
@@ -504,7 +506,12 @@ export function RhythmLab() {
         {controls.map((control) => (
           <label className="range-control" key={control.key}>
             <span>
-              {control.label}
+              <div style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}>
+                {control.label}
+                <div title={control.description} style={{ display: "inline-flex", cursor: "help", color: "var(--muted)", opacity: 0.7 }}>
+                  <Info size={14} />
+                </div>
+              </div>
               <strong>
                 {effectiveState[control.key]}
                 {control.unit}
