@@ -10,11 +10,14 @@ import {
   Sparkles,
 } from "lucide-react";
 import { BodyClockTimeline } from "./components/BodyClockTimeline";
+import { ClockMechanicsSection } from "./components/ClockMechanicsSection";
 import { DrugTimingPanel } from "./components/DrugTimingPanel";
 import { EntrainmentDemo } from "./components/EntrainmentDemo";
 import { GeneNetwork } from "./components/GeneNetwork";
 import { OxaliplatinTimeline } from "./components/OxaliplatinTimeline";
 import { RhythmLab } from "./components/RhythmLab";
+import { OpeningHero } from "./components/OpeningHero";
+import { ChapterIntro } from "./components/ChapterIntro";
 import { TwoProcessModel } from "./components/TwoProcessModel";
 import {
   chapters,
@@ -175,26 +178,25 @@ export default function Home() {
 
         <section className="content-band oxaliplatin-band">
           <ChapterIntro {...oxaliplatin} />
-          <div className="two-column">
-            <div className="narrative-block">
-              <p className="kicker">Case study</p>
-              <h3>Oxaliplatin shows why timing can change interpretation.</h3>
-              <p>
-                In the chronomedicine review, oxaliplatin is presented as a
-                historical example where excessive toxicity nearly derailed a
-                useful colorectal cancer drug. Chronomodulated delivery changed
-                the safety and efficacy conversation.
-                <CitationPill id="cederroth-2019" />
-              </p>
-              <p>
-                The important v1 lesson is not that every person needs the same
-                hour. It is that internal circadian phase can become part of the
-                treatment design problem.
-              </p>
-            </div>
-            <OxaliplatinTimeline />
+          <div className="narrative-block" style={{ maxWidth: "800px", margin: "0 auto 3rem", textAlign: "center" }}>
+            <p className="kicker" style={{ color: "#06b6d4", fontWeight: 700, textTransform: "uppercase", letterSpacing: "1px", fontSize: "0.85rem", marginBottom: "0.5rem" }}>Case study</p>
+            <h3 style={{ fontSize: "1.75rem", color: "#f3f4f6", marginBottom: "1rem", fontWeight: 700, letterSpacing: "-0.5px" }}>Oxaliplatin shows why timing can change interpretation.</h3>
+            <p style={{ color: "#9ca3af", fontSize: "1.125rem", lineHeight: 1.6, marginBottom: "1rem" }}>
+              In the chronomedicine review, oxaliplatin is presented as a
+              historical example where excessive toxicity nearly derailed a
+              useful colorectal cancer drug. Chronomodulated delivery changed
+              the safety and efficacy conversation.
+            </p>
+            <p style={{ color: "#9ca3af", fontSize: "1.125rem", lineHeight: 1.6 }}>
+              The important lesson is not that every person needs the same
+              hour. It is that internal circadian phase can become part of the
+              treatment design problem.
+            </p>
           </div>
+          <OxaliplatinTimeline />
         </section>
+
+        <ClockMechanicsSection />
 
         <section className="content-band genes-band">
           <ChapterIntro {...genes} />

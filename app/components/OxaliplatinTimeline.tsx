@@ -3,202 +3,68 @@
 import { useState } from "react";
 import { oxaliplatinEvents } from "../content/site-data";
 
+const plates = [
+  "/oxaliplatin_neuropathy_1781491364986.jpg",
+  "/oxaliplatin_mouse_1781491376492.jpg",
+  "/oxaliplatin_chronomodulation_1781491386150.jpg",
+  "/oxaliplatin_personalization_1781491394151.jpg"
+];
+
 export function OxaliplatinTimeline() {
   const [activeStep, setActiveStep] = useState(0);
-
-  // SVG Paths for smooth animation
-  // Base line: Flat (Step 0) vs Wave (Step 1-3)
-  const deliveryLine1 =
-    activeStep === 0
-      ? "M 50 150 C 150 150 250 150 316 150 C 400 150 450 150 450 150"
-      : "M 50 230 C 150 230 200 60 316 60 C 400 60 420 230 450 230";
-
-  // Personalization waves (Step 3 only)
-  const deliveryLineEarly =
-    "M 50 230 C 100 230 150 60 216 60 C 300 60 350 230 450 230";
-  const deliveryLineLate =
-    "M 50 230 C 200 230 250 60 416 60 C 440 60 445 230 450 230";
-
-  // Toxicity (Red area). High in Step 0, Low in Steps 1-3.
-  const toxHigh =
-    "M 50 250 L 50 60 L 150 40 L 250 80 L 350 50 L 450 70 L 450 250 Z";
-  const toxLow =
-    "M 50 250 L 50 200 L 150 190 L 250 160 L 350 180 L 450 190 L 450 250 Z";
-  const toxPath = activeStep === 0 ? toxHigh : toxLow;
-
-  // Efficacy (Green area). Rises in Steps 2-3.
-  const effLow =
-    "M 50 250 L 50 230 L 150 220 L 250 240 L 350 230 L 450 240 L 450 250 Z";
-  const effHigh =
-    "M 50 250 L 50 200 L 150 160 L 250 130 L 316 90 L 400 140 L 450 190 L 450 250 Z";
-  const effPath = activeStep >= 2 ? effHigh : effLow;
 
   return (
     <div
       className="oxaliplatin-explorer interactive-block"
       style={{
         display: "grid",
-        gridTemplateColumns: "1fr 1fr",
-        gap: "2rem",
+        gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
+        gap: "3rem",
         alignItems: "center",
+        maxWidth: "1000px",
+        margin: "0 auto",
       }}
     >
-      {/* Left: Graphic Visualization */}
+      {/* Left: Retro Image Plate Container */}
       <div
         className="visual-panel"
         style={{
-          padding: "2rem 1rem",
+          position: "relative",
+          width: "100%",
+          aspectRatio: "1 / 1",
           background: "#0a0f14",
-          borderRadius: "12px",
+          borderRadius: "16px",
+          border: "1px solid rgba(255,255,255,0.08)",
+          boxShadow: "0 20px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1)",
+          overflow: "hidden",
         }}
       >
-        <svg
-          viewBox="0 0 500 300"
-          width="100%"
-          height="100%"
-          style={{ overflow: "visible" }}
-        >
-          {/* Grid lines and axes */}
-          <line
-            x1="50"
-            y1="250"
-            x2="450"
-            y2="250"
-            stroke="#374151"
-            strokeWidth="2"
+        {plates.map((src, index) => (
+          <img
+            key={src}
+            src={src}
+            alt={`Scientific plate ${index + 1}`}
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              opacity: activeStep === index ? 1 : 0,
+              transform: activeStep === index ? "scale(1)" : "scale(1.05)",
+              transition: "opacity 0.6s ease, transform 0.8s ease-out",
+              pointerEvents: "none",
+            }}
           />
-          <line
-            x1="50"
-            y1="50"
-            x2="50"
-            y2="250"
-            stroke="#374151"
-            strokeWidth="2"
-          />
-
-          {/* Labels */}
-          <text
-            x="30"
-            y="150"
-            fill="#9ca3af"
-            fontSize="12"
-            transform="rotate(-90 30,150)"
-            textAnchor="middle"
-            style={{ fontWeight: 600, letterSpacing: "1px" }}
-          >
-            AMOUNT
-          </text>
-          <text
-            x="250"
-            y="275"
-            fill="#9ca3af"
-            fontSize="12"
-            textAnchor="middle"
-            style={{ fontWeight: 600, letterSpacing: "1px" }}
-          >
-            TIME OF DAY (0:00 - 24:00)
-          </text>
-
-          {/* Safety Threshold */}
-          <line
-            x1="50"
-            y1="120"
-            x2="450"
-            y2="120"
-            stroke="#ef4444"
-            strokeWidth="2"
-            strokeDasharray="6 6"
-            opacity="0.5"
-          />
-          <text x="455" y="124" fill="#ef4444" fontSize="12" opacity="0.8">
-            Safety Limit
-          </text>
-
-          {/* Efficacy Area (Green) */}
-          <path
-            d={effPath}
-            fill="rgba(16, 185, 129, 0.15)"
-            stroke="#10b981"
-            strokeWidth="2"
-            style={{ transition: "d 1s cubic-bezier(0.4, 0, 0.2, 1)" }}
-          />
-
-          {/* Toxicity Area (Red) */}
-          <path
-            d={toxPath}
-            fill="rgba(239, 68, 68, 0.15)"
-            stroke="#ef4444"
-            strokeWidth="2"
-            style={{ transition: "d 1s cubic-bezier(0.4, 0, 0.2, 1)" }}
-          />
-
-          {/* Delivery Infusion Lines (Cyan) */}
-          <path
-            d={deliveryLine1}
-            fill="none"
-            stroke="#06b6d4"
-            strokeWidth="4"
-            strokeLinecap="round"
-            style={{ transition: "d 1s cubic-bezier(0.4, 0, 0.2, 1)" }}
-          />
-
-          <path
-            d={deliveryLineEarly}
-            fill="none"
-            stroke="#06b6d4"
-            strokeWidth="4"
-            strokeLinecap="round"
-            strokeDasharray="4 6"
-            opacity={activeStep === 3 ? 0.6 : 0}
-            style={{ transition: "opacity 1s ease" }}
-          />
-
-          <path
-            d={deliveryLineLate}
-            fill="none"
-            stroke="#06b6d4"
-            strokeWidth="4"
-            strokeLinecap="round"
-            strokeDasharray="4 6"
-            opacity={activeStep === 3 ? 0.6 : 0}
-            style={{ transition: "opacity 1s ease" }}
-          />
-
-          {/* Step 3: Labels for patients */}
-          <text
-            x="216"
-            y="45"
-            fill="#06b6d4"
-            fontSize="10"
-            textAnchor="middle"
-            opacity={activeStep === 3 ? 1 : 0}
-            style={{ transition: "opacity 1s ease" }}
-          >
-            Early
-          </text>
-          <text
-            x="316"
-            y="45"
-            fill="#06b6d4"
-            fontSize="10"
-            textAnchor="middle"
-            opacity={activeStep === 3 ? 1 : 0}
-            style={{ transition: "opacity 1s ease" }}
-          >
-            Standard
-          </text>
-          <text
-            x="416"
-            y="45"
-            fill="#06b6d4"
-            fontSize="10"
-            textAnchor="middle"
-            opacity={activeStep === 3 ? 1 : 0}
-            style={{ transition: "opacity 1s ease" }}
-          >
-            Late
-          </text>
-        </svg>
+        ))}
+        {/* Subtle overlay to simulate paper texture or CRT scanline if desired, for now just a glossy inset */}
+        <div style={{
+          position: "absolute",
+          inset: 0,
+          boxShadow: "inset 0 0 40px rgba(0,0,0,0.6)",
+          pointerEvents: "none"
+        }} />
       </div>
 
       {/* Right: Narrative Steps */}
@@ -214,24 +80,26 @@ export function OxaliplatinTimeline() {
               onClick={() => setActiveStep(index)}
               style={{
                 display: "flex",
-                gap: "1rem",
+                gap: "1.25rem",
                 textAlign: "left",
                 padding: "1.5rem",
-                borderRadius: "8px",
-                background: isActive ? "#fff9ef" : "transparent",
+                borderRadius: "12px",
+                background: isActive ? "rgba(255, 249, 239, 0.05)" : "transparent",
                 border: isActive
-                  ? "1px solid rgba(16,24,32,0.1)"
+                  ? "1px solid rgba(255, 255, 255, 0.1)"
                   : "1px solid transparent",
                 cursor: "pointer",
                 transition: "all 0.3s ease",
-                opacity: isActive ? 1 : 0.5,
+                opacity: isActive ? 1 : 0.4,
+                boxShadow: isActive ? "0 10px 30px rgba(0,0,0,0.2)" : "none",
               }}
             >
               <div
                 style={{
                   fontWeight: 700,
-                  color: isActive ? "#f59e0b" : "#9ca3af",
-                  fontSize: "1.25rem",
+                  color: isActive ? "#f59e0b" : "#6b7280",
+                  fontSize: "1.5rem",
+                  fontFamily: "monospace",
                 }}
               >
                 {String(index + 1).padStart(2, "0")}
@@ -239,25 +107,26 @@ export function OxaliplatinTimeline() {
               <div>
                 <span
                   style={{
-                    fontSize: "0.875rem",
-                    fontWeight: 600,
-                    color: "#6b7280",
+                    fontSize: "0.85rem",
+                    fontWeight: 700,
+                    color: isActive ? "#06b6d4" : "#4b5563",
                     textTransform: "uppercase",
-                    letterSpacing: "0.5px",
+                    letterSpacing: "1px",
                   }}
                 >
                   {event.year}
                 </span>
-                <h3 style={{ margin: "0.25rem 0", color: "#101820" }}>
+                <h3 style={{ margin: "0.3rem 0", color: isActive ? "#f3f4f6" : "#9ca3af", fontSize: "1.125rem", fontWeight: 600 }}>
                   {event.title}
                 </h3>
                 {isActive && (
                   <p
                     style={{
                       margin: 0,
-                      color: "#374151",
-                      lineHeight: 1.5,
+                      color: "#9ca3af",
+                      lineHeight: 1.6,
                       marginTop: "0.5rem",
+                      fontSize: "0.95rem"
                     }}
                   >
                     {event.copy}
