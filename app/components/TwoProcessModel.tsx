@@ -4,6 +4,7 @@ import { useState } from "react";
 
 export function TwoProcessModel() {
   const [hoursAwake, setHoursAwake] = useState(0);
+  const [caffeineStart, setCaffeineStart] = useState<number | null>(null);
 
   // SVG dimensions
   const width = 600;
@@ -24,6 +25,16 @@ export function TwoProcessModel() {
     const hValue = 1 - Math.exp(-t / 14);
     const yH = baselineY - hValue * graphHeight;
 
+    let perceivedHValue = hValue;
+    if (caffeineStart !== null && t >= caffeineStart && t <= caffeineStart + 6) {
+      const dropProgress = (t - caffeineStart) / 6;
+      const dropFactor = Math.max(0, 1 - dropProgress); // 1 to 0 over 6 hours
+      // Block up to 50% of the adenosine present when coffee was taken
+      const pressureAtStart = 1 - Math.exp(-caffeineStart / 14);
+      perceivedHValue = hValue - (pressureAtStart * 0.5 * dropFactor);
+    }
+    const perceivedYH = baselineY - perceivedHValue * graphHeight;
+
     // Process C (Circadian Alerting Signal)
     // Sinusoidal. t=0 is 8AM. Peak at t=8 (4PM). Trough at t=20 (4AM).
     const cValue = 0.5 + 0.5 * Math.sin(((t - 2) * Math.PI) / 12);
@@ -33,6 +44,7 @@ export function TwoProcessModel() {
       t,
       x: Number(x.toFixed(2)),
       yH: Number(yH.toFixed(2)),
+      perceivedYH: Number(perceivedYH.toFixed(2)),
       yC: Number(yC.toFixed(2)),
     });
   }
@@ -42,9 +54,13 @@ export function TwoProcessModel() {
   const pathHFull = "M " + points.map((p) => `${p.x},${p.yH}`).join(" L ");
   const pathCFull = "M " + points.map((p) => `${p.x},${p.yC}`).join(" L ");
 
-  const pathHActive =
+  const pathHActiveActual =
     activePoints.length > 0
       ? "M " + activePoints.map((p) => `${p.x},${p.yH}`).join(" L ")
+      : "";
+  const pathHActivePerceived =
+    activePoints.length > 0
+      ? "M " + activePoints.map((p) => `${p.x},${p.perceivedYH}`).join(" L ")
       : "";
   const pathCActive =
     activePoints.length > 0
@@ -53,13 +69,18 @@ export function TwoProcessModel() {
 
   let pathArea = "";
   if (activePoints.length > 0) {
-    const forwardH = activePoints.map((p) => `${p.x},${p.yH}`).join(" L ");
+    const forwardH = activePoints.map((p) => `${p.x},${p.perceivedYH}`).join(" L ");
     const backwardC = [...activePoints]
       .reverse()
       .map((p) => `${p.x},${p.yC}`)
       .join(" L ");
-    pathArea = `M ${activePoints[0].x},${activePoints[0].yH} L ${forwardH} L ${backwardC} Z`;
+    pathArea = `M ${activePoints[0].x},${activePoints[0].perceivedYH} L ${forwardH} L ${backwardC} Z`;
   }
+
+  // Thermometer logic
+  const currentPoint = activePoints[activePoints.length - 1] || points[0];
+  const currentActualH = 1 - Math.exp(-hoursAwake / 14);
+  const currentPerceivedH = (baselineY - currentPoint.perceivedYH) / graphHeight;
 
   return (
     <div
@@ -205,7 +226,10 @@ export function TwoProcessModel() {
           {/* Active solid paths */}
           {activePoints.length > 0 && (
             <>
-              <path d={pathHActive} fill="none" stroke="var(--violet)" strokeWidth="4" strokeLinecap="round" />
+              {caffeineStart !== null && hoursAwake > caffeineStart && (
+                <path d={pathHActiveActual} fill="none" stroke="var(--violet)" strokeWidth="2" strokeDasharray="4 4" opacity="0.6" strokeLinecap="round" />
+              )}
+              <path d={pathHActivePerceived} fill="none" stroke="var(--violet)" strokeWidth="4" strokeLinecap="round" />
               <path d={pathCActive} fill="none" stroke="var(--amber)" strokeWidth="4" strokeLinecap="round" />
             </>
           )}
@@ -223,8 +247,88 @@ export function TwoProcessModel() {
       </div>
 
       <div
-        style={{ marginTop: "3rem", display: "flex", justifyContent: "center" }}
+        style={{ marginTop: "3rem", display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "4rem", alignItems: "center" }}
       >
+        {/* Thermometer & Coffee Block */}
+        <div style={{ display: "flex", alignItems: "flex-end", gap: "1.5rem" }}>
+          {/* Thermometer Graphic */}
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0.5rem" }}>
+            <div style={{ fontSize: "0.75rem", fontWeight: 700, color: "var(--muted)", letterSpacing: "1px", textTransform: "uppercase" }}>Adenosine</div>
+            <div style={{ 
+              width: "24px", 
+              height: "120px", 
+              background: "rgba(0,0,0,0.05)", 
+              border: "2px solid var(--line)", 
+              borderRadius: "12px",
+              position: "relative",
+              overflow: "hidden"
+            }}>
+              {/* Actual Pressure Level (faded background) */}
+              <div style={{
+                position: "absolute",
+                bottom: 0,
+                left: 0,
+                right: 0,
+                height: `${currentActualH * 100}%`,
+                background: "var(--violet)",
+                opacity: 0.2,
+                transition: "height 0.1s linear"
+              }} />
+              {/* Perceived Pressure Level */}
+              <div style={{
+                position: "absolute",
+                bottom: 0,
+                left: 0,
+                right: 0,
+                height: `${currentPerceivedH * 100}%`,
+                background: "var(--violet)",
+                borderRadius: "10px",
+                transition: "height 0.1s linear"
+              }} />
+              
+              {/* Coffee Blockers (Amber) */}
+              {caffeineStart !== null && hoursAwake > caffeineStart && hoursAwake <= caffeineStart + 6 && (
+                <div style={{
+                  position: "absolute",
+                  bottom: `${currentPerceivedH * 100}%`,
+                  left: 0,
+                  right: 0,
+                  height: `${(currentActualH - currentPerceivedH) * 100}%`,
+                  background: "repeating-linear-gradient(45deg, var(--amber), var(--amber) 4px, transparent 4px, transparent 8px)",
+                  opacity: 0.8,
+                  transition: "all 0.1s linear"
+                }} />
+              )}
+            </div>
+          </div>
+
+          {/* Coffee Action */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", paddingBottom: "1rem" }}>
+            <button 
+              onClick={() => setCaffeineStart(hoursAwake)}
+              disabled={caffeineStart !== null && hoursAwake >= caffeineStart && hoursAwake <= caffeineStart + 6}
+              style={{
+                padding: "0.5rem 1rem",
+                background: (caffeineStart !== null && hoursAwake >= caffeineStart && hoursAwake <= caffeineStart + 6) ? "var(--surface)" : "var(--amber)",
+                color: (caffeineStart !== null && hoursAwake >= caffeineStart && hoursAwake <= caffeineStart + 6) ? "var(--muted)" : "#fff",
+                border: "none",
+                borderRadius: "8px",
+                fontWeight: 600,
+                cursor: (caffeineStart !== null && hoursAwake >= caffeineStart && hoursAwake <= caffeineStart + 6) ? "not-allowed" : "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: "0.5rem",
+                transition: "all 0.2s ease"
+              }}
+            >
+              ☕ Drink Coffee
+            </button>
+            <div style={{ fontSize: "0.75rem", color: "var(--muted)", maxWidth: "160px", lineHeight: 1.4 }}>
+              Caffeine blocks adenosine receptors, temporarily dropping perceived sleep pressure.
+            </div>
+          </div>
+        </div>
+
         <label
           className="range-control"
           style={{
@@ -233,7 +337,7 @@ export function TwoProcessModel() {
             alignItems: "center",
             gap: "1rem",
             width: "100%",
-            maxWidth: "400px",
+            maxWidth: "350px",
           }}
         >
           <span
@@ -258,11 +362,13 @@ export function TwoProcessModel() {
             onChange={(e) => {
               const val = Number(e.currentTarget.value);
               setHoursAwake(val);
+              if (caffeineStart !== null && val < caffeineStart) setCaffeineStart(null);
               e.currentTarget.style.setProperty("--value", ((val / 48) * 100).toString());
             }}
             onInput={(e) => {
               const val = Number(e.currentTarget.value);
               setHoursAwake(val);
+              if (caffeineStart !== null && val < caffeineStart) setCaffeineStart(null);
               e.currentTarget.style.setProperty("--value", ((val / 48) * 100).toString());
             }}
             style={{ "--value": (hoursAwake / 48) * 100, width: "100%", cursor: "grab" } as React.CSSProperties}
