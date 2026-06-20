@@ -13,7 +13,8 @@ import { StructureViewer } from "./StructureViewer";
 const categoryLabels: Record<ClockGeneCategory, string> = {
   corePositive: "Core positive",
   coreNegative: "Core negative",
-  stabilizing: "Stabilizing loop",
+  secondaryLoop: "Secondary loop",
+  accessoryRegulator: "Accessory regulator",
   organSystem: "Organ system",
   downstreamTarget: "Downstream target",
 };
@@ -24,8 +25,10 @@ const categoryClass = (category: ClockGeneCategory) => {
       return "bg-core-positive text-white";
     case "coreNegative":
       return "bg-core-negative text-white";
-    case "stabilizing":
-      return "bg-stabilizing text-white";
+    case "secondaryLoop":
+      return "bg-[#8d55d8] text-white";
+    case "accessoryRegulator":
+      return "bg-[#e8902f] text-white";
     case "organSystem":
       return "bg-[#eab308] text-white"; // yellow-500
     case "downstreamTarget":

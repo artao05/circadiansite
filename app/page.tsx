@@ -10,15 +10,15 @@ import {
   Sparkles,
 } from "lucide-react";
 import { BodyClockTimeline } from "./components/BodyClockTimeline";
+import { CircadianSandbox } from "./components/CircadianSandbox";
+import { InteractiveBrainMap } from "./components/InteractiveBrainMap";
 import { ClockMechanicsSection } from "./components/ClockMechanicsSection";
 import { DrugTimingPanel } from "./components/DrugTimingPanel";
 import { EntrainmentDemo } from "./components/EntrainmentDemo";
 import { GeneNetwork } from "./components/GeneNetwork";
 import { OxaliplatinTimeline } from "./components/OxaliplatinTimeline";
 import { RhythmLab } from "./components/RhythmLab";
-import { OpeningHero } from "./components/OpeningHero";
 import { ChapterIntro } from "./components/ChapterIntro";
-import { TwoProcessModel } from "./components/TwoProcessModel";
 import {
   chapters,
   citations,
@@ -142,7 +142,17 @@ export default function Home() {
               </p>
             </article>
           </div>
-          <TwoProcessModel />
+          <CircadianSandbox />
+        </section>
+
+        <section className="content-band brain-band bg-[#1C2026] text-[#FCF8EE] py-24">
+          <div className="max-w-6xl mx-auto px-6">
+            <h2 className="font-serif text-4xl mb-4 text-[#FCF8EE]">The Core Circadian Circuitry</h2>
+            <p className="text-lg text-[#FCF8EE]/80 max-w-2xl mb-12">
+              The master clock sits deep inside the brain. The Suprachiasmatic Nucleus (SCN) receives light signals directly from the eyes and coordinates with sleep-promoting centers like the VLPO and arousal centers like the TMN to drive the sleep-wake cycle.
+            </p>
+            <InteractiveBrainMap />
+          </div>
         </section>
 
         <section className="content-band rhythm-band">

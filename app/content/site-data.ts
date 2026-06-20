@@ -5,7 +5,6 @@ import {
   Clock3,
   Dna,
   HeartPulse,
-  Lightbulb,
   Moon,
   Pill,
   Shield,
@@ -1645,34 +1644,35 @@ export const clockGeneNodes: ClockGeneNode[] = [
     sources: ["general-biology"],
   },
   {
-    id: "DBP",
-    symbol: "DBP",
-    aliases: ["D site-binding protein"],
+    id: "DBP_OUTPUT",
+    symbol: "D-box outputs",
+    aliases: ["DBP-regulated output genes", "D-box output layer"],
     category: "downstreamTarget",
-    chromosome: "19q13.3",
+    chromosome: "multiple loci",
     x: 20,
     y: 80,
-    title: "D site-binding protein",
+    title: "DBP-regulated output layer",
     description:
-      "A PAR bZIP transcription factor that is directly regulated by the core clock and drives rhythmic expression of downstream output genes.",
-    expressionPattern: "High amplitude, robust daily oscillation",
-    peakTime: "Late afternoon",
-    tissues: ["Liver", "Kidney", "Brain"],
+      "A simplified downstream layer representing genes and pathways shaped by DBP-family D-box regulation.",
+    expressionPattern:
+      "Rhythmic output programs vary by tissue and downstream target.",
+    peakTime: "Often follows upstream DBP-family activity",
+    tissues: ["liver", "kidney", "brain"],
     diseaseAssociations: [
       {
-        disease: "Sleep disorders",
+        disease: "Sleep and metabolic rhythm disruption",
         mechanism:
-          "Disruptions in DBP and other PAR bZIPs affect sleep consolidation and EEG delta power.",
-        sources: ["NCBI"],
+          "Clock-output programs can connect transcriptional timing to sleep consolidation, detoxification, and metabolic physiology.",
+        sources: ["NCBI core clock table", "Reactome"],
       },
     ],
     externalLinks: {
-      ncbiGene: "https://www.ncbi.nlm.nih.gov/gene/1628",
-      uniProt: "https://www.uniprot.org/uniprotkb/Q10586/entry",
+      ncbiGene: "",
+      uniProt: "",
       circaKb: "",
       circaDb: "",
     },
-    sources: ["ncbi-clock-table"],
+    sources: ["ncbi-clock-table", "reactome-clock"],
   },
 ];
 
@@ -1827,6 +1827,16 @@ export const clockGeneEdges: ClockGeneEdge[] = [
       "The core clock directly drives metabolic rhythms in the liver.",
     sources: ["General biology"],
   },
+  {
+    id: "DBP-DBP_OUTPUT",
+    source: "DBP",
+    target: "DBP_OUTPUT",
+    type: "activation",
+    label: "D-box output program",
+    description:
+      "DBP-family regulators help translate core clock timing into downstream rhythmic output programs.",
+    sources: ["ncbi-clock-table", "reactome-clock"],
+  },
 ];
 
 export const workflowSteps: WorkflowStep[] = [
@@ -1895,5 +1905,4 @@ export const timingSignals = [
   { label: "Sleep", icon: Moon },
   { label: "Meals", icon: Waves },
   { label: "Activity", icon: Activity },
-  { label: "Care", icon: Lightbulb },
 ];
