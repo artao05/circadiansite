@@ -18,6 +18,7 @@ The chapter should bridge Chapter 1 and Chapter 3:
 ## Current Problem
 
 The existing Chapter 2 demo is scientifically reasonable but visually modest.
+It uses light-off and last-meal sliders to show brain/gut offset across eight
 days. That teaches internal desynchronization, but it undersells the broader
 chapter promise: light, sleep, meals, and activity all tug on time.
 
