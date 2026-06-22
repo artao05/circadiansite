@@ -501,6 +501,8 @@ const col = (c, fb) => new T.Color(PAL[c] || fb || '#cccccc');
         };
         model.add(mesh);
         allMeshes.push(mesh);
+        if (!meshById.has(id)) meshById.set(id, []);
+        meshById.get(id).push(mesh);
         cats['other'] = cats['other'] || { want: true, targetOpacity: 1, meshes: [] };
         cats['other'].meshes.push(mesh);
         return mesh;

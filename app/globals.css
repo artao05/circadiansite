@@ -1041,6 +1041,7 @@ main {
 }
 
 .visual-panel {
+  min-width: 0;
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background: var(--visual-panel-bg);
@@ -1063,7 +1064,13 @@ main {
 
 .rhythm-panel {
   min-height: 420px;
+  overflow: hidden;
   padding: 1rem;
+}
+
+.rhythm-panel svg {
+  display: block;
+  max-width: 100%;
 }
 
 .panel-heading,
@@ -3140,9 +3147,9 @@ meter {
 
 @media (max-width: 720px) {
   .report-nav {
-    position: sticky;
+    position: fixed;
     gap: 0.75rem;
-    overflow-x: auto;
+    overflow: hidden;
   }
 
   .report-nav div {
@@ -3151,6 +3158,8 @@ meter {
     overflow-x: auto;
     padding-block: 0.15rem;
     scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    mask-image: linear-gradient(90deg, #000 0 calc(100% - 1.6rem), transparent);
   }
 
   .report-nav div::-webkit-scrollbar {
@@ -3161,10 +3170,15 @@ meter {
     flex: 0 0 2.75rem;
     width: 2.75rem;
     height: 2.75rem;
+    scroll-snap-align: start;
   }
 
   .hero-section {
     padding-top: 4.75rem;
+  }
+
+  .interactive-block {
+    width: 100%;
   }
 
   .hero-copy h1 {
@@ -3304,6 +3318,21 @@ meter {
   .sandbox-toggle button,
   .sandbox-actions button {
     flex: 1 1 150px;
+  }
+
+  .rhythm-panel {
+    padding: 0.85rem;
+  }
+
+  .rhythm-panel .panel-heading {
+    align-items: flex-start;
+  }
+
+  .rhythm-panel .legend {
+    flex: 1 1 auto;
+    flex-wrap: wrap;
+    gap: 0.5rem 0.8rem !important;
+    min-width: 0;
   }
 
   .network-canvas svg {
@@ -4619,6 +4648,10 @@ meter {
   .signal-timeline-panel,
   .sync-band .entrainment-visual {
     padding: 0.85rem;
+  }
+
+  .signal-timeline-panel {
+    overscroll-behavior-inline: contain;
   }
 
   .signal-day-track,

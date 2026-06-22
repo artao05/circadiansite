@@ -150,7 +150,7 @@ export function MasterCircadianClock() {
       </div>
 
       <label className="master-scrubber">
-        <span>Scrub biological time</span>
+        <span>Biological Time</span>
         <input
           type="range"
           min="0"

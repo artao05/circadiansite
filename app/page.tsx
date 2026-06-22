@@ -23,7 +23,6 @@ import {
   chapters,
   citations,
   claimMatrix,
-  heroStats,
   roadmapItems,
   timingSignals,
   workflowSteps,
@@ -101,14 +100,6 @@ export default function Home() {
             </div>
           </div>
           <MasterCircadianClock />
-          <div className="hero-stats">
-            {heroStats.map((stat) => (
-              <div key={stat.label}>
-                <strong>{stat.value}</strong>
-                <span>{stat.label}</span>
-              </div>
-            ))}
-          </div>
         </section>
 
         <section className="content-band opening-band">

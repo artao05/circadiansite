@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
 import { oxaliplatinEvents } from "../content/site-data";
 
@@ -40,16 +41,15 @@ export function OxaliplatinTimeline() {
         }}
       >
         {plates.map((src, index) => (
-          <img
+          <Image
             key={src}
             src={src}
             alt={`Scientific plate ${index + 1}`}
+            fill
+            priority={index === 0}
+            unoptimized
+            sizes="(max-width: 720px) 100vw, 480px"
             style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              width: "100%",
-              height: "100%",
               objectFit: "cover",
               opacity: activeStep === index ? 1 : 0,
               transform: activeStep === index ? "scale(1)" : "scale(1.05)",

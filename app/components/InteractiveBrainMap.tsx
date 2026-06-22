@@ -9,6 +9,7 @@ import { BrainScene } from './brain-scene';
 /* ------------------------------------------------------------------ */
 interface NucleusInfo {
   id: string;
+  structureNames: string[];
   abbr: string;
   fullName: string;
   color: string;
@@ -48,6 +49,10 @@ type BrainSceneApi = {
   focusCategory?: (category: string) => void;
   focusNode?: (id: string) => void;
   meshById?: Map<string, THREE.Object3D[]>;
+  selectNode: (id: string) => void;
+  clearSelect: () => void;
+  setHighlight: (activeIds?: string[], seenIds?: string[]) => void;
+  clearHighlight: () => void;
   setLayers: (layers: Record<string, BrainSceneLayerState>) => void;
   setPalette: (palette: Record<string, string>) => void;
 };
@@ -63,6 +68,7 @@ declare global {
 const NUCLEI: NucleusInfo[] = [
   {
     id: 'scn-node',
+    structureNames: ['Anterior hypothalamus.l'],
     abbr: 'SCN',
     fullName: 'Suprachiasmatic Nucleus',
     color: '#5D8A54',
@@ -77,6 +83,7 @@ const NUCLEI: NucleusInfo[] = [
   },
   {
     id: 'tmn-node',
+    structureNames: ['Tuberal hypothalamus.l'],
     abbr: 'TMN',
     fullName: 'Tuberomammillary Nucleus',
     color: '#4A8B7F',
@@ -91,6 +98,7 @@ const NUCLEI: NucleusInfo[] = [
   },
   {
     id: 'vlpo-node',
+    structureNames: ['Preoptic hypothalamus.l'],
     abbr: 'VLPO',
     fullName: 'Ventrolateral Preoptic Area',
     color: '#C05746',
@@ -111,6 +119,7 @@ const NUCLEI: NucleusInfo[] = [
 export function InteractiveBrainMap() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const apiRef = useRef<BrainSceneApi | null>(null);
+  const structureToNucleusRef = useRef(new Map<string, string>());
   const [loading, setLoading] = useState(true);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -158,6 +167,14 @@ export function InteractiveBrainMap() {
               meninges_dura: { visible: false },
             });
 
+            structureToNucleusRef.current = new Map();
+            NUCLEI.forEach((nucleus) => {
+              nucleus.structureNames.forEach((name) => {
+                const node = manifestData.nodes.find((n) => n.name === name);
+                if (node) structureToNucleusRef.current.set(node.id, nucleus.id);
+              });
+            });
+
             const getCentroid = (name: string) => {
               const node = manifestData.nodes.find((n) => n.name === name);
               if (!node) return null;
@@ -179,19 +196,33 @@ export function InteractiveBrainMap() {
             if (scnPos) {
               scnPos.y -= 0.002;
               scnPos.z += 0.001;
-              api.addGlowingSphere('scn-node', scnPos, '#5D8A54', 0.0015);
+              api.addGlowingSphere('scn-node', scnPos, '#5D8A54', 0.0045);
             }
             if (tmnPos) {
               tmnPos.y -= 0.001;
               tmnPos.z -= 0.001;
-              api.addGlowingSphere('tmn-node', tmnPos, '#4A8B7F', 0.0015);
+              api.addGlowingSphere('tmn-node', tmnPos, '#4A8B7F', 0.004);
             }
             if (vlpoPos) {
               vlpoPos.y -= 0.002;
-              api.addGlowingSphere('vlpo-node', vlpoPos, '#C05746', 0.0015);
+              api.addGlowingSphere('vlpo-node', vlpoPos, '#C05746', 0.004);
             }
 
             api.focusCategory('diencephalon');
+          },
+          onHover: (nodeId: string | null) => {
+            if (!nodeId) {
+              setHoveredId(null);
+              return;
+            }
+            setHoveredId(structureToNucleusRef.current.get(nodeId) ?? nodeId);
+          },
+          onPick: (nodeId: string | null) => {
+            if (!nodeId) return;
+            const nucleusId = structureToNucleusRef.current.get(nodeId) ?? nodeId;
+            if (NUCLEI.some((nucleus) => nucleus.id === nucleusId)) {
+              setActiveId((current) => (current === nucleusId ? null : nucleusId));
+            }
           },
         }) as BrainSceneApi;
         apiRef.current = api;
@@ -209,19 +240,39 @@ export function InteractiveBrainMap() {
     const api = apiRef.current;
     if (api) {
       api.focusNode?.(nucleus.id);
+      api.setHighlight([nucleus.id]);
+      api.selectNode(nucleus.id);
     }
   }, []);
 
   const handleCardLeave = useCallback(() => {
     setHoveredId(null);
+    if (activeId) return;
     const api = apiRef.current;
     if (api) {
       api.focusCategory?.('diencephalon');
+      api.clearHighlight();
+      api.clearSelect();
     }
-  }, []);
+  }, [activeId]);
 
   const handleCardClick = useCallback((nucleus: NucleusInfo) => {
-    setActiveId(prev => (prev === nucleus.id ? null : nucleus.id));
+    setActiveId(prev => {
+      const next = prev === nucleus.id ? null : nucleus.id;
+      const api = apiRef.current;
+      if (api) {
+        if (next) {
+          api.focusNode?.(next);
+          api.setHighlight([next]);
+          api.selectNode(next);
+        } else {
+          api.clearHighlight();
+          api.clearSelect();
+          api.focusCategory?.('diencephalon');
+        }
+      }
+      return next;
+    });
   }, []);
 
   return (
