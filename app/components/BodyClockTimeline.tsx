@@ -13,21 +13,9 @@ function circularDistance(a: number, b: number) {
 export function BodyClockTimeline() {
   const { hour: masterHour } = useCircadianTime();
   const [activeOrganId, setActiveOrganId] = useState(organClocks[0].id);
-  const [timeState, setTimeState] = useState({
-    sourceHour: masterHour,
-    hour: masterHour,
-  });
-  const hour =
-    timeState.sourceHour === masterHour ? timeState.hour : masterHour;
-  const handleHourInput = (nextHour: number) =>
-    setTimeState({
-      sourceHour: masterHour,
-      hour: nextHour,
-    });
-
-  if (timeState.sourceHour !== masterHour) {
-    setTimeState({ sourceHour: masterHour, hour: masterHour });
-  }
+  const [selectedHour, setSelectedHour] = useState<number | null>(null);
+  const hour = selectedHour ?? masterHour;
+  const handleHourInput = (nextHour: number) => setSelectedHour(nextHour);
 
   const activeOrgan = useMemo(() => {
     return organClocks.find((o) => o.id === activeOrganId) || organClocks[0];
@@ -44,20 +32,19 @@ export function BodyClockTimeline() {
 
   // Proximity is a 0-1 scale. 1 = exactly on the hour. 0 = 4 or more hours away.
   const proximity = Math.max(0, 1 - activeEvent.distance / 4);
+  const ActiveIcon =
+    activeOrgan.iconName === "Brain"
+      ? Brain
+      : activeOrgan.iconName === "Activity"
+        ? Activity
+        : activeOrgan.iconName === "HeartPulse"
+          ? HeartPulse
+          : Shield;
 
   return (
     <div className="interactive-block body-clock">
       <div className="clock-face visual-panel" aria-label="Organ Explorer">
-        <div
-          className="organ-tabs"
-          style={{
-            display: "flex",
-            gap: "0.5rem",
-            marginBottom: "2rem",
-            flexWrap: "wrap",
-            justifyContent: "center",
-          }}
-        >
+        <div className="organ-tabs" aria-label="Body clock axes">
           {organClocks.map((organ) => {
             const isSelected = organ.id === activeOrganId;
             const Icon =
@@ -72,20 +59,9 @@ export function BodyClockTimeline() {
               <button
                 key={organ.id}
                 onClick={() => setActiveOrganId(organ.id)}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "0.5rem",
-                  padding: "0.5rem 1rem",
-                  borderRadius: "999px",
-                  background: isSelected ? "#101820" : "#fff9ef",
-                  color: isSelected ? "#fff9ef" : "#101820",
-                  border: "1px solid rgba(16,24,32,0.1)",
-                  cursor: "pointer",
-                  fontWeight: isSelected ? 600 : 400,
-                  fontSize: "0.875rem",
-                  transition: "all 0.2s ease",
-                }}
+                className={isSelected ? "selected" : ""}
+                type="button"
+                aria-pressed={isSelected}
               >
                 <Icon size={16} />
                 {organ.name.split(" ")[0]}
@@ -94,29 +70,9 @@ export function BodyClockTimeline() {
           })}
         </div>
 
-        <div
-          style={{
-            position: "relative",
-            width: "300px",
-            height: "300px",
-            margin: "2rem auto 1rem",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
+        <div className="body-clock-stage">
           {/* 24-Hour Circular Track */}
-          <div
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              borderRadius: "50%",
-              border: "2px dashed rgba(16,24,32,0.1)",
-            }}
-          />
+          <div className="body-clock-track" />
 
           {/* Time Marker Ring */}
           <div
@@ -137,67 +93,28 @@ export function BodyClockTimeline() {
 
           {/* Time Labels */}
           <span
-            style={{
-              position: "absolute",
-              bottom: "-25px",
-              left: "50%",
-              transform: "translateX(-50%)",
-              fontSize: "0.75rem",
-              color: "#9ca3af",
-              fontWeight: 600,
-            }}
+            className="body-clock-hour-label bottom"
           >
             0:00
           </span>
           <span
-            style={{
-              position: "absolute",
-              top: "50%",
-              left: "-35px",
-              transform: "translateY(-50%)",
-              fontSize: "0.75rem",
-              color: "#9ca3af",
-              fontWeight: 600,
-            }}
+            className="body-clock-hour-label left"
           >
             6:00
           </span>
           <span
-            style={{
-              position: "absolute",
-              top: "-25px",
-              left: "50%",
-              transform: "translateX(-50%)",
-              fontSize: "0.75rem",
-              color: "#9ca3af",
-              fontWeight: 600,
-            }}
+            className="body-clock-hour-label top"
           >
             12:00
           </span>
           <span
-            style={{
-              position: "absolute",
-              top: "50%",
-              right: "-40px",
-              transform: "translateY(-50%)",
-              fontSize: "0.75rem",
-              color: "#9ca3af",
-              fontWeight: 600,
-            }}
+            className="body-clock-hour-label right"
           >
             18:00
           </span>
 
           {/* Center Humanoid SVG */}
-          <div
-            style={{
-              width: "200px",
-              height: "240px",
-              position: "relative",
-              zIndex: 5,
-            }}
-          >
+          <div className="body-clock-figure">
             <svg
               viewBox="0 0 200 240"
               width="100%"
@@ -360,84 +277,75 @@ export function BodyClockTimeline() {
         </label>
       </div>
 
-      <div className="rhythm-list" style={{ justifyContent: "center" }}>
-        <article
-          className={`rhythm-event ${activeOrgan.tone}`}
-          key={activeEvent.label}
-        >
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "0.5rem",
-              marginBottom: "0.5rem",
-            }}
-          >
-            <span
-              style={{
-                background: "rgba(16,24,32,0.05)",
-                padding: "0.2rem 0.5rem",
-                borderRadius: "4px",
-                fontWeight: 700,
-                color: "#101820",
-              }}
-            >
-              {String(activeEvent.hour).padStart(2, "0")}:00
+      <div className="body-axis-panel">
+        <div className={`axis-summary ${activeOrgan.tone}`}>
+          <div className="axis-summary-heading">
+            <span className="axis-icon">
+              <ActiveIcon size={18} aria-hidden="true" />
             </span>
-            <h3 style={{ margin: 0 }}>{activeEvent.label}</h3>
+            <div>
+              <span>{activeOrgan.evidenceNote}</span>
+              <h3>{activeOrgan.name}</h3>
+            </div>
+          </div>
+          <p>{activeOrgan.summary}</p>
+        </div>
+
+        <article className={`rhythm-event ${activeOrgan.tone}`} key={activeEvent.label}>
+          <div className="axis-event-heading">
+            <span>{String(activeEvent.hour).padStart(2, "0")}:00</span>
+            <h3>{activeEvent.label}</h3>
           </div>
           <p>{activeEvent.copy}</p>
         </article>
 
-        <div
-          style={{
-            marginTop: "2rem",
-            padding: "1rem",
-            borderTop: "1px solid #e5e7eb",
-          }}
-        >
-          <h4
-            style={{
-              margin: "0 0 1rem 0",
-              fontSize: "0.875rem",
-              color: "#6b7280",
-              textTransform: "uppercase",
-            }}
-          >
-            Daily Schedule
-          </h4>
-          <ul
-            style={{
-              listStyle: "none",
-              padding: 0,
-              margin: 0,
-              display: "flex",
-              flexDirection: "column",
-              gap: "0.5rem",
-            }}
-          >
+        <div className="axis-function-list" aria-label={`${activeOrgan.name} timed functions`}>
+          {activeOrgan.functions.map((item) => (
+            <article key={item.label} className="axis-function">
+              <div>
+                <h4>{item.label}</h4>
+                <span>{item.evidence}</span>
+              </div>
+              <p>{item.pattern}</p>
+              <small>{item.caveat}</small>
+            </article>
+          ))}
+        </div>
+
+        <div className="body-clock-nuance">
+          <h4>Nuance worth keeping</h4>
+          <p>
+            A daily pattern is not always a pure circadian rhythm. Meals, sleep,
+            posture, activity, light, stress, and species differences can all
+            shape the observed timing.
+          </p>
+        </div>
+
+        <div className="daily-schedule">
+          <h4>Daily markers</h4>
+          <ul>
             {activeOrgan.events
               .slice()
               .sort((a, b) => a.hour - b.hour)
               .map((ev) => (
                 <li
                   key={ev.label}
-                  style={{
-                    fontSize: "0.875rem",
-                    display: "flex",
-                    gap: "0.5rem",
-                    color:
-                      ev.label === activeEvent.label ? "#101820" : "#9ca3af",
-                    fontWeight: ev.label === activeEvent.label ? 600 : 400,
-                  }}
+                  className={ev.label === activeEvent.label ? "active" : ""}
                 >
-                  <span style={{ width: "40px" }}>
-                    {String(ev.hour).padStart(2, "0")}:00
-                  </span>
+                  <span>{String(ev.hour).padStart(2, "0")}:00</span>
                   <span>{ev.label}</span>
                 </li>
               ))}
           </ul>
+        </div>
+
+        <div className="axis-sources" aria-label="Evidence sources">
+          <span>Evidence spine</span>
+          <div>
+            {activeOrgan.sources.map((source) => (
+              <code key={source}>{source}</code>
+            ))}
+          </div>
         </div>
       </div>
     </div>

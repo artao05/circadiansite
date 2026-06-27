@@ -51,11 +51,22 @@ export type OrganClockEvent = {
   copy: string;
 };
 
+export type OrganClockFunction = {
+  label: string;
+  pattern: string;
+  evidence: string;
+  caveat: string;
+};
+
 export type OrganClock = {
   id: string;
   name: string;
   iconName: "Brain" | "Activity" | "HeartPulse" | "Shield";
   tone: "light" | "metabolic" | "cardio" | "immune";
+  summary: string;
+  evidenceNote: string;
+  functions: OrganClockFunction[];
+  sources: string[];
   events: OrganClockEvent[];
 };
 
@@ -233,6 +244,74 @@ export const citations: Citation[] = [
     note: "Roadmap source for explaining tissue-specific rhythmic gene expression.",
     url: "https://www.pnas.org/doi/10.1073/pnas.1408886111",
   },
+  {
+    id: "poggiogalle-2017",
+    title: "Circadian regulation of glucose, lipid, and energy metabolism in humans",
+    source: "Metabolism",
+    note: "Review source for human metabolic rhythms, including glucose tolerance and insulin sensitivity.",
+    url: "https://doi.org/10.1016/j.metabol.2017.11.017",
+  },
+  {
+    id: "speksnijder-2024",
+    title: "Circadian desynchrony and glucose metabolism",
+    source: "Journal of Pineal Research",
+    note: "Review source for circadian misalignment and glucose-metabolism evidence.",
+    url: "https://doi.org/10.1111/jpi.12956",
+  },
+  {
+    id: "kinouchi-2021",
+    title:
+      "Circadian rhythms in the tissue-specificity from metabolism to immunity",
+    source: "Molecular Aspects of Medicine",
+    note: "Review source for tissue-specific circadian omics from metabolism to immunity.",
+    url: "https://doi.org/10.1016/j.mam.2021.100984",
+  },
+  {
+    id: "shea-bp-2011",
+    title:
+      "Existence of an endogenous circadian blood pressure rhythm in humans",
+    source: "Circulation Research",
+    note: "Controlled human protocol source for endogenous blood-pressure rhythmicity.",
+    url: "https://doi.org/10.1161/CIRCRESAHA.110.233668",
+  },
+  {
+    id: "scheer-platelet-2011",
+    title:
+      "The human endogenous circadian system causes greatest platelet activation during the biological morning",
+    source: "PLOS ONE",
+    note: "Forced-desynchrony source for circadian platelet activation.",
+    url: "https://doi.org/10.1371/journal.pone.0024549",
+  },
+  {
+    id: "scheer-pai-2014",
+    title:
+      "Human circadian system causes a morning peak in prothrombotic PAI-1",
+    source: "Blood",
+    note: "Controlled human protocol source for PAI-1 and fibrinolytic-inhibition timing.",
+    url: "https://doi.org/10.1182/blood-2013-07-517060",
+  },
+  {
+    id: "pick-2019",
+    title: "Time-of-day-dependent trafficking and function of leukocyte subsets",
+    source: "Trends in Immunology",
+    note: "Review source for immune-cell trafficking and function across the day.",
+    url: "https://doi.org/10.1016/j.it.2019.03.010",
+  },
+  {
+    id: "labrecque-2015",
+    title: "Circadian clocks in the immune system",
+    source: "Journal of Biological Rhythms",
+    note: "Review source for immune clocks and inflammatory timing mechanisms.",
+    url: "https://doi.org/10.1177/0748730415577723",
+  },
+  {
+    id: "zhao-2017",
+    title:
+      "Opposite circadian rhythms between mouse and human leukocytes in humanized mice",
+    source: "Blood",
+    note: "Translational caveat source showing that immune timing can differ across species.",
+    url: "https://doi.org/10.1182/blood-2017-04-778779",
+  },
 ];
 
 export const chapters: Chapter[] = [
@@ -355,6 +434,54 @@ export const claimMatrix: Claim[] = [
     beginnerPhrasing:
       "Clock genes talk to each other in loops: some turn rhythms on, some apply brakes, and others tune the timing.",
   },
+  {
+    claim:
+      "Human glucose tolerance and insulin sensitivity vary across circadian phase, with poorer handling often observed later in the day than in the biological morning.",
+    source: "poggiogalle-2017; speksnijder-2024",
+    evidenceType: "Human metabolism reviews and controlled circadian protocols",
+    confidence: "High",
+    caveat:
+      "Everyday glucose patterns also reflect meal timing, sleep, activity, and prior wakefulness.",
+    visualUse: "Body clocks metabolism axis",
+    beginnerPhrasing:
+      "The same meal can meet a different metabolic state depending on biological time.",
+  },
+  {
+    claim:
+      "Blood pressure, platelet activation, and PAI-1 show circadian regulation in controlled human studies.",
+    source: "shea-bp-2011; scheer-platelet-2011; scheer-pai-2014",
+    evidenceType: "Controlled human circadian studies",
+    confidence: "High",
+    caveat:
+      "Morning cardiovascular risk also depends on waking, posture, hormones, behavior, and underlying disease.",
+    visualUse: "Body clocks cardiovascular axis",
+    beginnerPhrasing:
+      "The cardiovascular system has daily timing in pressure, clotting balance, and vascular demand.",
+  },
+  {
+    claim:
+      "Immune-cell trafficking and inflammatory responsiveness are time-structured, but timing differs by cell type and species.",
+    source: "pick-2019; labrecque-2015; zhao-2017",
+    evidenceType: "Immune timing reviews and translational comparative evidence",
+    confidence: "Moderate",
+    caveat:
+      "Many immune mechanisms are animal-heavy, and mouse timing should not be copied directly onto humans.",
+    visualUse: "Body clocks immune axis",
+    beginnerPhrasing:
+      "Immune cells do not patrol the body in the same pattern all day.",
+  },
+  {
+    claim:
+      "Different tissues can keep local circadian programs, so whole-body timing is coordinated but not perfectly uniform.",
+    source: "kinouchi-2021; pnas-atlas",
+    evidenceType: "Tissue-specific omics review and mammalian expression atlas",
+    confidence: "Moderate",
+    caveat:
+      "Human tissue-level timing is harder to measure than animal or cell models, so exact phases vary by evidence type.",
+    visualUse: "Body clocks nuance note",
+    beginnerPhrasing:
+      "The body is coordinated like an orchestra, not synchronized like one clock face.",
+  },
 ];
 
 export const organClocks: OrganClock[] = [
@@ -363,6 +490,29 @@ export const organClocks: OrganClock[] = [
     name: "Brain (SCN)",
     iconName: "Brain",
     tone: "light",
+    summary:
+      "The brain clock is the coordinator: light reaches the SCN, and the SCN helps align sleep, hormones, temperature, and downstream tissue clocks.",
+    evidenceNote:
+      "Coordinator axis - not one of the three function axes below.",
+    functions: [
+      {
+        label: "Light entrainment",
+        pattern:
+          "Morning and evening light can shift the internal estimate of day and night.",
+        evidence: "Strong consensus",
+        caveat:
+          "The size and direction of the shift depend on timing, intensity, history, and individual phase.",
+      },
+      {
+        label: "System coordination",
+        pattern:
+          "SCN signals help organize melatonin, cortisol, temperature, sleep pressure, and tissue timing.",
+        evidence: "Strong consensus",
+        caveat:
+          "Peripheral clocks also respond to meals, activity, temperature, and local tissue cues.",
+      },
+    ],
+    sources: ["cederroth-2019", "klerman-2026", "kinouchi-2021"],
     events: [
       {
         hour: 8,
@@ -386,6 +536,37 @@ export const organClocks: OrganClock[] = [
     name: "Metabolism (Liver/Gut)",
     iconName: "Activity",
     tone: "metabolic",
+    summary:
+      "Metabolic tissues keep local time so nutrient handling, glucose control, liver processing, and gut rhythms are not identical across the day.",
+    evidenceNote:
+      "Strongest human anchor: glucose tolerance and insulin sensitivity. Liver and microbiome mechanisms are important but more animal- and model-heavy.",
+    functions: [
+      {
+        label: "Glucose handling",
+        pattern:
+          "Glucose tolerance and insulin sensitivity are generally better in the biological morning than later in the day.",
+        evidence: "Strong human",
+        caveat:
+          "Meal composition, sleep, activity, and prior wakefulness can change the observed pattern.",
+      },
+      {
+        label: "Liver processing",
+        pattern:
+          "Liver clocks organize nutrient storage, lipid handling, bile acid pathways, and detoxification programs.",
+        evidence: "Review consensus",
+        caveat:
+          "Exact clock times for hepatic functions are less settled in humans than in animal and cellular studies.",
+      },
+      {
+        label: "Gut-microbiome timing",
+        pattern:
+          "Microbial composition and metabolites can fluctuate across the day and respond strongly to feeding rhythms.",
+        evidence: "Emerging human",
+        caveat:
+          "Human microbiome timing is hard to separate from diet, sampling method, medication, and stool-based measures.",
+      },
+    ],
+    sources: ["poggiogalle-2017", "speksnijder-2024", "kinouchi-2021"],
     events: [
       {
         hour: 10,
@@ -409,6 +590,37 @@ export const organClocks: OrganClock[] = [
     name: "Cardiovascular",
     iconName: "HeartPulse",
     tone: "cardio",
+    summary:
+      "The cardiovascular system has daily structure in pressure, clotting balance, vascular tone, and cardiac workload.",
+    evidenceNote:
+      "Strongest controlled-human anchors: blood pressure, platelet activation, and PAI-1.",
+    functions: [
+      {
+        label: "Blood pressure rhythm",
+        pattern:
+          "Controlled human studies show an endogenous blood-pressure rhythm, separate from behavior.",
+        evidence: "Strong human",
+        caveat:
+          "Everyday blood pressure also changes with posture, sleep, activity, stress, and temperature.",
+      },
+      {
+        label: "Clotting balance",
+        pattern:
+          "Platelet activation and PAI-1 show circadian timing that can favor a more prothrombotic morning state.",
+        evidence: "Strong human",
+        caveat:
+          "This supports a risk window concept but does not explain every cardiovascular event.",
+      },
+      {
+        label: "Vascular demand",
+        pattern:
+          "Heart rate, vascular tone, endothelial function, and cardiac metabolism show daily organization.",
+        evidence: "Review consensus",
+        caveat:
+          "For many variables, the exact endogenous human phase is less secure than for BP, platelets, and PAI-1.",
+      },
+    ],
+    sources: ["shea-bp-2011", "scheer-platelet-2011", "scheer-pai-2014"],
     events: [
       {
         hour: 5,
@@ -432,6 +644,37 @@ export const organClocks: OrganClock[] = [
     name: "Immune System",
     iconName: "Shield",
     tone: "immune",
+    summary:
+      "Immune timing is not one rhythm. Different immune cells circulate, enter tissues, and respond to challenge on different schedules.",
+    evidenceNote:
+      "Strong broad consensus, but cell type and species matter. Mouse immune timing should not be copied directly onto humans.",
+    functions: [
+      {
+        label: "Leukocyte trafficking",
+        pattern:
+          "Circulating immune-cell numbers and tissue entry show subtype-specific daily rhythms.",
+        evidence: "Strong consensus",
+        caveat:
+          "Cell subsets can peak at different times, and human and mouse patterns can differ.",
+      },
+      {
+        label: "Inflammatory tone",
+        pattern:
+          "Cytokine release, migration, phagocytosis, and inflammatory responsiveness can vary by time of day.",
+        evidence: "Review consensus",
+        caveat:
+          "Do not reduce immunity to one universal 'best' time; the relevant function matters.",
+      },
+      {
+        label: "Clock-inflammation feedback",
+        pattern:
+          "Inflammation can feed back onto central, liver, and immune clocks in mechanistic studies.",
+        evidence: "Emerging",
+        caveat:
+          "This is a real mechanism area, but routine human phase effects need careful qualification.",
+      },
+    ],
+    sources: ["pick-2019", "labrecque-2015", "zhao-2017"],
     events: [
       {
         hour: 8,

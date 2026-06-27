@@ -174,13 +174,16 @@ const col = (c, fb) => new T.Color(PAL[c] || fb || '#cccccc');
       idleTimer = 0;
     }
     // keyboard modifier toggles pan even mid-drag
-    window.addEventListener('keydown', (e) => { if ((e.key === 'Meta' || e.key === 'Control') && dragging) panning = true; });
-    window.addEventListener('keyup', (e) => { if (e.key === 'Meta' || e.key === 'Control') panning = false; });
+    const keydown = (e) => { if ((e.key === 'Meta' || e.key === 'Control') && dragging) panning = true; };
+    const keyup = (e) => { if (e.key === 'Meta' || e.key === 'Control') panning = false; };
+    const blockContextMenu = e => e.preventDefault();
+    window.addEventListener('keydown', keydown);
+    window.addEventListener('keyup', keyup);
     dom.addEventListener('pointerdown', down);
     dom.addEventListener('pointermove', move);
     window.addEventListener('pointerup', up);
     dom.addEventListener('wheel', wheel, { passive: false });
-    dom.addEventListener('contextmenu', e => e.preventDefault());
+    dom.addEventListener('contextmenu', blockContextMenu);
 
     /* ---------------- picking / hover (per-structure) ---------------- */
     const ray = new T.Raycaster();
@@ -194,6 +197,7 @@ const col = (c, fb) => new T.Color(PAL[c] || fb || '#cccccc');
     let hiOn = false;
     let hiActive = new Set();   // nodeIds glowing now
     let hiSeen = new Set();     // nodeIds lit earlier in the pathway
+    let hiColor = null;
     const GHOST_CATS = new Set(['cortex', 'cerebellum', 'brainstem']);
     function pickAt(e) {
       const r = dom.getBoundingClientRect();
@@ -210,9 +214,21 @@ const col = (c, fb) => new T.Color(PAL[c] || fb || '#cccccc');
       if (m !== hovered) {
         hovered = m;
         dom.style.cursor = m ? 'pointer' : 'grab';
-        if (opts.onHover) opts.onHover(m ? m.userData.nodeId : null);
+        if (opts.onHover) {
+          const r = dom.getBoundingClientRect();
+          opts.onHover(m ? m.userData.nodeId : null, {
+            x: e.clientX - r.left,
+            y: e.clientY - r.top,
+          });
+        }
       }
     }
+    function leave() {
+      hovered = null;
+      dom.style.cursor = 'grab';
+      if (opts.onHover) opts.onHover(null);
+    }
+    dom.addEventListener('pointerleave', leave);
     function click(e) {
       const m = pickAt(e);
       if (opts.onPick) opts.onPick(m ? m.userData.nodeId : null, m);
@@ -283,12 +299,13 @@ const col = (c, fb) => new T.Color(PAL[c] || fb || '#cccccc');
     }
 
     // ---- functional-system highlight (drives Systems & Learn) ----
-    function setHighlight(activeIds, seenIds) {
+    function setHighlight(activeIds, seenIds, activeColor) {
       hiOn = true;
       hiActive = new Set(activeIds || []);
       hiSeen = new Set(seenIds || []);
+      hiColor = activeColor ? new T.Color(activeColor) : null;
     }
-    function clearHighlight() { hiOn = false; hiActive = new Set(); hiSeen = new Set(); }
+    function clearHighlight() { hiOn = false; hiActive = new Set(); hiSeen = new Set(); hiColor = null; }
     // frame a set of nodeIds (only the meshes currently shown by hemisphere)
     function frameNodes(ids, padScale) {
       const b = new T.Box3();
@@ -371,9 +388,10 @@ const col = (c, fb) => new T.Color(PAL[c] || fb || '#cccccc');
           m.material.opacity += (tgt - m.material.opacity) * (isActive ? 1 : fade);
           m.material.depthWrite = m.material.opacity >= 0.98;
           m.visible = m.material.opacity > 0.012;
-          m.material.color.copy(ud.baseColor);
+          const activeColor = hiColor || ud.baseColor;
+          m.material.color.copy(isActive ? activeColor : ud.baseColor);
           if (isActive) {
-            m.material.emissive.copy(ud.baseColor).multiplyScalar(Math.min(1.1, ud.baseEmiss * 2.4 + 0.30 + pulse * 0.22));
+            m.material.emissive.copy(activeColor).multiplyScalar(Math.min(1.1, ud.baseEmiss * 2.4 + 0.30 + pulse * 0.22));
             m.renderOrder = 3;
           } else if (isSeen) {
             m.material.emissive.copy(ud.baseColor).multiplyScalar(ud.baseEmiss + 0.05);
@@ -477,7 +495,19 @@ const col = (c, fb) => new T.Color(PAL[c] || fb || '#cccccc');
       selectNode, clearSelect, reset, frameSphere, snap, isolate, setSubset, zoom,
       setHighlight, clearHighlight, frameNodes,
       setAutoRotate, setExposure, setBackground, setPalette, capturePoster,
-      dispose() { cancelAnimationFrame(raf); ro.disconnect(); renderer.dispose(); },
+      dispose() {
+        cancelAnimationFrame(raf);
+        ro.disconnect();
+        window.removeEventListener('keydown', keydown);
+        window.removeEventListener('keyup', keyup);
+        window.removeEventListener('pointerup', up);
+        dom.removeEventListener('pointerdown', down);
+        dom.removeEventListener('pointermove', move);
+        dom.removeEventListener('pointerleave', leave);
+        dom.removeEventListener('wheel', wheel);
+        dom.removeEventListener('contextmenu', blockContextMenu);
+        renderer.dispose();
+      },
       addGlowingSphere(id, position, colorHex, size = 0.005) {
         const geo = new T.SphereGeometry(size, 16, 16);
         const mat = new T.MeshStandardMaterial({

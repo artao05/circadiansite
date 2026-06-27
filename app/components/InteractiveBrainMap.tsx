@@ -2,6 +2,7 @@
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import type * as THREE from 'three';
+import { LocateFixed, Minus, Plus, RotateCcw } from 'lucide-react';
 import { BrainScene } from './brain-scene';
 
 /* ------------------------------------------------------------------ */
@@ -51,10 +52,23 @@ type BrainSceneApi = {
   meshById?: Map<string, THREE.Object3D[]>;
   selectNode: (id: string) => void;
   clearSelect: () => void;
-  setHighlight: (activeIds?: string[], seenIds?: string[]) => void;
+  reset: () => void;
+  frameNodes?: (ids: string[], padScale?: number) => void;
+  zoom: (direction: number) => void;
+  setAutoRotate: (value: boolean) => void;
+  setHighlight: (activeIds?: string[], seenIds?: string[], activeColor?: string) => void;
   clearHighlight: () => void;
   setLayers: (layers: Record<string, BrainSceneLayerState>) => void;
   setPalette: (palette: Record<string, string>) => void;
+};
+
+type HoverLabel = {
+  id: string;
+  title: string;
+  subtitle?: string;
+  color?: string;
+  x: number;
+  y: number;
 };
 
 declare global {
@@ -68,7 +82,7 @@ declare global {
 const NUCLEI: NucleusInfo[] = [
   {
     id: 'scn-node',
-    structureNames: ['Anterior hypothalamus.l'],
+    structureNames: ['Anterior hypothalamus.l', 'Anterior hypothalamus.r'],
     abbr: 'SCN',
     fullName: 'Suprachiasmatic Nucleus',
     color: '#5D8A54',
@@ -83,7 +97,7 @@ const NUCLEI: NucleusInfo[] = [
   },
   {
     id: 'tmn-node',
-    structureNames: ['Tuberal hypothalamus.l'],
+    structureNames: ['Tuberal hypothalamus.l', 'Tuberal hypothalamus.r'],
     abbr: 'TMN',
     fullName: 'Tuberomammillary Nucleus',
     color: '#4A8B7F',
@@ -98,7 +112,7 @@ const NUCLEI: NucleusInfo[] = [
   },
   {
     id: 'vlpo-node',
-    structureNames: ['Preoptic hypothalamus.l'],
+    structureNames: ['Preoptic hypothalamus.l', 'Preoptic hypothalamus.r'],
     abbr: 'VLPO',
     fullName: 'Ventrolateral Preoptic Area',
     color: '#C05746',
@@ -120,9 +134,44 @@ export function InteractiveBrainMap() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const apiRef = useRef<BrainSceneApi | null>(null);
   const structureToNucleusRef = useRef(new Map<string, string>());
+  const nucleusToStructureIdsRef = useRef(new Map<string, string[]>());
+  const nodeNameByIdRef = useRef(new Map<string, BrainManifestNode>());
   const [loading, setLoading] = useState(true);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const [hoverLabel, setHoverLabel] = useState<HoverLabel | null>(null);
   const [activeId, setActiveId] = useState<string | null>(null);
+  const [autoRotate, setAutoRotate] = useState(true);
+
+  const nucleiById = useRef(new Map(NUCLEI.map((nucleus) => [nucleus.id, nucleus])));
+  const activeIdRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    activeIdRef.current = activeId;
+  }, [activeId]);
+
+  const getNucleusStructureIds = useCallback((nucleus: NucleusInfo | string) => {
+    const nucleusId = typeof nucleus === 'string' ? nucleus : nucleus.id;
+    return nucleusToStructureIdsRef.current.get(nucleusId) ?? [];
+  }, []);
+
+  const highlightNucleus = useCallback((nucleus: NucleusInfo | string, options?: { frame?: boolean }) => {
+    const nucleusId = typeof nucleus === 'string' ? nucleus : nucleus.id;
+    const nucleusInfo = nucleiById.current.get(nucleusId);
+    const structureIds = getNucleusStructureIds(nucleusId);
+    const activeIds = [...structureIds, nucleusId];
+    const api = apiRef.current;
+
+    if (!api) return;
+
+    api.setHighlight(activeIds, undefined, nucleusInfo?.color);
+    if (structureIds[0]) api.selectNode(structureIds[0]);
+    else api.selectNode(nucleusId);
+
+    if (options?.frame) {
+      if (structureIds.length > 0) api.frameNodes?.(structureIds, 4.2);
+      else api.focusNode?.(nucleusId);
+    }
+  }, [getNucleusStructureIds]);
 
   /* ---- 3D scene bootstrap ---- */
   useEffect(() => {
@@ -134,6 +183,7 @@ export function InteractiveBrainMap() {
       .then(res => res.json())
       .then((manifestData: BrainManifest) => {
         window.BRAIN = { nodes: manifestData.nodes };
+        nodeNameByIdRef.current = new Map(manifestData.nodes.map((node) => [node.id, node]));
 
         api = BrainScene.create(canvasRef.current, {
           url: '/models/brain.glb',
@@ -168,60 +218,106 @@ export function InteractiveBrainMap() {
             });
 
             structureToNucleusRef.current = new Map();
+            nucleusToStructureIdsRef.current = new Map();
             NUCLEI.forEach((nucleus) => {
+              const structureIds: string[] = [];
               nucleus.structureNames.forEach((name) => {
                 const node = manifestData.nodes.find((n) => n.name === name);
-                if (node) structureToNucleusRef.current.set(node.id, nucleus.id);
+                if (node) {
+                  structureToNucleusRef.current.set(node.id, nucleus.id);
+                  structureIds.push(node.id);
+                }
               });
+              nucleusToStructureIdsRef.current.set(nucleus.id, structureIds);
             });
 
-            const getCentroid = (name: string) => {
-              const node = manifestData.nodes.find((n) => n.name === name);
-              if (!node) return null;
-              const meshes = api.meshById?.get(node.id);
-              if (meshes && meshes.length > 0) {
-                const box = new api.THREE.Box3();
-                meshes.forEach((mesh) => {
-                  if ('geometry' in mesh) box.expandByObject(mesh);
+            const getCentroid = (structureNames: string[]) => {
+              const box = new api.THREE.Box3();
+              let hasMesh = false;
+
+              structureNames.forEach((name) => {
+                const node = manifestData.nodes.find((n) => n.name === name);
+                if (!node) return;
+
+                const meshes = api.meshById?.get(node.id);
+                meshes?.forEach((mesh) => {
+                  if ('geometry' in mesh) {
+                    box.expandByObject(mesh);
+                    hasMesh = true;
+                  }
                 });
-                return box.getCenter(new api.THREE.Vector3());
-              }
-              return null;
+              });
+
+              return hasMesh ? box.getCenter(new api.THREE.Vector3()) : null;
             };
 
-            const scnPos = getCentroid('Anterior hypothalamus.l');
-            const tmnPos = getCentroid('Tuberal hypothalamus.l');
-            const vlpoPos = getCentroid('Preoptic hypothalamus.l');
+            const [scn, tmn, vlpo] = NUCLEI;
+            const scnPos = getCentroid(scn.structureNames);
+            const tmnPos = getCentroid(tmn.structureNames);
+            const vlpoPos = getCentroid(vlpo.structureNames);
 
             if (scnPos) {
               scnPos.y -= 0.002;
               scnPos.z += 0.001;
-              api.addGlowingSphere('scn-node', scnPos, '#5D8A54', 0.0045);
+              api.addGlowingSphere('scn-node', scnPos, '#5D8A54', 0.0032);
             }
             if (tmnPos) {
               tmnPos.y -= 0.001;
               tmnPos.z -= 0.001;
-              api.addGlowingSphere('tmn-node', tmnPos, '#4A8B7F', 0.004);
+              api.addGlowingSphere('tmn-node', tmnPos, '#4A8B7F', 0.003);
             }
             if (vlpoPos) {
               vlpoPos.y -= 0.002;
-              api.addGlowingSphere('vlpo-node', vlpoPos, '#C05746', 0.004);
+              api.addGlowingSphere('vlpo-node', vlpoPos, '#C05746', 0.003);
             }
 
             api.focusCategory('diencephalon');
           },
-          onHover: (nodeId: string | null) => {
+          onHover: (nodeId: string | null, point?: { x: number; y: number }) => {
             if (!nodeId) {
               setHoveredId(null);
+              setHoverLabel(null);
+              if (!activeIdRef.current) {
+                api?.clearHighlight();
+                api?.clearSelect();
+              }
               return;
             }
-            setHoveredId(structureToNucleusRef.current.get(nodeId) ?? nodeId);
+            const nucleusId = structureToNucleusRef.current.get(nodeId) ?? nodeId;
+            const nucleus = nucleiById.current.get(nucleusId);
+            const manifestNode = nodeNameByIdRef.current.get(nodeId);
+
+            setHoveredId(nucleusId);
+            if (point) {
+              setHoverLabel({
+                id: nucleusId,
+                title: nucleus ? nucleus.fullName : manifestNode?.name ?? 'Brain structure',
+                subtitle: nucleus ? nucleus.abbr : manifestNode?.category,
+                color: nucleus?.color,
+                x: point.x,
+                y: point.y,
+              });
+            }
+
+            if (nucleus) {
+              highlightNucleus(nucleus.id);
+            }
           },
           onPick: (nodeId: string | null) => {
             if (!nodeId) return;
             const nucleusId = structureToNucleusRef.current.get(nodeId) ?? nodeId;
             if (NUCLEI.some((nucleus) => nucleus.id === nucleusId)) {
-              setActiveId((current) => (current === nucleusId ? null : nucleusId));
+              setActiveId((current) => {
+                const next = current === nucleusId ? null : nucleusId;
+                if (next) {
+                  highlightNucleus(next, { frame: true });
+                } else {
+                  api?.clearHighlight();
+                  api?.clearSelect();
+                  api?.focusCategory?.('diencephalon');
+                }
+                return next;
+              });
             }
           },
         }) as BrainSceneApi;
@@ -231,22 +327,17 @@ export function InteractiveBrainMap() {
     return () => {
       if (api) api.dispose();
     };
-  }, []);
+  }, [highlightNucleus]);
 
   /* ---- card interaction handlers ---- */
   const handleCardEnter = useCallback((nucleus: NucleusInfo) => {
     setHoveredId(nucleus.id);
-    // Focus the camera on the relevant sphere
-    const api = apiRef.current;
-    if (api) {
-      api.focusNode?.(nucleus.id);
-      api.setHighlight([nucleus.id]);
-      api.selectNode(nucleus.id);
-    }
-  }, []);
+    highlightNucleus(nucleus);
+  }, [highlightNucleus]);
 
   const handleCardLeave = useCallback(() => {
     setHoveredId(null);
+    setHoverLabel(null);
     if (activeId) return;
     const api = apiRef.current;
     if (api) {
@@ -262,15 +353,40 @@ export function InteractiveBrainMap() {
       const api = apiRef.current;
       if (api) {
         if (next) {
-          api.focusNode?.(next);
-          api.setHighlight([next]);
-          api.selectNode(next);
+          highlightNucleus(next, { frame: true });
         } else {
           api.clearHighlight();
           api.clearSelect();
           api.focusCategory?.('diencephalon');
         }
       }
+      return next;
+    });
+  }, [highlightNucleus]);
+
+  const focusNucleus = useCallback((nucleus: NucleusInfo) => {
+    setActiveId(nucleus.id);
+    setHoveredId(nucleus.id);
+    highlightNucleus(nucleus, { frame: true });
+  }, [highlightNucleus]);
+
+  const resetView = useCallback(() => {
+    setActiveId(null);
+    setHoveredId(null);
+    setHoverLabel(null);
+    const api = apiRef.current;
+    if (api) {
+      api.clearHighlight();
+      api.clearSelect();
+      api.reset();
+      api.focusCategory?.('diencephalon');
+    }
+  }, []);
+
+  const toggleAutoRotate = useCallback(() => {
+    setAutoRotate((current) => {
+      const next = !current;
+      apiRef.current?.setAutoRotate(next);
       return next;
     });
   }, []);
@@ -286,6 +402,57 @@ export function InteractiveBrainMap() {
           </div>
         )}
         <canvas ref={canvasRef} className="brain-map-canvas" />
+        {!loading && (
+          <>
+            <div className="brain-map-controls" aria-label="Brain map controls">
+              <button type="button" onClick={resetView} aria-label="Reset brain view">
+                <RotateCcw aria-hidden="true" size={16} />
+              </button>
+              <button type="button" onClick={toggleAutoRotate} aria-pressed={autoRotate} aria-label="Toggle brain rotation">
+                <LocateFixed aria-hidden="true" size={16} />
+              </button>
+              <button type="button" onClick={() => apiRef.current?.zoom(-1)} aria-label="Zoom in">
+                <Plus aria-hidden="true" size={16} />
+              </button>
+              <button type="button" onClick={() => apiRef.current?.zoom(1)} aria-label="Zoom out">
+                <Minus aria-hidden="true" size={16} />
+              </button>
+            </div>
+
+            <div className="brain-map-region-rail" aria-label="Key neuroanatomy regions">
+              {NUCLEI.map((nucleus) => (
+                <button
+                  key={nucleus.id}
+                  type="button"
+                  className={activeId === nucleus.id || hoveredId === nucleus.id ? 'active' : ''}
+                  style={{ '--nucleus-color': nucleus.color } as React.CSSProperties}
+                  onMouseEnter={() => handleCardEnter(nucleus)}
+                  onMouseLeave={handleCardLeave}
+                  onFocus={() => handleCardEnter(nucleus)}
+                  onBlur={handleCardLeave}
+                  onClick={() => focusNucleus(nucleus)}
+                >
+                  <span>{nucleus.abbr}</span>
+                  <strong>{nucleus.circadianRole}</strong>
+                </button>
+              ))}
+            </div>
+
+            {hoverLabel && (
+              <div
+                className="brain-map-hover-label"
+                style={{
+                  '--nucleus-color': hoverLabel.color ?? '#FCF8EE',
+                  left: hoverLabel.x,
+                  top: hoverLabel.y,
+                } as React.CSSProperties}
+              >
+                {hoverLabel.subtitle && <span>{hoverLabel.subtitle}</span>}
+                <strong>{hoverLabel.title}</strong>
+              </div>
+            )}
+          </>
+        )}
       </div>
 
       {/* Nucleus legend cards */}
@@ -303,7 +470,18 @@ export function InteractiveBrainMap() {
                 style={{ '--nucleus-color': n.color } as React.CSSProperties}
                 onMouseEnter={() => handleCardEnter(n)}
                 onMouseLeave={handleCardLeave}
+                onFocus={() => handleCardEnter(n)}
+                onBlur={handleCardLeave}
                 onClick={() => handleCardClick(n)}
+                role="button"
+                tabIndex={0}
+                aria-expanded={isExpanded}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    handleCardClick(n);
+                  }
+                }}
               >
                 {/* Header row — always visible */}
                 <div className="brain-nucleus-header">

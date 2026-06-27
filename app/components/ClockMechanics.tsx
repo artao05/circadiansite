@@ -38,22 +38,6 @@ function usePrefersReducedMotion() {
   return reducedRef;
 }
 
-function makeRibbonCurve(phase: number) {
-  const points = Array.from({ length: 120 }, (_, index) => {
-    const ratio = index / 119;
-    const theta = ratio * Math.PI * 5.2 + phase;
-    const x = (ratio - 0.5) * 4.4;
-    const radius = 0.32 + Math.sin(theta * 1.7) * 0.045;
-    return new THREE.Vector3(
-      x,
-      Math.sin(theta) * radius,
-      Math.cos(theta) * radius,
-    );
-  });
-
-  return new THREE.CatmullRomCurve3(points);
-}
-
 function makeDnaCurve(phase: number) {
   const points = Array.from({ length: 160 }, (_, index) => {
     const ratio = index / 159;
@@ -61,8 +45,8 @@ function makeDnaCurve(phase: number) {
     const x = (ratio - 0.5) * 7.2;
     return new THREE.Vector3(
       x,
-      -1.25 + Math.sin(theta) * 0.22,
-      -1.8 + Math.cos(theta) * 0.22,
+      -0.92 + Math.sin(theta) * 0.18,
+      -1.18 + Math.cos(theta) * 0.18,
     );
   });
 
@@ -107,6 +91,7 @@ function createDissolveBuffers() {
 
 function clockOpacity(timeState: ClockMechanicsState) {
   if (timeState === "night") return 0.36;
+  if (timeState === "afternoon") return 0.54;
   if (timeState === "dawn") return 1;
   return 0.86;
 }
@@ -185,29 +170,29 @@ function DnaTrack() {
     <group>
       {curves.map((curve, index) => (
         <mesh key={index}>
-          <tubeGeometry args={[curve, 120, 0.014, 8, false]} />
+          <tubeGeometry args={[curve, 120, 0.018, 8, false]} />
           <meshStandardMaterial
-            color={index === 0 ? "#60f0df" : "#f7b267"}
-            emissive={index === 0 ? "#2bc8bf" : "#d98532"}
-            emissiveIntensity={0.42}
+            color={index === 0 ? "#cfe3ff" : "#91a4c1"}
+            emissive={index === 0 ? "#6fa7ff" : "#48627f"}
+            emissiveIntensity={0.26}
             transparent
-            opacity={0.42}
+            opacity={0.58}
           />
         </mesh>
       ))}
       {rungs.map((rung) => (
         <mesh
           key={rung.x}
-          position={[rung.x, -1.25, -1.8]}
+          position={[rung.x, -0.92, -1.18]}
           rotation={[rung.rotation, 0, Math.PI / 2]}
         >
-          <boxGeometry args={[0.016, 0.48, 0.012]} />
+          <boxGeometry args={[0.018, 0.4, 0.012]} />
           <meshStandardMaterial
             color="#d8e7ff"
             emissive="#8cc8ff"
-            emissiveIntensity={0.12}
+            emissiveIntensity={0.16}
             transparent
-            opacity={0.32}
+            opacity={0.42}
           />
         </mesh>
       ))}
@@ -215,40 +200,65 @@ function DnaTrack() {
   );
 }
 
-function ClockBmalRibbons({ timeState }: { timeState: ClockMechanicsState }) {
-  const curves = useMemo(() => [makeRibbonCurve(0), makeRibbonCurve(Math.PI)], []);
+function ClockBmalComplex({ timeState }: { timeState: ClockMechanicsState }) {
   const groupRef = useRef<THREE.Group>(null);
   const targetScale = useMemo(() => new THREE.Vector3(1, 1, 1), []);
+  const targetPosition = useMemo(() => new THREE.Vector3(), []);
   const elapsedRef = useRef(0);
 
   useFrame((_, delta) => {
     if (!groupRef.current) return;
     elapsedRef.current += delta;
-    const scale = timeState === "night" ? 0.92 : 1;
+    const scale = timeState === "morning" || timeState === "dawn" ? 1 : 0.74;
+    const y = timeState === "night" ? -0.16 : -0.2;
+    const z = timeState === "night" ? 0.2 : 0.34;
+    targetPosition.set(0, y, z);
     targetScale.set(scale, scale, scale);
+    groupRef.current.position.lerp(targetPosition, Math.min(1, delta * 3));
     groupRef.current.scale.lerp(
       targetScale,
       Math.min(1, delta * 3),
     );
-    groupRef.current.rotation.y = Math.sin(elapsedRef.current * 0.22) * 0.08;
+    groupRef.current.rotation.y = Math.sin(elapsedRef.current * 0.32) * 0.1;
+    groupRef.current.rotation.z = Math.sin(elapsedRef.current * 0.2) * 0.04;
   });
 
   return (
-    <group ref={groupRef} position={[0, -0.06, 0]}>
-      {curves.map((curve, index) => (
-        <mesh key={index}>
-          <tubeGeometry args={[curve, 160, 0.07, 16, false]} />
-          <MeshWobbleMaterial
-            color={index === 0 ? "#54d6c2" : "#f7b267"}
-            emissive={index === 0 ? "#25b7ad" : "#d8892b"}
-            emissiveIntensity={clockOpacity(timeState)}
-            factor={0.16}
-            speed={0.55}
-            roughness={0.22}
-            metalness={0.04}
-          />
-        </mesh>
-      ))}
+    <group ref={groupRef} position={[0, -0.2, 0.34]}>
+      <mesh position={[-0.28, 0.05, 0]} scale={[0.52, 0.44, 0.34]}>
+        <sphereGeometry args={[1, 40, 40]} />
+        <MeshWobbleMaterial
+          color="#54d6c2"
+          emissive="#25b7ad"
+          emissiveIntensity={clockOpacity(timeState)}
+          factor={0.12}
+          speed={0.5}
+          roughness={0.24}
+          metalness={0.04}
+        />
+      </mesh>
+      <mesh position={[0.26, -0.02, 0.02]} scale={[0.5, 0.42, 0.32]}>
+        <sphereGeometry args={[1, 40, 40]} />
+        <MeshWobbleMaterial
+          color="#f7b267"
+          emissive="#d8892b"
+          emissiveIntensity={clockOpacity(timeState)}
+          factor={0.12}
+          speed={0.46}
+          roughness={0.24}
+          metalness={0.04}
+        />
+      </mesh>
+      <mesh position={[0, -0.02, -0.02]} scale={[0.36, 0.16, 0.16]}>
+        <sphereGeometry args={[1, 24, 24]} />
+        <meshStandardMaterial
+          color="#fff1cc"
+          emissive="#f7b267"
+          emissiveIntensity={0.24}
+          transparent
+          opacity={0.48}
+        />
+      </mesh>
     </group>
   );
 }
@@ -492,7 +502,7 @@ function MolecularScene({
 
       <ClockMechanicsRig timeState={timeState}>
         <DnaTrack />
-        <ClockBmalRibbons timeState={timeState} />
+        <ClockBmalComplex timeState={timeState} />
         <TranscriptParticles
           timeState={timeState}
           reducedMotionRef={reducedMotionRef}

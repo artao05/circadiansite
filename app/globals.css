@@ -609,6 +609,150 @@ main {
   line-height: 1.6;
 }
 
+.clock-term {
+  border-radius: 6px;
+  padding: 0.06rem 0.36rem;
+  font-weight: 850;
+  white-space: nowrap;
+}
+
+.clock-term.activator {
+  background: rgba(84, 214, 194, 0.16);
+  color: #7cf4e7;
+}
+
+.clock-term.repressor {
+  background: rgba(159, 140, 255, 0.16);
+  color: #c7bcff;
+}
+
+.clock-molecule-key {
+  position: absolute;
+  right: clamp(1.2rem, 5vw, 5rem);
+  top: clamp(6.25rem, 14vh, 10.5rem);
+  z-index: 2;
+  display: grid;
+  gap: 0.62rem;
+  width: min(340px, calc(100vw - 2.4rem));
+}
+
+.clock-molecule-key article {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  gap: 0.72rem;
+  align-items: start;
+  border: 1px solid rgba(255, 249, 239, 0.12);
+  border-radius: 8px;
+  background: rgba(5, 9, 19, 0.5);
+  padding: 0.72rem;
+  color: rgba(255, 249, 239, 0.78);
+  backdrop-filter: blur(14px);
+  opacity: 0.72;
+  transition:
+    opacity 260ms ease,
+    border-color 260ms ease,
+    background 260ms ease,
+    transform 260ms ease;
+}
+
+.clock-molecule-key article.active {
+  border-color: rgba(84, 214, 194, 0.42);
+  background: rgba(10, 23, 31, 0.72);
+  opacity: 1;
+  transform: translateX(-2px);
+}
+
+.clock-molecule-key article.reset.active {
+  border-color: rgba(216, 231, 255, 0.36);
+}
+
+.molecule-swatch {
+  position: relative;
+  width: 34px;
+  height: 34px;
+}
+
+.molecule-swatch::before,
+.molecule-swatch::after {
+  content: "";
+  position: absolute;
+}
+
+.molecule-swatch.activator::before,
+.molecule-swatch.activator::after {
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+}
+
+.molecule-swatch.activator::before {
+  left: 1px;
+  top: 8px;
+  background: #54d6c2;
+  box-shadow: 0 0 12px rgba(84, 214, 194, 0.5);
+}
+
+.molecule-swatch.activator::after {
+  right: 1px;
+  top: 8px;
+  background: #f7b267;
+  box-shadow: 0 0 12px rgba(247, 178, 103, 0.45);
+}
+
+.molecule-swatch.repressor::before,
+.molecule-swatch.repressor::after {
+  width: 15px;
+  height: 15px;
+  border-radius: 999px;
+}
+
+.molecule-swatch.repressor::before {
+  left: 2px;
+  top: 8px;
+  background: #9f8cff;
+  box-shadow: 0 0 16px rgba(159, 140, 255, 0.5);
+}
+
+.molecule-swatch.repressor::after {
+  right: 2px;
+  bottom: 8px;
+  background: #6fe8ff;
+  box-shadow: 0 0 16px rgba(111, 232, 255, 0.48);
+}
+
+.molecule-swatch.reset::before {
+  inset: 7px;
+  border: 2px dotted rgba(216, 231, 255, 0.9);
+  border-radius: 999px;
+  box-shadow: 0 0 12px rgba(216, 231, 255, 0.22);
+}
+
+.clock-molecule-key strong,
+.clock-molecule-key span,
+.clock-molecule-key p {
+  display: block;
+}
+
+.clock-molecule-key strong {
+  color: #fff9ef;
+  font-size: 0.9rem;
+}
+
+.clock-molecule-key span {
+  margin-top: 0.08rem;
+  color: rgba(255, 249, 239, 0.58);
+  font-size: 0.68rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.clock-molecule-key p {
+  margin: 0.34rem 0 0;
+  color: rgba(255, 249, 239, 0.66);
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
 .clock-mechanics-progress {
   right: clamp(1.2rem, 4vw, 4rem);
   top: 50%;
@@ -1287,6 +1431,281 @@ input[type="range"] {
   place-items: center;
   gap: 1.25rem;
   padding: 1.5rem;
+}
+
+.body-clock {
+  grid-template-columns: minmax(0, 0.95fr) minmax(360px, 1.05fr);
+}
+
+.organ-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.organ-tabs button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 42px;
+  border: 1px solid rgba(16, 24, 32, 0.1);
+  border-radius: 999px;
+  padding: 0.5rem 1rem;
+  background: #fff9ef;
+  color: #101820;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease,
+    transform 180ms ease;
+}
+
+.organ-tabs button:hover,
+.organ-tabs button:focus-visible {
+  border-color: rgba(16, 24, 32, 0.24);
+  transform: translateY(-1px);
+}
+
+.organ-tabs button.selected {
+  background: #101820;
+  color: #fff9ef;
+}
+
+.body-clock-stage {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: min(100%, 310px);
+  aspect-ratio: 1;
+  margin: 1.25rem auto 0.75rem;
+}
+
+.body-clock-track {
+  position: absolute;
+  inset: 0;
+  border: 2px dashed rgba(16, 24, 32, 0.1);
+  border-radius: 50%;
+}
+
+.body-clock-hour-label {
+  position: absolute;
+  color: #9ca3af;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.body-clock-hour-label.top,
+.body-clock-hour-label.bottom {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.body-clock-hour-label.top {
+  top: -25px;
+}
+
+.body-clock-hour-label.bottom {
+  bottom: -25px;
+}
+
+.body-clock-hour-label.left,
+.body-clock-hour-label.right {
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.body-clock-hour-label.left {
+  left: -35px;
+}
+
+.body-clock-hour-label.right {
+  right: -40px;
+}
+
+.body-clock-figure {
+  position: relative;
+  z-index: 5;
+  width: 200px;
+  height: 240px;
+}
+
+.body-axis-panel {
+  display: grid;
+  align-content: start;
+  gap: 0.85rem;
+}
+
+.axis-summary,
+.axis-function,
+.body-clock-nuance,
+.daily-schedule,
+.axis-sources {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--card);
+  padding: 1rem;
+}
+
+.axis-summary {
+  border-left: 4px solid var(--cyan);
+}
+
+.axis-summary.light {
+  border-left-color: var(--amber);
+}
+
+.axis-summary.metabolic {
+  border-left-color: var(--coral);
+}
+
+.axis-summary.cardio {
+  border-left-color: #ef4444;
+}
+
+.axis-summary.immune {
+  border-left-color: #10b981;
+}
+
+.axis-summary-heading,
+.axis-event-heading,
+.axis-function > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.axis-summary-heading {
+  justify-content: flex-start;
+}
+
+.axis-icon {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  background: rgba(16, 24, 32, 0.07);
+  color: var(--ink);
+}
+
+.axis-summary-heading span:not(.axis-icon),
+.axis-sources > span {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.axis-summary h3,
+.axis-function h4,
+.body-clock-nuance h4,
+.daily-schedule h4 {
+  margin: 0;
+}
+
+.axis-summary p,
+.axis-function p,
+.axis-function small,
+.body-clock-nuance p {
+  margin: 0.65rem 0 0;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.axis-function-list {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.axis-function h4 {
+  font-size: 1rem;
+}
+
+.axis-function span {
+  flex: 0 0 auto;
+  border: 1px solid rgba(16, 24, 32, 0.1);
+  border-radius: 999px;
+  padding: 0.2rem 0.55rem;
+  background: rgba(16, 24, 32, 0.04);
+  color: var(--ink);
+  font-size: 0.68rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.axis-function small {
+  display: block;
+  font-size: 0.78rem;
+}
+
+.axis-event-heading span {
+  border-radius: 4px;
+  padding: 0.2rem 0.5rem;
+  background: rgba(16, 24, 32, 0.05);
+  color: #101820;
+}
+
+.body-clock-nuance {
+  border-color: rgba(93, 138, 84, 0.35);
+  background: color-mix(in srgb, var(--card) 86%, rgba(93, 138, 84, 0.14));
+}
+
+.body-clock-nuance h4 {
+  color: #3f6f39;
+}
+
+.daily-schedule ul {
+  display: grid;
+  gap: 0.42rem;
+  margin: 0.75rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.daily-schedule li {
+  display: flex;
+  gap: 0.6rem;
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+.daily-schedule li span:first-child {
+  width: 42px;
+  flex: 0 0 auto;
+  font-weight: 800;
+}
+
+.daily-schedule li.active {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.axis-sources {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.axis-sources div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.axis-sources code {
+  border: 1px solid rgba(16, 24, 32, 0.09);
+  border-radius: 6px;
+  padding: 0.18rem 0.4rem;
+  background: rgba(16, 24, 32, 0.04);
+  color: var(--muted);
+  font-size: 0.72rem;
 }
 
 .clock-orbit {
@@ -3231,6 +3650,32 @@ meter {
     font-size: 0.95rem;
   }
 
+  .clock-molecule-key {
+    left: 1rem;
+    right: 1rem;
+    top: 18rem;
+    grid-template-columns: 1fr;
+    width: auto;
+  }
+
+  .clock-molecule-key article {
+    grid-template-columns: 28px minmax(0, 1fr);
+    padding: 0.58rem;
+  }
+
+  .clock-molecule-key article:not(.active) {
+    display: none;
+  }
+
+  .molecule-swatch {
+    width: 28px;
+    height: 28px;
+  }
+
+  .clock-molecule-key p {
+    font-size: 0.72rem;
+  }
+
   .clock-mechanics-progress {
     left: 1rem;
     right: auto;
@@ -3430,11 +3875,160 @@ meter {
   box-shadow: 0 8px 40px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(252, 248, 238, 0.06);
 }
 
+.brain-map-viewport::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 52% 46%, rgba(74, 139, 127, 0.14), transparent 26%),
+    linear-gradient(180deg, rgba(28, 32, 38, 0) 58%, rgba(28, 32, 38, 0.38) 100%);
+}
+
 .brain-map-canvas {
   display: block;
   width: 100%;
   height: 100%;
   touch-action: none;
+}
+
+.brain-map-controls {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 6;
+  display: flex;
+  gap: 8px;
+  padding: 6px;
+  border: 1px solid rgba(252, 248, 238, 0.12);
+  border-radius: 8px;
+  background: rgba(28, 32, 38, 0.72);
+  backdrop-filter: blur(14px);
+}
+
+.brain-map-controls button {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid rgba(252, 248, 238, 0.12);
+  border-radius: 8px;
+  background: rgba(252, 248, 238, 0.06);
+  color: rgba(252, 248, 238, 0.78);
+  transition: background 180ms ease, border-color 180ms ease, color 180ms ease, transform 180ms ease;
+}
+
+.brain-map-controls button:hover,
+.brain-map-controls button:focus-visible,
+.brain-map-controls button[aria-pressed='true'] {
+  background: rgba(74, 139, 127, 0.2);
+  border-color: rgba(118, 215, 198, 0.4);
+  color: #FCF8EE;
+  transform: translateY(-1px);
+}
+
+.brain-map-region-rail {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: 16px;
+  z-index: 6;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.brain-map-region-rail button {
+  --nucleus-color: #FCF8EE;
+  min-width: 0;
+  min-height: 58px;
+  padding: 10px 12px;
+  border: 1px solid rgba(252, 248, 238, 0.12);
+  border-radius: 8px;
+  background: rgba(28, 32, 38, 0.72);
+  color: rgba(252, 248, 238, 0.7);
+  text-align: left;
+  backdrop-filter: blur(14px);
+  transition: background 180ms ease, border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+}
+
+.brain-map-region-rail button span,
+.brain-map-region-rail button strong {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.brain-map-region-rail button span {
+  margin-bottom: 3px;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--nucleus-color);
+  letter-spacing: 0;
+}
+
+.brain-map-region-rail button strong {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: rgba(252, 248, 238, 0.86);
+}
+
+.brain-map-region-rail button:hover,
+.brain-map-region-rail button:focus-visible,
+.brain-map-region-rail button.active {
+  background: color-mix(in srgb, var(--nucleus-color) 18%, rgba(28, 32, 38, 0.78));
+  border-color: color-mix(in srgb, var(--nucleus-color) 52%, rgba(252, 248, 238, 0.14));
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.28), 0 0 22px color-mix(in srgb, var(--nucleus-color) 18%, transparent);
+  transform: translateY(-1px);
+}
+
+.brain-map-hover-label {
+  --nucleus-color: #FCF8EE;
+  position: absolute;
+  z-index: 7;
+  min-width: 156px;
+  max-width: min(280px, calc(100% - 32px));
+  padding: 9px 11px;
+  border: 1px solid color-mix(in srgb, var(--nucleus-color) 55%, rgba(252, 248, 238, 0.14));
+  border-radius: 8px;
+  background: rgba(28, 32, 38, 0.86);
+  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.34), 0 0 24px color-mix(in srgb, var(--nucleus-color) 18%, transparent);
+  color: #FCF8EE;
+  pointer-events: none;
+  transform: translate(14px, -50%);
+  backdrop-filter: blur(16px);
+}
+
+.brain-map-hover-label::before {
+  content: '';
+  position: absolute;
+  left: -5px;
+  top: 50%;
+  width: 9px;
+  height: 9px;
+  border-left: 1px solid color-mix(in srgb, var(--nucleus-color) 55%, rgba(252, 248, 238, 0.14));
+  border-bottom: 1px solid color-mix(in srgb, var(--nucleus-color) 55%, rgba(252, 248, 238, 0.14));
+  background: rgba(28, 32, 38, 0.86);
+  transform: translateY(-50%) rotate(45deg);
+}
+
+.brain-map-hover-label span {
+  display: block;
+  margin-bottom: 2px;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.67rem;
+  font-weight: 700;
+  color: var(--nucleus-color);
+  letter-spacing: 0;
+}
+
+.brain-map-hover-label strong {
+  display: block;
+  font-size: 0.86rem;
+  line-height: 1.2;
+  font-weight: 650;
 }
 
 .brain-map-loader {
@@ -3484,7 +4078,7 @@ meter {
   position: relative;
   background: rgba(252, 248, 238, 0.06);
   border: 1px solid rgba(252, 248, 238, 0.1);
-  border-radius: 10px;
+  border-radius: 8px;
   padding: 14px 16px;
   cursor: pointer;
   transition: background 260ms ease, border-color 260ms ease, box-shadow 260ms ease;
@@ -3550,7 +4144,7 @@ meter {
   font-weight: 600;
   text-transform: uppercase;
   color: var(--nucleus-color);
-  letter-spacing: 0.04em;
+  letter-spacing: 0;
 }
 
 .brain-nucleus-full {
@@ -3577,9 +4171,9 @@ meter {
 /* ---- Expandable detail panel ---- */
 
 .brain-nucleus-detail {
-  display: grid;
-  grid-template-rows: 0fr;
-  transition: grid-template-rows 350ms cubic-bezier(0.4, 0, 0.2, 1),
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 350ms cubic-bezier(0.4, 0, 0.2, 1),
               margin-top 350ms cubic-bezier(0.4, 0, 0.2, 1),
               opacity 260ms ease;
   opacity: 0;
@@ -3587,13 +4181,13 @@ meter {
 }
 
 .brain-nucleus-card.expanded .brain-nucleus-detail {
-  grid-template-rows: 1fr;
+  max-height: 760px;
   opacity: 1;
   margin-top: 14px;
 }
 
 .brain-nucleus-detail > * {
-  overflow: hidden;
+  min-width: 0;
 }
 
 .brain-nucleus-desc {
@@ -3627,7 +4221,7 @@ meter {
   font-weight: 600;
   text-transform: uppercase;
   color: rgba(252, 248, 238, 0.35);
-  letter-spacing: 0.03em;
+  letter-spacing: 0;
 }
 
 .brain-nucleus-meta-value {
@@ -3701,6 +4295,39 @@ meter {
 }
 
 @media (max-width: 480px) {
+  .brain-map-controls {
+    top: 10px;
+    right: 10px;
+    gap: 6px;
+  }
+
+  .brain-map-controls button {
+    width: 32px;
+    height: 32px;
+  }
+
+  .brain-map-region-rail {
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    max-width: none;
+  }
+
+  .brain-map-region-rail button {
+    min-height: 42px;
+    padding: 8px;
+    text-align: center;
+  }
+
+  .brain-map-region-rail button span {
+    margin-bottom: 0;
+  }
+
+  .brain-map-region-rail button strong {
+    display: none;
+  }
+
   .brain-nucleus-meta-grid {
     grid-template-columns: 1fr;
   }
@@ -3713,7 +4340,9 @@ meter {
   .brain-nucleus-card::before,
   .brain-nucleus-dot,
   .brain-nucleus-chevron,
-  .brain-nucleus-detail {
+  .brain-nucleus-detail,
+  .brain-map-controls button,
+  .brain-map-region-rail button {
     transition: none;
   }
 
