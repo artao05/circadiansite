@@ -3,7 +3,6 @@
 import { useId, useMemo, useState, type CSSProperties } from "react";
 import {
   Activity,
-  AlarmClock,
   Bed,
   Clock3,
   Moon,
@@ -33,7 +32,6 @@ type SignalDefinition = {
   reference: number;
   icon: LucideIcon;
   color: string;
-  markerY: number;
   description: string;
 };
 
@@ -44,18 +42,32 @@ type Preset = {
   copy: string;
 };
 
-type ClockEstimate = {
-  id: string;
+type RhythmKey = "scn" | "sleep" | "metabolic" | "activity";
+
+type RhythmDefinition = {
+  id: RhythmKey;
   label: string;
+  shortLabel: string;
   cue: string;
-  offset: number;
   color: string;
+  amplitude: number;
+  referencePhase: number;
+  weights: Partial<Record<SignalKey, number>>;
 };
 
-type AdaptationStep = {
-  day: number;
-  offset: number;
-  left: number;
+type RhythmModel = RhythmDefinition & {
+  phase: number;
+  shift: number;
+  path: string;
+  crestX: number;
+  crestY: number;
+};
+
+type WavePoint = {
+  hour: number;
+  x: number;
+  y: number;
+  positive: number;
 };
 
 type AlignmentTone = "aligned" | "shifted" | "mixed" | "split";
@@ -66,18 +78,22 @@ type AlignmentStatus = {
   copy: string;
 };
 
-const axis = {
-  left: 72,
-  right: 668,
-  top: 42,
-  width: 596,
+const waveAxis = {
+  left: 62,
+  right: 710,
+  top: 52,
+  midY: 178,
+  width: 648,
+  height: 220,
+  coherenceBaseY: 374,
+  coherenceHeight: 96,
 };
 
-const clusterAxis = {
-  min: -3,
-  max: 4.5,
-  left: 92,
-  width: 520,
+const sampleCount = 121;
+
+const phaseShiftRange = {
+  min: -4,
+  max: 5,
 };
 
 const referenceSchedule: SignalSchedule = {
@@ -99,9 +115,7 @@ const signalDefinitions: SignalDefinition[] = [
     reference: referenceSchedule.lightOff,
     icon: SunMedium,
     color: "var(--amber)",
-    markerY: 102,
-    description:
-      "Evening light is a strong timing signal for the brain clock.",
+    description: "Moves the light-tuned SCN rhythm most strongly.",
   },
   {
     key: "sleepStart",
@@ -113,9 +127,7 @@ const signalDefinitions: SignalDefinition[] = [
     reference: referenceSchedule.sleepStart,
     icon: Moon,
     color: "var(--violet)",
-    markerY: 126,
-    description:
-      "The sleep window helps mark biological night in this teaching model.",
+    description: "Helps mark the start of biological night.",
   },
   {
     key: "sleepEnd",
@@ -127,9 +139,7 @@ const signalDefinitions: SignalDefinition[] = [
     reference: referenceSchedule.sleepEnd,
     icon: Bed,
     color: "var(--green)",
-    markerY: 150,
-    description:
-      "Wake time is a morning anchor that can pull rhythms earlier or later.",
+    description: "Acts as a morning anchor for the day rhythm.",
   },
   {
     key: "lastMeal",
@@ -141,9 +151,7 @@ const signalDefinitions: SignalDefinition[] = [
     reference: referenceSchedule.lastMeal,
     icon: Utensils,
     color: "var(--coral)",
-    markerY: 174,
-    description:
-      "Food timing is a particularly visible cue for metabolic clocks.",
+    description: "Moves the food-tuned metabolic rhythm most strongly.",
   },
   {
     key: "activityPeak",
@@ -155,9 +163,68 @@ const signalDefinitions: SignalDefinition[] = [
     reference: referenceSchedule.activityPeak,
     icon: Activity,
     color: "var(--cyan)",
-    markerY: 198,
-    description:
-      "Movement and exertion add timing evidence for active biological day.",
+    description: "Adds timing evidence for active biological day.",
+  },
+];
+
+const rhythmDefinitions: RhythmDefinition[] = [
+  {
+    id: "scn",
+    label: "SCN / light rhythm",
+    shortLabel: "SCN",
+    cue: "light-tuned",
+    color: "var(--amber)",
+    amplitude: 72,
+    referencePhase: 15,
+    weights: {
+      lightOff: 0.62,
+      sleepStart: 0.22,
+      sleepEnd: 0.16,
+    },
+  },
+  {
+    id: "sleep",
+    label: "Sleep / night rhythm",
+    shortLabel: "Sleep",
+    cue: "night window",
+    color: "var(--violet)",
+    amplitude: 58,
+    referencePhase: 15,
+    weights: {
+      sleepStart: 0.45,
+      sleepEnd: 0.35,
+      lightOff: 0.2,
+    },
+  },
+  {
+    id: "metabolic",
+    label: "Meal / metabolic rhythm",
+    shortLabel: "Meal",
+    cue: "food-tuned",
+    color: "var(--coral)",
+    amplitude: 64,
+    referencePhase: 15,
+    weights: {
+      lastMeal: 0.68,
+      sleepStart: 0.12,
+      activityPeak: 0.12,
+      lightOff: 0.08,
+    },
+  },
+  {
+    id: "activity",
+    label: "Activity / day rhythm",
+    shortLabel: "Activity",
+    cue: "movement-tuned",
+    color: "var(--green)",
+    amplitude: 52,
+    referencePhase: 15,
+    weights: {
+      activityPeak: 0.58,
+      sleepEnd: 0.22,
+      lightOff: 0.12,
+      lastMeal: 0.08,
+    },
   },
 ];
 
@@ -190,7 +257,7 @@ const presets: Preset[] = [
       lastMeal: 22.5,
       activityPeak: 15,
     },
-    copy: "The metabolic cue points later than the light and sleep cues.",
+    copy: "The food cue moves later while the light-tuned rhythm stays closer to the reference day.",
   },
   {
     id: "mixed-cues",
@@ -202,7 +269,7 @@ const presets: Preset[] = [
       lastMeal: 22.5,
       activityPeak: 10,
     },
-    copy: "Light and food point later while activity still points earlier, so the evidence is less unified.",
+    copy: "Light and food point later while activity points earlier, so the waves no longer crest together.",
   },
   {
     id: "weekend-drift",
@@ -247,41 +314,16 @@ function formatOffset(offset: number) {
   return `${offset > 0 ? "+" : ""}${roundToTenth(offset)} h`;
 }
 
-function describeBodyOffset(offset: number) {
-  const absoluteOffset = Math.abs(offset);
-
-  if (absoluteOffset < 0.25) {
-    return "body time is close to wall time in this model";
-  }
-
-  const direction = offset > 0 ? "lags" : "leads";
-  return `body time ${direction} wall time by about ${roundToTenth(
-    absoluteOffset,
-  )} h`;
-}
-
-function hourToAxisX(hour: number) {
-  return axis.left + (hour / 24) * axis.width;
+function hourToX(hour: number) {
+  return waveAxis.left + (hour / 24) * waveAxis.width;
 }
 
 function timeToX(hour: number) {
-  return hourToAxisX(normalizeHour(hour));
+  return hourToX(normalizeHour(hour));
 }
 
-function offsetToX(offset: number) {
-  const bounded = clamp(offset, clusterAxis.min, clusterAxis.max);
-  return (
-    clusterAxis.left +
-    ((bounded - clusterAxis.min) / (clusterAxis.max - clusterAxis.min)) *
-      clusterAxis.width
-  );
-}
-
-function offsetToPercent(offset: number) {
-  const bounded = clamp(offset, clusterAxis.min, clusterAxis.max);
-  return (
-    ((bounded - clusterAxis.min) / (clusterAxis.max - clusterAxis.min)) * 100
-  );
+function getSignalShift(schedule: SignalSchedule, key: SignalKey) {
+  return schedule[key] - referenceSchedule[key];
 }
 
 function getSleepSegments(schedule: SignalSchedule) {
@@ -296,142 +338,197 @@ function getSleepSegments(schedule: SignalSchedule) {
   ];
 }
 
-function getSignalShift(schedule: SignalSchedule, key: SignalKey) {
-  return schedule[key] - referenceSchedule[key];
+function signedCircularDistance(hour: number, reference: number) {
+  const diff = normalizeHour(hour) - normalizeHour(reference);
+  if (diff > 12) return diff - 24;
+  if (diff < -12) return diff + 24;
+  return diff;
 }
 
-function buildClockEstimates(schedule: SignalSchedule): ClockEstimate[] {
-  const lightShift = getSignalShift(schedule, "lightOff");
-  const sleepStartShift = getSignalShift(schedule, "sleepStart");
-  const sleepEndShift = getSignalShift(schedule, "sleepEnd");
-  const mealShift = getSignalShift(schedule, "lastMeal");
-  const activityShift = getSignalShift(schedule, "activityPeak");
-
-  return [
-    {
-      id: "central",
-      label: "Light clock",
-      cue: "brain / SCN",
-      offset: clamp(
-        lightShift * 0.56 + sleepStartShift * 0.24 + sleepEndShift * 0.12,
-        clusterAxis.min,
-        clusterAxis.max,
-      ),
-      color: "var(--cyan)",
-    },
-    {
-      id: "sleep",
-      label: "Sleep clock",
-      cue: "night window",
-      offset: clamp(
-        sleepStartShift * 0.42 + sleepEndShift * 0.42 + lightShift * 0.16,
-        clusterAxis.min,
-        clusterAxis.max,
-      ),
-      color: "var(--violet)",
-    },
-    {
-      id: "metabolic",
-      label: "Meal clock",
-      cue: "metabolism",
-      offset: clamp(
-        mealShift * 0.66 +
-          sleepStartShift * 0.14 +
-          lightShift * 0.1 +
-          activityShift * 0.1,
-        clusterAxis.min,
-        clusterAxis.max,
-      ),
-      color: "var(--coral)",
-    },
-    {
-      id: "activity",
-      label: "Activity clock",
-      cue: "movement",
-      offset: clamp(
-        activityShift * 0.48 +
-          sleepEndShift * 0.22 +
-          lightShift * 0.14 +
-          mealShift * 0.12,
-        clusterAxis.min,
-        clusterAxis.max,
-      ),
-      color: "var(--green)",
-    },
-  ];
+function circularDistance(hour: number, reference: number) {
+  return Math.abs(signedCircularDistance(hour, reference));
 }
 
-function getStatus(spread: number, meanOffset: number): AlignmentStatus {
-  const absoluteMean = Math.abs(meanOffset);
+function circularMeanHour(hours: number[]) {
+  const vectors = hours.reduce(
+    (total, hour) => {
+      const angle = (normalizeHour(hour) / 24) * Math.PI * 2;
+      return {
+        x: total.x + Math.cos(angle),
+        y: total.y + Math.sin(angle),
+      };
+    },
+    { x: 0, y: 0 },
+  );
+  const angle = Math.atan2(vectors.y / hours.length, vectors.x / hours.length);
+  return normalizeHour((angle / (Math.PI * 2)) * 24);
+}
 
-  if (spread < 0.7 && absoluteMean < 0.7) {
+function buildWaveSamples(phase: number, amplitude: number): WavePoint[] {
+  return Array.from({ length: sampleCount }, (_, index) => {
+    const hour = (index / (sampleCount - 1)) * 24;
+    const angle = ((hour - phase) / 24) * Math.PI * 2;
+    const wave = Math.cos(angle);
+    const positive = (wave + 1) / 2;
+
+    return {
+      hour,
+      x: hourToX(hour),
+      y: waveAxis.midY - wave * amplitude,
+      positive,
+    };
+  });
+}
+
+function pointsToPath(points: Array<{ x: number; y: number }>) {
+  return points
+    .map((point, index) => `${index === 0 ? "M" : "L"}${roundToTenth(point.x)} ${roundToTenth(point.y)}`)
+    .join(" ");
+}
+
+function getRhythmShift(schedule: SignalSchedule, rhythm: RhythmDefinition) {
+  const shift = Object.entries(rhythm.weights).reduce(
+    (total, [key, weight]) =>
+      total + getSignalShift(schedule, key as SignalKey) * (weight ?? 0),
+    0,
+  );
+
+  return clamp(shift, phaseShiftRange.min, phaseShiftRange.max);
+}
+
+function buildRhythms(schedule: SignalSchedule): RhythmModel[] {
+  return rhythmDefinitions.map((rhythm) => {
+    const shift = getRhythmShift(schedule, rhythm);
+    const phase = normalizeHour(rhythm.referencePhase + shift);
+    const samples = buildWaveSamples(phase, rhythm.amplitude);
+
+    return {
+      ...rhythm,
+      phase,
+      shift,
+      path: pointsToPath(samples),
+      crestX: timeToX(phase),
+      crestY: waveAxis.midY - rhythm.amplitude,
+    };
+  });
+}
+
+function buildCoherenceArea(rhythms: RhythmModel[]) {
+  const topPoints = Array.from({ length: sampleCount }, (_, index) => {
+    const hour = (index / (sampleCount - 1)) * 24;
+    const values = rhythms.map((rhythm) => {
+      const angle = ((hour - rhythm.phase) / 24) * Math.PI * 2;
+      return clamp((Math.cos(angle) + 1) / 2, 0.02, 1);
+    });
+    const product =
+      values.reduce((total, value) => total * value, 1) ** (1 / values.length);
+
+    return {
+      x: hourToX(hour),
+      y: waveAxis.coherenceBaseY - product * waveAxis.coherenceHeight,
+    };
+  });
+
+  const first = topPoints[0];
+  const last = topPoints[topPoints.length - 1];
+  return `${pointsToPath(topPoints)} L${roundToTenth(last.x)} ${waveAxis.coherenceBaseY} L${roundToTenth(first.x)} ${waveAxis.coherenceBaseY} Z`;
+}
+
+function getStatus(
+  rhythms: RhythmModel[],
+  coherenceScore: number,
+  meanShift: number,
+): AlignmentStatus {
+  const scn = rhythms.find((rhythm) => rhythm.id === "scn");
+  const metabolic = rhythms.find((rhythm) => rhythm.id === "metabolic");
+  const activity = rhythms.find((rhythm) => rhythm.id === "activity");
+  const sleep = rhythms.find((rhythm) => rhythm.id === "sleep");
+  const mealAgainstScn =
+    scn && metabolic
+      ? signedCircularDistance(metabolic.phase, scn.phase)
+      : 0;
+  const lightAgainstMeal =
+    scn && metabolic
+      ? signedCircularDistance(scn.phase, metabolic.phase)
+      : 0;
+  const activityAgainstScn =
+    scn && activity
+      ? signedCircularDistance(activity.phase, scn.phase)
+      : 0;
+  const sleepAgainstScn =
+    scn && sleep ? signedCircularDistance(sleep.phase, scn.phase) : 0;
+
+  if (coherenceScore >= 86 && Math.abs(meanShift) < 0.75) {
     return {
       tone: "aligned",
-      title: "Aligned signal cluster",
-      copy: "The simplified clocks sit close together because the cues tell a consistent story about day and night.",
+      title: "Aligned wave overlap",
+      copy: "The waves crest together, so the simplified combined rhythm is tall and coherent.",
     };
   }
 
-  if (spread < 1.4 && absoluteMean >= 1.2) {
+  if (coherenceScore >= 78) {
     return {
       tone: "shifted",
       title: "Coherent but shifted",
-      copy: "Several cues lean in the same direction, so the model moves body time as a group instead of splitting the clocks apart.",
+      copy: "Several cues move in the same direction, so the waves stay organized while the whole pattern shifts in time.",
     };
   }
 
-  if (spread < 1.8) {
+  if (mealAgainstScn > 1.25) {
+    return {
+      tone: "split",
+      title: "Late meal split",
+      copy: "Meals moved later, so the metabolic rhythm trails while the light-tuned SCN rhythm stays closer to the light schedule.",
+    };
+  }
+
+  if (lightAgainstMeal > 1.25) {
+    return {
+      tone: "split",
+      title: "Late light split",
+      copy: "Light moved later, so the SCN rhythm trails while the food-tuned rhythm stays nearer to the meal schedule.",
+    };
+  }
+
+  if (Math.abs(activityAgainstScn) > 1.15 || Math.abs(sleepAgainstScn) > 1.15) {
     return {
       tone: "mixed",
-      title: "Readable, slightly mixed",
-      copy: "The cues are still mostly clustered, but one system receives a stronger timing nudge than the others.",
+      title: "Mixed timing evidence",
+      copy: "One rhythm is no longer cresting with the others, so the overlap shape becomes lower and broader.",
     };
   }
 
   return {
-    tone: "split",
-    title: "Split evidence",
-    copy: "Different cues point to different biological times, so the model spreads the clock estimates apart.",
+    tone: "mixed",
+    title: "Readable, slightly mixed",
+    copy: "The signals still mostly agree, but the crests are spread enough to soften the combined rhythm.",
   };
 }
 
 function analyzeSchedule(schedule: SignalSchedule, wallHour: number) {
-  const estimates = buildClockEstimates(schedule);
-  const offsets = estimates.map((estimate) => estimate.offset);
-  const minOffset = Math.min(...offsets);
-  const maxOffset = Math.max(...offsets);
-  const spread = maxOffset - minOffset;
-  const meanOffset =
-    offsets.reduce((total, offset) => total + offset, 0) / offsets.length;
-  const alignmentScore = clamp(
-    Math.round(100 - spread * 22 - Math.abs(meanOffset) * 8),
-    0,
-    100,
+  const rhythms = buildRhythms(schedule);
+  const phases = rhythms.map((rhythm) => rhythm.phase);
+  const meanPhase = circularMeanHour(phases);
+  const spread = Math.max(
+    ...phases.map((phase) => circularDistance(phase, meanPhase)),
   );
-  const bodyHour = normalizeHour(wallHour - meanOffset);
+  const meanShift =
+    rhythms.reduce((total, rhythm) => total + rhythm.shift, 0) /
+    rhythms.length;
+  const coherenceScore = clamp(Math.round(100 - spread * 22), 0, 100);
+  const coherencePath = buildCoherenceArea(rhythms);
+  const bodyHour = normalizeHour(wallHour - meanShift);
 
   return {
-    estimates,
-    minOffset,
-    maxOffset,
+    rhythms,
+    meanPhase,
     spread,
-    meanOffset,
-    alignmentScore,
+    meanShift,
+    coherenceScore,
+    coherencePath,
     bodyHour,
-    status: getStatus(spread, meanOffset),
+    status: getStatus(rhythms, coherenceScore, meanShift),
   };
-}
-
-function buildAdaptationSteps(meanOffset: number): AdaptationStep[] {
-  return [1, 2, 3, 4, 5].map((day) => {
-    const offset = meanOffset * (1 - Math.exp(-day / 2.25));
-
-    return {
-      day,
-      offset,
-      left: offsetToPercent(offset),
-    };
-  });
 }
 
 function getCssVars(vars: Record<`--${string}`, string>) {
@@ -450,16 +547,12 @@ export function EntrainmentDemo() {
     () => analyzeSchedule(schedule, wallHour),
     [schedule, wallHour],
   );
-  const adaptationSteps = useMemo(
-    () => buildAdaptationSteps(model.meanOffset),
-    [model.meanOffset],
-  );
   const selectedPreset = presets.find((preset) => preset.id === activePreset);
   const presetCopy =
     selectedPreset?.copy ??
-    "Custom signal mix: the model recomputes the clock cluster from the edited cues.";
+    "Custom signal mix: the model recomputes how the rhythm waves overlap.";
   const scoreStyle = getCssVars({
-    "--alignment-score": `${model.alignmentScore}%`,
+    "--alignment-score": `${model.coherenceScore}%`,
   });
   const readoutStatus =
     model.status.tone === "split"
@@ -479,21 +572,22 @@ export function EntrainmentDemo() {
   };
 
   return (
-    <div className="signal-alignment-studio interactive-block entrainment">
+    <div className="signal-alignment-studio rhythm-overlap-studio interactive-block entrainment">
       <section
-        className="entrainment-sandbox"
+        className="entrainment-sandbox overlap-intro"
         aria-labelledby={`${id}-studio-title`}
       >
         <div className="signal-studio-header">
           <div>
-            <p className="kicker">Signal Alignment Studio</p>
+            <p className="kicker">Overlapping Rhythms Studio</p>
             <h3 id={`${id}-studio-title`}>
-              Your body does not read the clock. It reads evidence.
+              Your body does not read the clock. It reads overlapping evidence.
             </h3>
             <p className="microcopy">
-              Move the signals and watch a simplified clock cluster respond.
-              The display is educational: it sketches timing evidence, not a
-              diagnosis, treatment plan, or medication-timing recommendation.
+              Move light, sleep, food, and activity cues to see whether their
+              rhythm waves reinforce or split apart. This is an educational
+              model, not a measurement of circadian phase or a recommendation
+              to change sleep, meals, activity, or medication timing.
             </p>
           </div>
           <div className="studio-reset">
@@ -526,403 +620,289 @@ export function EntrainmentDemo() {
           ))}
         </div>
         <p className="microcopy">{presetCopy}</p>
-
-        <fieldset className="signal-control-grid">
-          <legend className="sr-only">Edit the timing cues</legend>
-          {signalDefinitions.map((signal) => {
-            const Icon = signal.icon;
-            const controlId = `${id}-${signal.key}`;
-
-            return (
-              <label className="range-control" key={signal.key}>
-                <span>
-                  <span className="range-label">
-                    <Icon size={16} aria-hidden="true" />
-                    {signal.label}
-                  </span>
-                  <strong>
-                    <output htmlFor={controlId}>
-                      {formatTime(schedule[signal.key], true)}
-                    </output>
-                  </strong>
-                </span>
-                <input
-                  id={controlId}
-                  type="range"
-                  min={signal.min}
-                  max={signal.max}
-                  step={signal.step}
-                  value={schedule[signal.key]}
-                  aria-label={`Adjust ${signal.label.toLowerCase()} time`}
-                  onChange={(event) =>
-                    updateSignal(signal.key, Number(event.currentTarget.value))
-                  }
-                />
-                <span className="range-description">
-                  {signal.description}
-                </span>
-              </label>
-            );
-          })}
-        </fieldset>
       </section>
 
-      <div className="entrainment-grid">
+      <div className="entrainment-grid overlap-grid">
         <section
-          className="signal-timeline-panel entrainment-visual visual-panel"
+          className="rhythm-wave-panel entrainment-visual visual-panel"
           aria-labelledby={`${id}-visual-title`}
         >
-          <div className="signal-row">
+          <div className="signal-row overlap-heading">
             <span id={`${id}-visual-title`}>
               <Clock3 size={18} aria-hidden="true" />
-              Wall time schedule
-            </span>
-            <span>
-              <AlarmClock size={18} aria-hidden="true" />
-              Body time estimate
+              24-hour rhythm overlap
             </span>
           </div>
 
           <svg
-            className="studio-svg timeline-svg"
-            viewBox="0 0 720 238"
+            className="studio-svg rhythm-wave-svg"
+            viewBox="0 0 760 430"
             role="img"
-            aria-labelledby={`${id}-timeline-title ${id}-timeline-desc`}
+            aria-labelledby={`${id}-wave-title ${id}-wave-desc`}
           >
-            <title id={`${id}-timeline-title`}>
-              Twenty-four hour wall-time signal schedule
+            <title id={`${id}-wave-title`}>
+              Overlapping circadian rhythm waves
             </title>
-            <desc id={`${id}-timeline-desc`}>
-              A wall-time ruler showing light, sleep, meal, and activity cues
-              across one day.
+            <desc id={`${id}-wave-desc`}>
+              Four phase-shifted rhythm waves for light, sleep, meals, and
+              activity, with a filled coherence shape that grows when the waves
+              overlap.
             </desc>
+            <defs>
+              <linearGradient id={`${id}-coherence-fill`} x1="0" x2="1">
+                <stop offset="0%" stopColor="rgba(84, 214, 194, 0.08)" />
+                <stop offset="48%" stopColor="rgba(84, 214, 194, 0.42)" />
+                <stop offset="100%" stopColor="rgba(247, 178, 103, 0.34)" />
+              </linearGradient>
+            </defs>
+
             <rect
-              x={axis.left}
-              y="50"
-              width={axis.width}
-              height="22"
-              rx="11"
-              fill="rgba(16, 24, 32, 0.08)"
+              x={waveAxis.left}
+              y={waveAxis.top}
+              width={waveAxis.width}
+              height={waveAxis.height}
+              rx="16"
+              fill="rgba(255, 252, 246, 0.58)"
             />
             <rect
               x={timeToX(6)}
-              y="50"
+              y={waveAxis.top}
               width={timeToX(18) - timeToX(6)}
-              height="22"
-              rx="11"
-              fill="rgba(247, 178, 103, 0.3)"
+              height={waveAxis.height}
+              rx="0"
+              fill="rgba(247, 178, 103, 0.12)"
             />
             {getSleepSegments(schedule).map((segment) => (
               <rect
                 key={`${segment.start}-${segment.end}`}
-                x={hourToAxisX(segment.start)}
-                y="78"
-                width={hourToAxisX(segment.end) - hourToAxisX(segment.start)}
-                height="14"
-                rx="7"
-                fill="rgba(159, 140, 255, 0.36)"
+                x={hourToX(segment.start)}
+                y={waveAxis.top}
+                width={hourToX(segment.end) - hourToX(segment.start)}
+                height={waveAxis.height}
+                fill="rgba(16, 24, 32, 0.06)"
               />
             ))}
+
             {[0, 6, 12, 18, 24].map((hour) => (
               <g key={hour}>
                 <line
-                  x1={axis.left + (hour / 24) * axis.width}
-                  x2={axis.left + (hour / 24) * axis.width}
-                  y1="42"
-                  y2="212"
-                  stroke="rgba(16, 24, 32, 0.12)"
+                  x1={hourToX(hour)}
+                  x2={hourToX(hour)}
+                  y1={waveAxis.top - 18}
+                  y2={waveAxis.coherenceBaseY + 12}
+                  stroke={
+                    hour === 0 || hour === 24
+                      ? "rgba(16, 24, 32, 0.18)"
+                      : "rgba(16, 24, 32, 0.1)"
+                  }
                 />
                 <text
-                  x={axis.left + (hour / 24) * axis.width}
-                  y="32"
+                  x={hourToX(hour)}
+                  y={waveAxis.top - 26}
                   fill="var(--muted)"
                   fontSize="12"
-                  fontWeight="800"
+                  fontWeight="850"
                   textAnchor="middle"
                 >
                   {hour === 24 ? "24" : String(hour).padStart(2, "0")}
                 </text>
               </g>
             ))}
+
+            <line
+              x1={waveAxis.left}
+              x2={waveAxis.right}
+              y1={waveAxis.midY}
+              y2={waveAxis.midY}
+              stroke="rgba(16, 24, 32, 0.18)"
+              strokeDasharray="4 8"
+            />
             <text
-              x="18"
-              y="65"
+              x={waveAxis.left}
+              y={waveAxis.top - 2}
               fill="var(--muted)"
               fontSize="12"
-              fontWeight="800"
+              fontWeight="850"
             >
-              daylight
+              rhythm waves
             </text>
             <text
-              x="18"
-              y="90"
+              x={waveAxis.left}
+              y={waveAxis.coherenceBaseY - waveAxis.coherenceHeight - 12}
               fill="var(--muted)"
               fontSize="12"
-              fontWeight="800"
+              fontWeight="850"
             >
-              sleep
+              combined overlap
             </text>
-            {signalDefinitions.map((signal) => {
+
+            <path
+              d={model.coherencePath}
+              fill={`url(#${id}-coherence-fill)`}
+              stroke="rgba(84, 214, 194, 0.6)"
+              strokeWidth="2"
+            />
+            <line
+              x1={waveAxis.left}
+              x2={waveAxis.right}
+              y1={waveAxis.coherenceBaseY}
+              y2={waveAxis.coherenceBaseY}
+              stroke="rgba(16, 24, 32, 0.18)"
+            />
+
+            {model.rhythms.map((rhythm) => (
+              <g key={rhythm.id}>
+                <path
+                  d={rhythm.path}
+                  fill="none"
+                  stroke={rhythm.color}
+                  strokeWidth="4"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  opacity={rhythm.id === "sleep" ? 0.72 : 0.86}
+                />
+                <circle
+                  cx={rhythm.crestX}
+                  cy={rhythm.crestY}
+                  r="7"
+                  fill={rhythm.color}
+                  stroke="var(--signal-paper)"
+                  strokeWidth="3"
+                />
+              </g>
+            ))}
+
+            {signalDefinitions.map((signal, index) => {
               const x = timeToX(schedule[signal.key]);
-              const shift = getSignalShift(schedule, signal.key);
 
               return (
                 <g key={signal.key}>
                   <line
                     x1={x}
                     x2={x}
-                    y1="96"
-                    y2={signal.markerY}
+                    y1={waveAxis.top + 8}
+                    y2={waveAxis.coherenceBaseY}
                     stroke={signal.color}
-                    strokeWidth="2"
-                    strokeDasharray="4 4"
+                    strokeWidth="1.5"
+                    strokeDasharray="3 9"
+                    opacity="0.54"
                   />
                   <circle
                     cx={x}
-                    cy={signal.markerY}
-                    r="7"
+                    cy={waveAxis.coherenceBaseY + 24 + (index % 2) * 22}
+                    r="6"
                     fill={signal.color}
-                    stroke="var(--control-bg)"
+                    stroke="var(--signal-paper)"
                     strokeWidth="3"
                   />
                   <text
                     x={x}
-                    y={signal.markerY + 24}
+                    y={waveAxis.coherenceBaseY + 42 + (index % 2) * 22}
                     fill="var(--ink)"
-                    fontSize="12"
-                    fontWeight="800"
+                    fontSize="11"
+                    fontWeight="850"
                     textAnchor="middle"
                   >
                     {signal.shortLabel}
                   </text>
-                  <text
-                    x={x}
-                    y={signal.markerY + 39}
-                    fill="var(--muted)"
-                    fontSize="11"
-                    textAnchor="middle"
-                  >
-                    {formatOffset(shift)}
-                  </text>
                 </g>
               );
             })}
+
+            <line
+              x1={timeToX(wallHour)}
+              x2={timeToX(wallHour)}
+              y1={waveAxis.top - 8}
+              y2={waveAxis.coherenceBaseY + 60}
+              stroke="rgba(16, 24, 32, 0.52)"
+              strokeWidth="2"
+            />
+            <text
+              x={Math.min(waveAxis.right - 16, timeToX(wallHour) + 10)}
+              y={waveAxis.top + 16}
+              fill="var(--ink)"
+              fontSize="11"
+              fontWeight="900"
+            >
+              now
+            </text>
           </svg>
 
-          <div className="clock-cluster-section">
-            <div className="signal-row">
-              <span>Clock cluster</span>
-              <span>{formatOffset(model.meanOffset)} average shift</span>
-            </div>
-            <svg
-              className="studio-svg cluster-svg"
-              viewBox="0 0 720 278"
-              role="img"
-              aria-labelledby={`${id}-cluster-title ${id}-cluster-desc`}
-            >
-              <title id={`${id}-cluster-title`}>
-                Wall time versus body time clock cluster
-              </title>
-              <desc id={`${id}-cluster-desc`}>
-                Four estimated tissue clocks arranged by phase offset from wall
-                time.
-              </desc>
-              <rect
-                x={offsetToX(model.minOffset)}
-                y="34"
-                width={offsetToX(model.maxOffset) - offsetToX(model.minOffset)}
-                height="204"
-                rx="10"
-                fill="rgba(255, 107, 107, 0.14)"
-              />
-              {[-3, -2, -1, 0, 1, 2, 3, 4].map((offset) => (
-                <g key={offset}>
-                  <line
-                    x1={offsetToX(offset)}
-                    x2={offsetToX(offset)}
-                    y1="28"
-                    y2="244"
-                    stroke={
-                      offset === 0
-                        ? "rgba(16, 24, 32, 0.34)"
-                        : "rgba(16, 24, 32, 0.1)"
+          <div className="rhythm-legend" aria-label="Rhythm wave legend">
+            {model.rhythms.map((rhythm) => (
+              <div key={rhythm.id}>
+                <i style={getCssVars({ "--legend-color": rhythm.color })} />
+                <span>{rhythm.label}</span>
+                <strong>{formatOffset(rhythm.shift)}</strong>
+              </div>
+            ))}
+          </div>
+
+          <fieldset className="signal-control-grid overlap-control-grid">
+            <legend className="sr-only">Edit the timing cues</legend>
+            {signalDefinitions.map((signal) => {
+              const Icon = signal.icon;
+              const controlId = `${id}-${signal.key}`;
+
+              return (
+                <label className="range-control" key={signal.key}>
+                  <span>
+                    <span className="range-label">
+                      <Icon size={16} aria-hidden="true" />
+                      {signal.label}
+                    </span>
+                    <strong>
+                      <output htmlFor={controlId}>
+                        {formatTime(schedule[signal.key], true)}
+                      </output>
+                    </strong>
+                  </span>
+                  <input
+                    id={controlId}
+                    type="range"
+                    min={signal.min}
+                    max={signal.max}
+                    step={signal.step}
+                    value={schedule[signal.key]}
+                    aria-label={`Adjust ${signal.label.toLowerCase()} time`}
+                    onChange={(event) =>
+                      updateSignal(
+                        signal.key,
+                        Number(event.currentTarget.value),
+                      )
                     }
-                    strokeWidth={offset === 0 ? 2 : 1}
                   />
-                  <text
-                    x={offsetToX(offset)}
-                    y="266"
-                    fill="var(--muted)"
-                    fontSize="12"
-                    fontWeight="800"
-                    textAnchor="middle"
-                  >
-                    {offset > 0 ? `+${offset}` : offset}
-                  </text>
-                </g>
-              ))}
-              <text
-                x={offsetToX(0)}
-                y="18"
-                fill="var(--ink)"
-                fontSize="12"
-                fontWeight="900"
-                textAnchor="middle"
-              >
-                wall time
-              </text>
-              <text
-                x={clusterAxis.left}
-                y="266"
-                fill="var(--muted)"
-                fontSize="12"
-                fontWeight="800"
-                textAnchor="end"
-              >
-                earlier
-              </text>
-              <text
-                x={clusterAxis.left + clusterAxis.width}
-                y="266"
-                fill="var(--muted)"
-                fontSize="12"
-                fontWeight="800"
-                textAnchor="start"
-              >
-                later
-              </text>
-              {model.estimates.map((estimate, index) => {
-                const y = 58 + index * 52;
-                const x = offsetToX(estimate.offset);
-
-                return (
-                  <g key={estimate.id}>
-                    <text
-                      x="18"
-                      y={y + 5}
-                      fill="var(--ink)"
-                      fontSize="13"
-                      fontWeight="900"
-                    >
-                      {estimate.label}
-                    </text>
-                    <text
-                      x="18"
-                      y={y + 22}
-                      fill="var(--muted)"
-                      fontSize="11"
-                      fontWeight="700"
-                    >
-                      {estimate.cue}
-                    </text>
-                    <line
-                      x1={offsetToX(0)}
-                      x2={x}
-                      y1={y}
-                      y2={y}
-                      stroke={estimate.color}
-                      strokeWidth="4"
-                      strokeLinecap="round"
-                      opacity="0.38"
-                    />
-                    <circle
-                      cx={x}
-                      cy={y}
-                      r="10"
-                      fill={estimate.color}
-                      stroke="var(--control-bg)"
-                      strokeWidth="4"
-                    />
-                    <text
-                      x={Math.min(678, x + 18)}
-                      y={y + 5}
-                      fill="var(--ink)"
-                      fontSize="12"
-                      fontWeight="800"
-                    >
-                      {formatOffset(estimate.offset)}
-                    </text>
-                  </g>
-                );
-              })}
-            </svg>
-          </div>
-
-          <div
-            className="adaptation-strip"
-            aria-label="Illustrative repeated cue response"
-          >
-            <div className="signal-row">
-              <span>Repeated cues</span>
-              <span>illustrative response</span>
-            </div>
-            <div className="adaptation-days">
-              {adaptationSteps.map((step) => (
-                <div className="adaptation-day" key={step.day}>
-                  <span>Day {step.day}</span>
-                  <div className="adaptation-track" aria-hidden="true">
-                    <i
-                      style={getCssVars({
-                        "--response-left": `${step.left}%`,
-                      })}
-                    />
-                  </div>
-                  <strong>{formatOffset(step.offset)}</strong>
-                </div>
-              ))}
-            </div>
-            <p>
-              The marker moves partway toward repeated timing evidence instead
-              of jumping instantly.
-            </p>
-          </div>
+                  <span className="range-description">
+                    {signal.description}
+                  </span>
+                </label>
+              );
+            })}
+          </fieldset>
         </section>
 
         <aside
-          className="alignment-readout explain-panel"
+          className="alignment-readout overlap-readout explain-panel"
           data-status={readoutStatus}
           aria-live="polite"
         >
           <p className="kicker">Readout</p>
-          <h3 data-tone={model.status.tone}>
-            {model.status.title}
-          </h3>
+          <h3 data-tone={model.status.tone}>{model.status.title}</h3>
           <p>{model.status.copy}</p>
 
           <div className="readout-details">
-            <div className="readout-time-grid">
-              <div>
-                <span className="readout-label">Wall time</span>
-                <strong className="readout-time">
-                  {formatTime(wallHour)}
-                </strong>
-              </div>
-              <div>
-                <span className="readout-label">
-                  Model body time
-                </span>
-                <strong className="readout-time">
-                  {formatTime(model.bodyHour)}
-                </strong>
-              </div>
-            </div>
-
-            <p className="readout-note">
-              At the current wall-time marker, {describeBodyOffset(model.meanOffset)}.
-            </p>
-
             <div>
               <div className="meter-label">
-                <span>Signal alignment</span>
-                <span>{model.alignmentScore}%</span>
+                <span>Wave coherence</span>
+                <span>{model.coherenceScore}%</span>
               </div>
               <div
                 className="sandbox-meter"
                 role="meter"
-                aria-label="Signal alignment score"
+                aria-label="Rhythm wave coherence score"
                 aria-valuemin={0}
                 aria-valuemax={100}
-                aria-valuenow={model.alignmentScore}
+                aria-valuenow={model.coherenceScore}
               >
                 <i style={scoreStyle} />
               </div>
@@ -930,24 +910,26 @@ export function EntrainmentDemo() {
 
             <dl className="readout-facts">
               <div>
-                <dt>Cluster spread</dt>
-                <dd>
-                  {roundToTenth(model.spread)} h
-                </dd>
+                <dt>Phase spread</dt>
+                <dd>{roundToTenth(model.spread)} h</dd>
               </div>
               <div>
-                <dt>Concept</dt>
-                <dd>
-                  Entrainment
-                </dd>
+                <dt>Body-time sketch</dt>
+                <dd>{formatTime(model.bodyHour)}</dd>
               </div>
             </dl>
+
+            <p className="readout-note">
+              The filled shape is strongest where the wave crests overlap. When
+              one cue shifts away from the others, the product-like overlap
+              drops.
+            </p>
           </div>
 
           <p className="readout-caveat">
-            Entrainment means biological rhythms lock onto repeated signals.
-            Real circadian phase requires measurement and clinical context; this
-            studio only shows why timing evidence can agree, drift, or conflict.
+            Real circadian phase depends on light history, sleep, meals,
+            activity, and individual biology. This studio only shows why timing
+            evidence can agree, drift, or conflict.
           </p>
         </aside>
       </div>

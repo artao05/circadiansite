@@ -57,13 +57,16 @@ d3 motion lucide-react clsx zod
 - **Chapter 4:** reusable drug-timing visual lab with medication tabs, safety
   caveats, and a first full statin scenario showing body route, exposure curve,
   target rhythm, and simplified overlap projection.
-- **Chapter 5:** oxaliplatin chronotherapy story as an evidence timeline.
+- **Chapter 5:** oxaliplatin chronotherapy story as an evidence timeline,
+  including the 2006 randomized trial complication and the 2012 sex-moderation
+  meta-analysis.
 - **Chapter 6:** interactive human clock-gene network with 21 curated nodes,
   63 relationship edges, category coloring, player cards, tissue/disease notes,
   and source link-outs to CircaKB, CIRCA/CircaDB, CGDB, Reactome, NCBI Gene,
   and UniProt.
-- **Closing:** chronomedicine workflow and v2 roadmap for databases and
-  scientific validation.
+- **Closing:** a hypothetical clinical-trial simulator showing how no timing,
+  population-level timing, and personalized timing can change the chance of
+  detecting a fictional time-sensitive treatment effect.
 
 ## Implementation Phases
 
@@ -85,6 +88,8 @@ d3 motion lucide-react clsx zod
    - Implement the Chapter 4 drug-timing lab with reusable scenario data, curve
      helpers, dose-time controls, duration toggles, body-route diagrams, and
      scaffolded future visual models for the remaining medication tabs.
+   - Implement the final clinical-trial simulator with repeated randomized runs,
+     simplified approval scorekeeping, and explicit fictional-drug caveats.
    - Implement the Chapter 6 clock-gene network with node selection, category
      filtering, source tab, edge legends, and external gene/protein links.
 

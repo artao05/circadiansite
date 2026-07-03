@@ -8,7 +8,8 @@ const plates = [
   "/oxaliplatin_neuropathy_1781491364986.jpg",
   "/oxaliplatin_mouse_1781491376492.jpg",
   "/oxaliplatin_chronomodulation_1781491386150.jpg",
-  "/oxaliplatin_personalization_1781491394151.jpg"
+  "/oxaliplatin_personalization_1781491394151.jpg",
+  "/oxaliplatin_chronomodulation_1781491386150.jpg",
 ];
 
 export function OxaliplatinTimeline() {
@@ -26,7 +27,6 @@ export function OxaliplatinTimeline() {
         margin: "0 auto",
       }}
     >
-      {/* Left: Retro Image Plate Container */}
       <div
         className="visual-panel"
         style={{
@@ -34,7 +34,7 @@ export function OxaliplatinTimeline() {
           width: "100%",
           aspectRatio: "1 / 1",
           background: "#0a0f14",
-          borderRadius: "16px",
+          borderRadius: "8px",
           border: "1px solid rgba(255,255,255,0.08)",
           boxShadow: "0 20px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1)",
           overflow: "hidden",
@@ -42,9 +42,9 @@ export function OxaliplatinTimeline() {
       >
         {plates.map((src, index) => (
           <Image
-            key={src}
+            key={`${src}-${index}`}
             src={src}
-            alt={`Scientific plate ${index + 1}`}
+            alt={`Oxaliplatin case study visual ${index + 1}`}
             fill
             priority={index === 0}
             unoptimized
@@ -58,7 +58,6 @@ export function OxaliplatinTimeline() {
             }}
           />
         ))}
-        {/* Subtle overlay to simulate paper texture or CRT scanline if desired, for now just a glossy inset */}
         <div style={{
           position: "absolute",
           inset: 0,
@@ -67,7 +66,6 @@ export function OxaliplatinTimeline() {
         }} />
       </div>
 
-      {/* Right: Narrative Steps */}
       <div
         className="narrative-steps"
         style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
@@ -83,7 +81,7 @@ export function OxaliplatinTimeline() {
                 gap: "1.25rem",
                 textAlign: "left",
                 padding: "1.5rem",
-                borderRadius: "12px",
+                borderRadius: "8px",
                 background: isActive ? "rgba(255, 249, 239, 0.05)" : "transparent",
                 border: isActive
                   ? "1px solid rgba(255, 255, 255, 0.1)"
@@ -111,7 +109,7 @@ export function OxaliplatinTimeline() {
                     fontWeight: 700,
                     color: isActive ? "#06b6d4" : "#4b5563",
                     textTransform: "uppercase",
-                    letterSpacing: "1px",
+                    letterSpacing: 0,
                   }}
                 >
                   {event.year}
@@ -136,6 +134,17 @@ export function OxaliplatinTimeline() {
             </button>
           );
         })}
+        <p
+          style={{
+            margin: "0.35rem 0 0",
+            color: "rgba(255, 249, 239, 0.58)",
+            fontSize: "0.88rem",
+            lineHeight: 1.55,
+          }}
+        >
+          Sources: giacchetti-2006, giacchetti-2012, cederroth-2019. This case
+          study is educational and does not recommend chemotherapy timing.
+        </p>
       </div>
     </div>
   );

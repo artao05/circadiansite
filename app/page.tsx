@@ -1,15 +1,12 @@
 import {
   ArrowDown,
-  BookOpen,
-  Database,
   Dna,
   FlaskConical,
   Microscope,
   Pill,
-  ShieldCheck,
-  Sparkles,
 } from "lucide-react";
 import { BodyClockTimeline } from "./components/BodyClockTimeline";
+import { ClinicalTrialSimulator } from "./components/ClinicalTrialSimulator";
 import { CircadianSandbox } from "./components/CircadianSandbox";
 import { InteractiveBrainMap } from "./components/InteractiveBrainMap";
 import { ClockMechanicsSection } from "./components/ClockMechanicsSection";
@@ -18,22 +15,15 @@ import { EntrainmentDemo } from "./components/EntrainmentDemo";
 import { GeneNetwork } from "./components/GeneNetwork";
 import { OxaliplatinTimeline } from "./components/OxaliplatinTimeline";
 import { RhythmLab } from "./components/RhythmLab";
-import { ChapterIntro } from "./components/ChapterIntro";
 import {
   chapters,
   citations,
   claimMatrix,
-  roadmapItems,
   timingSignals,
-  workflowSteps,
 } from "./content/site-data";
 import { CircadianTimeProvider } from "./components/CircadianTimeProvider";
 import { MasterCircadianClock } from "./components/MasterCircadianClock";
 import { DayNightCanvas } from "./components/DayNightCanvas";
-
-function CitationPill({ id }: { id: string }) {
-  return <span className="citation-pill">{id}</span>;
-}
 
 function ChapterIntro({
   id,
@@ -61,8 +51,19 @@ function ChapterIntro({
 }
 
 export default function Home() {
-  const [opening, rhythm, sync, body, medicine, oxaliplatin, genes, workflow] =
-    chapters;
+  const [
+    opening,
+    rhythm,
+    sync,
+    brain,
+    body,
+    clockMechanics,
+    genes,
+    medicine,
+    oxaliplatin,
+    trialSimulator,
+    sources,
+  ] = chapters;
 
   return (
     <CircadianTimeProvider>
@@ -104,46 +105,12 @@ export default function Home() {
 
         <section className="content-band opening-band">
           <ChapterIntro {...opening} />
-          <div className="opening-grid">
-            <article>
-              <BookOpen size={24} aria-hidden="true" />
-              <h3>The beginner idea</h3>
-              <p>
-                A body is not a static machine. It is more like a city with
-                daily traffic patterns: energy, repair, inflammation, alertness,
-                and drug handling all shift over the day.
-              </p>
-            </article>
-            <article>
-              <ShieldCheck size={24} aria-hidden="true" />
-              <h3>The safety frame</h3>
-              <p>
-                This site explains concepts and evidence. Medication timing
-                belongs with labels, pharmacists, and clinicians.
-                <CitationPill id="smith-2019" />
-              </p>
-            </article>
-            <article>
-              <Sparkles size={24} aria-hidden="true" />
-              <h3>The design premise</h3>
-              <p>
-                The best way to understand biological time is to move it: drag a
-                phase, shrink an amplitude, shift a cue, and watch the system
-                answer.
-              </p>
-            </article>
+          <div className="opening-thesis" aria-label="Opening principles">
+            <span>Biology changes.</span>
+            <span>Evidence stays visible.</span>
+            <span>Medication care stays clinical.</span>
           </div>
           <CircadianSandbox />
-        </section>
-
-        <section className="content-band brain-band bg-[#1C2026] text-[#FCF8EE] py-24">
-          <div className="max-w-6xl mx-auto px-6">
-            <h2 className="font-serif text-4xl mb-4 text-[#FCF8EE]">The Core Circadian Circuitry</h2>
-            <p className="text-lg text-[#FCF8EE]/80 max-w-2xl mb-12">
-              The master clock sits deep inside the brain. The Suprachiasmatic Nucleus (SCN) receives light signals directly from the eyes and coordinates with sleep-promoting centers like the VLPO and arousal centers like the TMN to drive the sleep-wake cycle.
-            </p>
-            <InteractiveBrainMap />
-          </div>
         </section>
 
         <section className="content-band rhythm-band">
@@ -167,9 +134,40 @@ export default function Home() {
           <EntrainmentDemo />
         </section>
 
+        <section
+          className="content-band brain-band bg-[#1C2026] text-[#FCF8EE] py-24"
+          id={brain.id}
+          aria-labelledby="brain-title"
+        >
+          <div className="max-w-6xl mx-auto px-6">
+            <p className="kicker">{brain.eyebrow}</p>
+            <h2
+              className="font-serif text-4xl mb-4 text-[#FCF8EE]"
+              id="brain-title"
+            >
+              The Core Circadian Circuitry
+            </h2>
+            <p className="text-lg text-[#FCF8EE]/80 max-w-2xl mb-12">
+              The master clock sits deep inside the brain. The
+              Suprachiasmatic Nucleus (SCN) receives light signals directly
+              from the eyes and coordinates with sleep-promoting centers like
+              the VLPO and arousal centers like the TMN to drive the sleep-wake
+              cycle.
+            </p>
+            <InteractiveBrainMap />
+          </div>
+        </section>
+
         <section className="content-band body-band">
           <ChapterIntro {...body} />
           <BodyClockTimeline />
+        </section>
+
+        <ClockMechanicsSection ariaLabel={clockMechanics.title} />
+
+        <section className="content-band genes-band">
+          <ChapterIntro {...genes} />
+          <GeneNetwork />
         </section>
 
         <section className="content-band medicine-band">
@@ -179,78 +177,63 @@ export default function Home() {
 
         <section className="content-band oxaliplatin-band">
           <ChapterIntro {...oxaliplatin} />
-          <div className="narrative-block" style={{ maxWidth: "800px", margin: "0 auto 3rem", textAlign: "center" }}>
-            <p className="kicker" style={{ color: "#06b6d4", fontWeight: 700, textTransform: "uppercase", letterSpacing: "1px", fontSize: "0.85rem", marginBottom: "0.5rem" }}>Case study</p>
-            <h3 style={{ fontSize: "1.75rem", color: "#f3f4f6", marginBottom: "1rem", fontWeight: 700, letterSpacing: "-0.5px" }}>Oxaliplatin shows why timing can change interpretation.</h3>
-            <p style={{ color: "#9ca3af", fontSize: "1.125rem", lineHeight: 1.6, marginBottom: "1rem" }}>
-              In the chronomedicine review, oxaliplatin is presented as a
-              historical example where excessive toxicity nearly derailed a
-              useful colorectal cancer drug. Chronomodulated delivery changed
-              the safety and efficacy conversation.
+          <div
+            className="narrative-block"
+            style={{ maxWidth: "800px", margin: "0 auto 3rem", textAlign: "center" }}
+          >
+            <p
+              className="kicker"
+              style={{
+                color: "#06b6d4",
+                fontWeight: 700,
+                textTransform: "uppercase",
+                letterSpacing: 0,
+                fontSize: "0.85rem",
+                marginBottom: "0.5rem",
+              }}
+            >
+              Case study
+            </p>
+            <h3
+              style={{
+                fontSize: "1.75rem",
+                color: "#f3f4f6",
+                marginBottom: "1rem",
+                fontWeight: 700,
+                letterSpacing: 0,
+              }}
+            >
+              Oxaliplatin shows why timing can change interpretation.
+            </h3>
+            <p
+              style={{
+                color: "#9ca3af",
+                fontSize: "1.125rem",
+                lineHeight: 1.6,
+                marginBottom: "1rem",
+              }}
+            >
+              Oxaliplatin is a useful case because the story did not end with a
+              simple win. Chronomodulated chemotherapy changed the safety and
+              efficacy conversation, but a later randomized trial and
+              meta-analysis raised a difficult sex-specific survival question.
             </p>
             <p style={{ color: "#9ca3af", fontSize: "1.125rem", lineHeight: 1.6 }}>
-              The important lesson is not that every person needs the same
-              hour. It is that internal circadian phase can become part of the
-              treatment design problem.
+              If that signal was real, it deserved better follow-up rather than
+              abandonment. If it was post-hoc noise, it shows why chronomedicine
+              needs careful trial design before it can become routine care.
             </p>
           </div>
           <OxaliplatinTimeline />
         </section>
 
-        <ClockMechanicsSection />
-
-        <section className="content-band genes-band">
-          <ChapterIntro {...genes} />
-          <GeneNetwork />
-        </section>
-
-        <section className="content-band workflow-band">
-          <ChapterIntro {...workflow} />
-          <div className="workflow-grid">
-            {workflowSteps.map((step) => {
-              const Icon = step.icon;
-              return (
-                <article key={step.title}>
-                  <Icon size={22} aria-hidden="true" />
-                  <h3>{step.title}</h3>
-                  <p>{step.copy}</p>
-                </article>
-              );
-            })}
-          </div>
-          <div className="roadmap-panel">
-            <div>
-              <Database size={24} aria-hidden="true" />
-              <h3>V2: from primer to evidence atlas</h3>
-              <p>
-                The first release is curated. The next layer can connect
-                CircaKB, NCBI, PubMed, OpenAlex, and validated science-review
-                workflows.
-                <CitationPill id="circakb" />
-                <CitationPill id="reactome-clock" />
-                <CitationPill id="pnas-atlas" />
-              </p>
-            </div>
-            <ul>
-              {roadmapItems.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
-          </div>
+        <section className="content-band trial-band">
+          <ChapterIntro {...trialSimulator} />
+          <ClinicalTrialSimulator />
         </section>
 
         <section className="content-band evidence-band">
-          <div className="chapter-intro compact-intro">
-            <span>08</span>
-            <div>
-              <p className="kicker">Knowledge foundation</p>
-              <h2>Claim matrix and sources</h2>
-              <p>
-                The site keeps a public-friendly claim matrix so the visuals
-                stay attached to evidence and caveats.
-              </p>
-            </div>
-          </div>
+          <ChapterIntro {...sources} />
           <div className="claim-table" role="table" aria-label="Claim matrix">
             <div className="claim-row header" role="row">
               <span>Claim</span>

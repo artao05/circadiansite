@@ -39,7 +39,7 @@ export type Claim = {
   claim: string;
   source: string;
   evidenceType: string;
-  confidence: "High" | "Moderate" | "Emerging";
+  confidence: "High" | "Moderate" | "Emerging" | "Uncertain";
   caveat: string;
   visualUse: string;
   beginnerPhrasing: string;
@@ -181,12 +181,52 @@ export type WorkflowStep = {
   icon: LucideIcon;
 };
 
+export type TrialSimulationMode = {
+  id: "untimed" | "population" | "personalized";
+  label: string;
+  shortLabel: string;
+  strategy: string;
+  copy: string;
+  accent: string;
+};
+
 export const citations: Citation[] = [
   {
     id: "cederroth-2019",
     title: "Medicine in the fourth dimension",
     source: "2019 - Medicine in the 4th Dimension.pdf",
     note: "Review article used for the broad chronomedicine framing, oxaliplatin history, and translation caveats.",
+  },
+  {
+    id: "giacchetti-2006",
+    title:
+      "Phase III trial comparing chronomodulated versus conventional fluorouracil, leucovorin, and oxaliplatin",
+    source: "Journal of Clinical Oncology",
+    note: "Primary randomized trial for the oxaliplatin chronotherapy case study and the difficult sex-specific survival signal.",
+    url: "https://pubmed.ncbi.nlm.nih.gov/16877722/",
+  },
+  {
+    id: "giacchetti-2012",
+    title:
+      "Sex moderates circadian chemotherapy effects on survival of patients with metastatic colorectal cancer",
+    source: "Annals of Oncology",
+    note: "Follow-up meta-analysis used to frame the unresolved question of sex moderation in chronomodulated colorectal cancer chemotherapy.",
+    url: "https://pubmed.ncbi.nlm.nih.gov/22745214/",
+  },
+  {
+    id: "walch-2026",
+    title:
+      "Design considerations for hypertension chronotherapy trials: insights from experience and modelling",
+    source: "BMC Medicine",
+    note: "Modeling paper and companion code inspiration for the educational clinical-trial simulation.",
+    url: "https://pubmed.ncbi.nlm.nih.gov/42157233/",
+  },
+  {
+    id: "time-simulations",
+    title: "ojwalch/time-simulations",
+    source: "GitHub repository",
+    note: "Open-source simulation repository accompanying the hypertension chronotherapy trial-design modeling paper.",
+    url: "https://github.com/ojwalch/time-simulations",
   },
   {
     id: "smith-2019",
@@ -368,25 +408,25 @@ export const chapters: Chapter[] = [
     dek: "Circadian time is not just a wall clock. It is a living estimate that updates from repeated signals.",
   },
   {
-    id: "body-clocks",
+    id: "brain",
     number: "03",
+    eyebrow: "The central clock",
+    title: "The SCN turns light into body time.",
+    dek: "A small brain clock receives light signals from the eyes and helps coordinate sleep, hormones, temperature, and downstream tissue clocks.",
+  },
+  {
+    id: "body-clocks",
+    number: "04",
     eyebrow: "The body is many clocks",
     title: "One person, many daily schedules.",
     dek: "The brain clock coordinates the day, while liver, gut, immune, cardiovascular, and metabolic tissues keep local time.",
   },
   {
-    id: "medicine",
-    number: "04",
-    eyebrow: "When should you take medicines?",
-    title: "For some drugs, timing is part of the biology.",
-    dek: "Labels, side effects, absorption, metabolism, and target activity can all make time-of-day matter.",
-  },
-  {
-    id: "oxaliplatin",
+    id: "clock-mechanics",
     number: "05",
-    eyebrow: "Oxaliplatin and chronotherapy",
-    title: "A cancer drug story where timing changed the plot.",
-    dek: "Oxaliplatin became a landmark example of how chronopharmacology can change toxicity, efficacy, and clinical interpretation.",
+    eyebrow: "Molecular timekeeping",
+    title: "The clock is a feedback loop.",
+    dek: "Inside cells, activator and repressor proteins rise and fall in a daily circuit that turns timing into gene regulation.",
   },
   {
     id: "genes",
@@ -396,11 +436,32 @@ export const chapters: Chapter[] = [
     dek: "Explore core clock genes, regulatory loops, rhythmic expression evidence, disease links, and source databases in one interactive map.",
   },
   {
-    id: "workflow",
+    id: "medicine",
     number: "07",
-    eyebrow: "The future workflow",
-    title: "Chronomedicine starts by measuring time.",
-    dek: "The next step is to connect biological phase, rhythmic targets, intervention timing, and clinical validation.",
+    eyebrow: "When should you take medicines?",
+    title: "For some drugs, timing is part of the biology.",
+    dek: "Labels, side effects, absorption, metabolism, and target activity can all make time-of-day matter.",
+  },
+  {
+    id: "oxaliplatin",
+    number: "08",
+    eyebrow: "Oxaliplatin and chronotherapy",
+    title: "A cancer drug story where timing changed the plot.",
+    dek: "Oxaliplatin became a landmark example of how chronopharmacology can change toxicity, efficacy, and clinical interpretation.",
+  },
+  {
+    id: "trial-simulator",
+    number: "09",
+    eyebrow: "Trial design lab",
+    title: "A timed drug can fail an untimed trial.",
+    dek: "Run a fictional clinical trial again and again to see how ignoring, standardizing, or personalizing timing can change the approval story.",
+  },
+  {
+    id: "sources",
+    number: "10",
+    eyebrow: "Knowledge foundation",
+    title: "Claim matrix and sources",
+    dek: "The site keeps a public-friendly claim matrix so the visuals stay attached to evidence and caveats.",
   },
 ];
 
@@ -456,14 +517,38 @@ export const claimMatrix: Claim[] = [
   {
     claim:
       "Oxaliplatin is a major chronotherapy example in metastatic colorectal cancer.",
-    source: "cederroth-2019",
-    evidenceType: "Clinical history and trial review",
+    source: "cederroth-2019; giacchetti-2006; giacchetti-2012",
+    evidenceType: "Clinical history, randomized trial, and meta-analysis",
     confidence: "Moderate",
     caveat:
-      "Clinical translation still requires personalization and careful trial context.",
+      "Clinical translation still requires personalization, careful trial context, and separation of prespecified findings from exploratory signals.",
     visualUse: "Oxaliplatin evidence timeline",
     beginnerPhrasing:
       "A drug that looked too toxic in one schedule looked different when timing was designed into treatment.",
+  },
+  {
+    claim:
+      "Sex may moderate survival effects in chronomodulated metastatic colorectal cancer chemotherapy.",
+    source: "giacchetti-2006; giacchetti-2012",
+    evidenceType: "Randomized trial subgroup signal and later meta-analysis",
+    confidence: "Uncertain",
+    caveat:
+      "This should be framed as a provocative unresolved research question, not a standard-of-care timing recommendation.",
+    visualUse: "Oxaliplatin case-study framing",
+    beginnerPhrasing:
+      "The hard question was not just whether timing mattered, but whether the same timing helped different groups equally.",
+  },
+  {
+    claim:
+      "In silico chronotherapy trials can show how trial design changes the chance of detecting a time-sensitive treatment effect.",
+    source: "walch-2026; time-simulations",
+    evidenceType: "Modeling paper and open-source simulation repository",
+    confidence: "Emerging",
+    caveat:
+      "The site's trial lab is fictional and educational; it is not calibrated to any real drug or approval pathway.",
+    visualUse: "Clinical trial simulation",
+    beginnerPhrasing:
+      "A simulation can make the design problem visible: the same fictional drug can look better or worse depending on whether timing is measured.",
   },
   {
     claim:
@@ -2217,9 +2302,41 @@ export const oxaliplatinEvents = [
     copy: "Chronomodulated combinations reported lower severe mucosal toxicity and higher objective response in cited trials.",
   },
   {
-    year: "Next question",
-    title: "Personalization",
-    copy: "The durable lesson is not one universal hour; it is the need to match therapy to internal circadian phase.",
+    year: "2006",
+    title: "Randomized trial complication",
+    copy: "A phase III trial compared chronomodulated delivery with conventional delivery and raised a difficult sex-specific survival signal.",
+  },
+  {
+    year: "2012",
+    title: "Follow-up, not closure",
+    copy: "A later meta-analysis argued that sex moderated survival effects. The safe public lesson is uncertainty: a real signal would deserve better trials, not bedside timing advice.",
+  },
+];
+
+export const trialSimulationModes: TrialSimulationMode[] = [
+  {
+    id: "untimed",
+    label: "No timing consideration",
+    shortLabel: "Untimed",
+    strategy: "Clinic-time dosing",
+    copy: "Participants receive the fictional drug when visits happen. Internal biological time is unmeasured, so benefit and toxicity windows are mixed together.",
+    accent: "#ff6b6b",
+  },
+  {
+    id: "population",
+    label: "Population-level best timing",
+    shortLabel: "Population",
+    strategy: "One best clock time",
+    copy: "Everyone is assigned the same clock-time schedule, chosen because it works well for the average participant in the model.",
+    accent: "#f6b84b",
+  },
+  {
+    id: "personalized",
+    label: "Personalized timing",
+    shortLabel: "Personalized",
+    strategy: "Dose by biological phase",
+    copy: "Each participant is scheduled by their estimated internal phase, so the fictional dose lands closer to the intended therapeutic window.",
+    accent: "#54d6c2",
   },
 ];
 

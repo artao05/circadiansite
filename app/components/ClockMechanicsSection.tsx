@@ -118,7 +118,11 @@ function stateFromProgress(progress: number): ClockMechanicsState {
   return "dawn";
 }
 
-export function ClockMechanicsSection() {
+export function ClockMechanicsSection({
+  ariaLabel = "Molecular clock mechanics scroll animation",
+}: {
+  ariaLabel?: string;
+}) {
   const sectionRef = useRef<HTMLElement>(null);
   const progressRef = useRef(0);
   const frameRef = useRef<number | null>(null);
@@ -167,7 +171,7 @@ export function ClockMechanicsSection() {
       ref={sectionRef}
       className="clock-mechanics-section"
       id="clock-mechanics"
-      aria-label="Molecular clock mechanics scroll animation"
+      aria-label={ariaLabel}
     >
       <div className="clock-mechanics-sticky" data-state={timeState}>
         <ClockMechanics timeState={timeState} progressRef={progressRef} />
