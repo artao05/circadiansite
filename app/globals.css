@@ -601,7 +601,7 @@ main {
   line-height: 0.96;
 }
 
-.clock-mechanics-copy p:not(.kicker) {
+.clock-mechanics-copy > p:not(.kicker) {
   max-width: 36rem;
   margin: 0;
   color: rgba(255, 249, 239, 0.72);
@@ -624,6 +624,71 @@ main {
 .clock-term.repressor {
   background: rgba(159, 140, 255, 0.16);
   color: #c7bcff;
+}
+
+.clock-balance-meter {
+  display: grid;
+  max-width: min(380px, 100%);
+  gap: 0.46rem;
+  border: 1px solid rgba(255, 249, 239, 0.12);
+  border-radius: 8px;
+  background: rgba(5, 9, 19, 0.54);
+  padding: 0.75rem;
+  backdrop-filter: blur(14px);
+}
+
+.clock-balance-meter div {
+  display: grid;
+  grid-template-columns: 5.2rem minmax(0, 1fr);
+  gap: 0.65rem;
+  align-items: center;
+}
+
+.clock-balance-meter span,
+.clock-balance-meter small {
+  color: rgba(255, 249, 239, 0.56);
+  font-size: 0.68rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.clock-balance-meter i {
+  display: block;
+  height: 0.5rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 249, 239, 0.1);
+}
+
+.clock-balance-meter b {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #54d6c2, #f7b267);
+  transition: width 360ms ease;
+}
+
+.clock-balance-meter div:nth-child(2) b {
+  background: linear-gradient(90deg, #9f8cff, #6fe8ff);
+}
+
+.clock-balance-meter strong {
+  margin-top: 0.14rem;
+  color: #fff9ef;
+  font-size: 0.92rem;
+}
+
+.clock-balance-meter p {
+  margin: 0;
+  color: rgba(255, 249, 239, 0.68);
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
+.clock-balance-meter small {
+  color: rgba(255, 249, 239, 0.46);
+  line-height: 1.35;
+  text-transform: none;
 }
 
 .clock-molecule-key {
@@ -1212,6 +1277,10 @@ main {
   padding: 1rem;
 }
 
+.rhythm-lab {
+  align-items: start;
+}
+
 .rhythm-panel svg {
   display: block;
   max-width: 100%;
@@ -1296,7 +1365,7 @@ main {
   gap: 0.65rem;
 }
 
-.range-control span {
+.range-control > span {
   display: flex;
   justify-content: space-between;
   gap: 1rem;
@@ -1306,6 +1375,113 @@ main {
 
 .range-control strong {
   color: var(--ink);
+}
+
+.range-label {
+  display: inline-flex;
+  min-width: 0;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.rhythm-heading .legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem 1.15rem;
+  align-items: center;
+}
+
+.rhythm-heading .legend > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 800;
+}
+
+.model-legend {
+  color: var(--green);
+}
+
+.model-marker text {
+  font-size: 10px;
+  font-weight: 900;
+  text-anchor: middle;
+}
+
+.y-axes {
+  fill: var(--muted);
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.control-eyebrow {
+  margin: 0 0 0.45rem;
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.rhythm-control-group {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.rhythm-choice {
+  gap: 0.45rem;
+}
+
+.rhythm-choice button {
+  min-height: 2.35rem;
+  padding: 0.58rem 0.72rem;
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.rhythm-readout {
+  display: grid;
+  gap: 0.85rem;
+  border-top: 1px solid var(--line);
+  padding-top: 1rem;
+}
+
+.rhythm-readout h3 {
+  margin: 0 0 0.25rem;
+  color: var(--ink);
+  font-size: 1rem;
+}
+
+.rhythm-readout p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.rhythm-readout dl {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.7rem 1rem;
+  margin: 0;
+}
+
+.rhythm-readout dl > div {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.rhythm-readout dt {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.rhythm-readout dd {
+  margin: 0;
+  color: var(--ink);
+  font-size: 1rem;
+  font-weight: 900;
 }
 
 input[type="range"] {
@@ -3122,6 +3298,11 @@ meter {
   stroke-dasharray: 2 1.5;
 }
 
+.edge-sequestration {
+  stroke: #f06f5e;
+  stroke-dasharray: 4 1 0.7 1;
+}
+
 .edge-phosphorylation {
   stroke: #6d5bd0;
   stroke-dasharray: 0.4 1.7;
@@ -3150,6 +3331,10 @@ meter {
 
 .edge-legend .edge-repression i {
   border-top-style: dashed;
+}
+
+.edge-legend .edge-sequestration i {
+  border-top-style: double;
 }
 
 .edge-legend .edge-phosphorylation i {
@@ -3645,15 +3830,24 @@ meter {
     font-size: 2.25rem;
   }
 
-  .clock-mechanics-copy p:not(.kicker) {
+  .clock-mechanics-copy > p:not(.kicker) {
     max-width: 22rem;
     font-size: 0.95rem;
+  }
+
+  .clock-balance-meter {
+    max-width: min(100%, 23rem);
+    padding: 0.62rem;
+  }
+
+  .clock-balance-meter div {
+    grid-template-columns: 4.8rem minmax(0, 1fr);
   }
 
   .clock-molecule-key {
     left: 1rem;
     right: 1rem;
-    top: 18rem;
+    top: 31rem;
     grid-template-columns: 1fr;
     width: auto;
   }
@@ -3766,6 +3960,7 @@ meter {
   }
 
   .rhythm-panel {
+    min-height: 0;
     padding: 0.85rem;
   }
 

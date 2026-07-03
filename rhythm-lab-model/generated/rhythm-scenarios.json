@@ -1,0 +1,7436 @@
+{
+  "metadata": {
+    "generatedAt": "2026-07-02T19:12:13.898216+00:00",
+    "generator": "rhythm-lab-model/generate_scenarios.py",
+    "package": "circadian",
+    "packageVersion": "1.0.3",
+    "modelScope": "Arcascope/circadian grounds light schedules, oscillator state, phase markers, amplitude, and ESRI-style regularity. Cortisol aging is an evidence overlay, not a model output."
+  },
+  "scenarios": [
+    {
+      "id": "regular",
+      "label": "Regular indoor day",
+      "summary": "A stable 07:00-23:00 light schedule with moderate indoor light.",
+      "signalScale": 1.0,
+      "cortisolProfile": "reference",
+      "caveat": "Reference educational schedule; real indoor light histories vary widely."
+    },
+    {
+      "id": "camping",
+      "label": "Camping schedule",
+      "summary": "Bright daytime outdoor light with very low light at night.",
+      "signalScale": 1.15,
+      "cortisolProfile": "reference",
+      "caveat": "High-amplitude light-dark contrast is modeled as an illustrative outdoor schedule."
+    },
+    {
+      "id": "aging",
+      "label": "Aging",
+      "summary": "Lower SCN-output strength over a regular day, with cortisol handled separately.",
+      "signalScale": 0.68,
+      "cortisolProfile": "aging",
+      "caveat": "The oscillator model does not simulate HPA-axis aging; cortisol uses a Van Cauter overlay."
+    },
+    {
+      "id": "shiftWork",
+      "label": "Shift work",
+      "summary": "Five night-work days followed by two day-oriented off days.",
+      "signalScale": 0.62,
+      "cortisolProfile": "misaligned",
+      "caveat": "This is a light-schedule simulation, not a personal shift-work risk estimate."
+    }
+  ],
+  "chronotypes": [
+    {
+      "id": "neutral",
+      "label": "Neutral",
+      "periodHours": 24.2,
+      "phaseOffsetHours": 0.0,
+      "summary": "Near the default Forger99 intrinsic period."
+    },
+    {
+      "id": "morning",
+      "label": "Morning person",
+      "periodHours": 23.9,
+      "phaseOffsetHours": -1.25,
+      "summary": "Shorter-period, earlier-phase educational chronotype."
+    },
+    {
+      "id": "nightOwl",
+      "label": "Night owl",
+      "periodHours": 24.45,
+      "phaseOffsetHours": 1.5,
+      "summary": "Longer-period, later-phase educational chronotype."
+    }
+  ],
+  "combinations": [
+    {
+      "id": "regular-neutral",
+      "scenarioId": "regular",
+      "chronotypeId": "neutral",
+      "model": {
+        "name": "Forger99",
+        "intrinsicPeriodHours": 24.2,
+        "dtHours": 0.5,
+        "simulationDays": 21,
+        "displayHours": 48
+      },
+      "metrics": {
+        "finalAmplitude": 1.0588,
+        "meanWindowAmplitude": 1.0748,
+        "finalPhaseRadians": 2.1171,
+        "latestCbtMinDisplayHour": 28.0,
+        "latestDlmoDisplayHour": 21.0,
+        "latestCbtMinClockHour": 4.0,
+        "latestDlmoClockHour": 21.0,
+        "esri": 0.3725,
+        "lightRegularity": 1.0,
+        "meanLightLux": 99.0,
+        "maxLightLux": 150.0
+      },
+      "display": {
+        "signalScale": 1.0,
+        "chronotypePhaseOffsetHours": 0.0,
+        "modelPhaseOffsetHours": 0.0
+      },
+      "points": [
+        {
+          "hour": 0.0,
+          "lightLux": 0.0,
+          "oscillator": 30.56,
+          "processN": 0.2321
+        },
+        {
+          "hour": 0.5,
+          "lightLux": 0.0,
+          "oscillator": 26.57,
+          "processN": 0.1853
+        },
+        {
+          "hour": 1.0,
+          "lightLux": 0.0,
+          "oscillator": 22.97,
+          "processN": 0.148
+        },
+        {
+          "hour": 1.5,
+          "lightLux": 0.0,
+          "oscillator": 19.79,
+          "processN": 0.1182
+        },
+        {
+          "hour": 2.0,
+          "lightLux": 0.0,
+          "oscillator": 17.09,
+          "processN": 0.0944
+        },
+        {
+          "hour": 2.5,
+          "lightLux": 0.0,
+          "oscillator": 14.9,
+          "processN": 0.0754
+        },
+        {
+          "hour": 3.0,
+          "lightLux": 0.0,
+          "oscillator": 13.26,
+          "processN": 0.0602
+        },
+        {
+          "hour": 3.5,
+          "lightLux": 0.0,
+          "oscillator": 12.2,
+          "processN": 0.048
+        },
+        {
+          "hour": 4.0,
+          "lightLux": 0.0,
+          "oscillator": 11.76,
+          "processN": 0.0384
+        },
+        {
+          "hour": 4.5,
+          "lightLux": 0.0,
+          "oscillator": 11.96,
+          "processN": 0.0306
+        },
+        {
+          "hour": 5.0,
+          "lightLux": 0.0,
+          "oscillator": 12.82,
+          "processN": 0.0245
+        },
+        {
+          "hour": 5.5,
+          "lightLux": 0.0,
+          "oscillator": 14.34,
+          "processN": 0.0195
+        },
+        {
+          "hour": 6.0,
+          "lightLux": 0.0,
+          "oscillator": 16.51,
+          "processN": 0.0156
+        },
+        {
+          "hour": 6.5,
+          "lightLux": 0.0,
+          "oscillator": 19.28,
+          "processN": 0.0125
+        },
+        {
+          "hour": 7.0,
+          "lightLux": 150.0,
+          "oscillator": 23.47,
+          "processN": 0.1626
+        },
+        {
+          "hour": 7.5,
+          "lightLux": 150.0,
+          "oscillator": 27.98,
+          "processN": 0.2619
+        },
+        {
+          "hour": 8.0,
+          "lightLux": 150.0,
+          "oscillator": 32.76,
+          "processN": 0.3275
+        },
+        {
+          "hour": 8.5,
+          "lightLux": 150.0,
+          "oscillator": 37.74,
+          "processN": 0.371
+        },
+        {
+          "hour": 9.0,
+          "lightLux": 150.0,
+          "oscillator": 42.84,
+          "processN": 0.3997
+        },
+        {
+          "hour": 9.5,
+          "lightLux": 150.0,
+          "oscillator": 47.96,
+          "processN": 0.4187
+        },
+        {
+          "hour": 10.0,
+          "lightLux": 150.0,
+          "oscillator": 53.03,
+          "processN": 0.4313
+        },
+        {
+          "hour": 10.5,
+          "lightLux": 150.0,
+          "oscillator": 57.96,
+          "processN": 0.4396
+        },
+        {
+          "hour": 11.0,
+          "lightLux": 150.0,
+          "oscillator": 62.71,
+          "processN": 0.4451
+        },
+        {
+          "hour": 11.5,
+          "lightLux": 150.0,
+          "oscillator": 67.19,
+          "processN": 0.4487
+        },
+        {
+          "hour": 12.0,
+          "lightLux": 150.0,
+          "oscillator": 71.36,
+          "processN": 0.4511
+        },
+        {
+          "hour": 12.5,
+          "lightLux": 150.0,
+          "oscillator": 75.16,
+          "processN": 0.4527
+        },
+        {
+          "hour": 13.0,
+          "lightLux": 150.0,
+          "oscillator": 78.55,
+          "processN": 0.4538
+        },
+        {
+          "hour": 13.5,
+          "lightLux": 150.0,
+          "oscillator": 81.48,
+          "processN": 0.4545
+        },
+        {
+          "hour": 14.0,
+          "lightLux": 150.0,
+          "oscillator": 83.9,
+          "processN": 0.4549
+        },
+        {
+          "hour": 14.5,
+          "lightLux": 150.0,
+          "oscillator": 85.78,
+          "processN": 0.4552
+        },
+        {
+          "hour": 15.0,
+          "lightLux": 150.0,
+          "oscillator": 87.07,
+          "processN": 0.4555
+        },
+        {
+          "hour": 15.5,
+          "lightLux": 150.0,
+          "oscillator": 87.74,
+          "processN": 0.4556
+        },
+        {
+          "hour": 16.0,
+          "lightLux": 150.0,
+          "oscillator": 87.76,
+          "processN": 0.4557
+        },
+        {
+          "hour": 16.5,
+          "lightLux": 150.0,
+          "oscillator": 87.12,
+          "processN": 0.4557
+        },
+        {
+          "hour": 17.0,
+          "lightLux": 150.0,
+          "oscillator": 85.81,
+          "processN": 0.4558
+        },
+        {
+          "hour": 17.5,
+          "lightLux": 150.0,
+          "oscillator": 83.85,
+          "processN": 0.4558
+        },
+        {
+          "hour": 18.0,
+          "lightLux": 150.0,
+          "oscillator": 81.28,
+          "processN": 0.4558
+        },
+        {
+          "hour": 18.5,
+          "lightLux": 150.0,
+          "oscillator": 78.16,
+          "processN": 0.4558
+        },
+        {
+          "hour": 19.0,
+          "lightLux": 150.0,
+          "oscillator": 74.57,
+          "processN": 0.4558
+        },
+        {
+          "hour": 19.5,
+          "lightLux": 150.0,
+          "oscillator": 70.6,
+          "processN": 0.4558
+        },
+        {
+          "hour": 20.0,
+          "lightLux": 150.0,
+          "oscillator": 66.36,
+          "processN": 0.4558
+        },
+        {
+          "hour": 20.5,
+          "lightLux": 150.0,
+          "oscillator": 61.95,
+          "processN": 0.4558
+        },
+        {
+          "hour": 21.0,
+          "lightLux": 150.0,
+          "oscillator": 57.46,
+          "processN": 0.4558
+        },
+        {
+          "hour": 21.5,
+          "lightLux": 150.0,
+          "oscillator": 52.98,
+          "processN": 0.4558
+        },
+        {
+          "hour": 22.0,
+          "lightLux": 150.0,
+          "oscillator": 48.59,
+          "processN": 0.4558
+        },
+        {
+          "hour": 22.5,
+          "lightLux": 150.0,
+          "oscillator": 44.35,
+          "processN": 0.4558
+        },
+        {
+          "hour": 23.0,
+          "lightLux": 0.0,
+          "oscillator": 39.5,
+          "processN": 0.364
+        },
+        {
+          "hour": 23.5,
+          "lightLux": 0.0,
+          "oscillator": 34.88,
+          "processN": 0.2907
+        },
+        {
+          "hour": 24.0,
+          "lightLux": 0.0,
+          "oscillator": 30.56,
+          "processN": 0.2321
+        },
+        {
+          "hour": 24.5,
+          "lightLux": 0.0,
+          "oscillator": 26.57,
+          "processN": 0.1853
+        },
+        {
+          "hour": 25.0,
+          "lightLux": 0.0,
+          "oscillator": 22.97,
+          "processN": 0.148
+        },
+        {
+          "hour": 25.5,
+          "lightLux": 0.0,
+          "oscillator": 19.79,
+          "processN": 0.1182
+        },
+        {
+          "hour": 26.0,
+          "lightLux": 0.0,
+          "oscillator": 17.09,
+          "processN": 0.0944
+        },
+        {
+          "hour": 26.5,
+          "lightLux": 0.0,
+          "oscillator": 14.9,
+          "processN": 0.0754
+        },
+        {
+          "hour": 27.0,
+          "lightLux": 0.0,
+          "oscillator": 13.26,
+          "processN": 0.0602
+        },
+        {
+          "hour": 27.5,
+          "lightLux": 0.0,
+          "oscillator": 12.2,
+          "processN": 0.048
+        },
+        {
+          "hour": 28.0,
+          "lightLux": 0.0,
+          "oscillator": 11.76,
+          "processN": 0.0384
+        },
+        {
+          "hour": 28.5,
+          "lightLux": 0.0,
+          "oscillator": 11.96,
+          "processN": 0.0306
+        },
+        {
+          "hour": 29.0,
+          "lightLux": 0.0,
+          "oscillator": 12.82,
+          "processN": 0.0245
+        },
+        {
+          "hour": 29.5,
+          "lightLux": 0.0,
+          "oscillator": 14.34,
+          "processN": 0.0195
+        },
+        {
+          "hour": 30.0,
+          "lightLux": 0.0,
+          "oscillator": 16.51,
+          "processN": 0.0156
+        },
+        {
+          "hour": 30.5,
+          "lightLux": 0.0,
+          "oscillator": 19.28,
+          "processN": 0.0125
+        },
+        {
+          "hour": 31.0,
+          "lightLux": 150.0,
+          "oscillator": 23.47,
+          "processN": 0.1626
+        },
+        {
+          "hour": 31.5,
+          "lightLux": 150.0,
+          "oscillator": 27.98,
+          "processN": 0.2619
+        },
+        {
+          "hour": 32.0,
+          "lightLux": 150.0,
+          "oscillator": 32.76,
+          "processN": 0.3275
+        },
+        {
+          "hour": 32.5,
+          "lightLux": 150.0,
+          "oscillator": 37.74,
+          "processN": 0.371
+        },
+        {
+          "hour": 33.0,
+          "lightLux": 150.0,
+          "oscillator": 42.84,
+          "processN": 0.3997
+        },
+        {
+          "hour": 33.5,
+          "lightLux": 150.0,
+          "oscillator": 47.96,
+          "processN": 0.4187
+        },
+        {
+          "hour": 34.0,
+          "lightLux": 150.0,
+          "oscillator": 53.03,
+          "processN": 0.4313
+        },
+        {
+          "hour": 34.5,
+          "lightLux": 150.0,
+          "oscillator": 57.96,
+          "processN": 0.4396
+        },
+        {
+          "hour": 35.0,
+          "lightLux": 150.0,
+          "oscillator": 62.71,
+          "processN": 0.4451
+        },
+        {
+          "hour": 35.5,
+          "lightLux": 150.0,
+          "oscillator": 67.19,
+          "processN": 0.4487
+        },
+        {
+          "hour": 36.0,
+          "lightLux": 150.0,
+          "oscillator": 71.36,
+          "processN": 0.4511
+        },
+        {
+          "hour": 36.5,
+          "lightLux": 150.0,
+          "oscillator": 75.16,
+          "processN": 0.4527
+        },
+        {
+          "hour": 37.0,
+          "lightLux": 150.0,
+          "oscillator": 78.55,
+          "processN": 0.4538
+        },
+        {
+          "hour": 37.5,
+          "lightLux": 150.0,
+          "oscillator": 81.48,
+          "processN": 0.4545
+        },
+        {
+          "hour": 38.0,
+          "lightLux": 150.0,
+          "oscillator": 83.9,
+          "processN": 0.4549
+        },
+        {
+          "hour": 38.5,
+          "lightLux": 150.0,
+          "oscillator": 85.78,
+          "processN": 0.4552
+        },
+        {
+          "hour": 39.0,
+          "lightLux": 150.0,
+          "oscillator": 87.07,
+          "processN": 0.4555
+        },
+        {
+          "hour": 39.5,
+          "lightLux": 150.0,
+          "oscillator": 87.74,
+          "processN": 0.4556
+        },
+        {
+          "hour": 40.0,
+          "lightLux": 150.0,
+          "oscillator": 87.76,
+          "processN": 0.4557
+        },
+        {
+          "hour": 40.5,
+          "lightLux": 150.0,
+          "oscillator": 87.12,
+          "processN": 0.4557
+        },
+        {
+          "hour": 41.0,
+          "lightLux": 150.0,
+          "oscillator": 85.81,
+          "processN": 0.4558
+        },
+        {
+          "hour": 41.5,
+          "lightLux": 150.0,
+          "oscillator": 83.85,
+          "processN": 0.4558
+        },
+        {
+          "hour": 42.0,
+          "lightLux": 150.0,
+          "oscillator": 81.28,
+          "processN": 0.4558
+        },
+        {
+          "hour": 42.5,
+          "lightLux": 150.0,
+          "oscillator": 78.16,
+          "processN": 0.4558
+        },
+        {
+          "hour": 43.0,
+          "lightLux": 150.0,
+          "oscillator": 74.57,
+          "processN": 0.4558
+        },
+        {
+          "hour": 43.5,
+          "lightLux": 150.0,
+          "oscillator": 70.6,
+          "processN": 0.4558
+        },
+        {
+          "hour": 44.0,
+          "lightLux": 150.0,
+          "oscillator": 66.36,
+          "processN": 0.4558
+        },
+        {
+          "hour": 44.5,
+          "lightLux": 150.0,
+          "oscillator": 61.95,
+          "processN": 0.4558
+        },
+        {
+          "hour": 45.0,
+          "lightLux": 150.0,
+          "oscillator": 57.46,
+          "processN": 0.4558
+        },
+        {
+          "hour": 45.5,
+          "lightLux": 150.0,
+          "oscillator": 52.98,
+          "processN": 0.4558
+        },
+        {
+          "hour": 46.0,
+          "lightLux": 150.0,
+          "oscillator": 48.59,
+          "processN": 0.4558
+        },
+        {
+          "hour": 46.5,
+          "lightLux": 150.0,
+          "oscillator": 44.35,
+          "processN": 0.4558
+        },
+        {
+          "hour": 47.0,
+          "lightLux": 0.0,
+          "oscillator": 39.5,
+          "processN": 0.364
+        },
+        {
+          "hour": 47.5,
+          "lightLux": 0.0,
+          "oscillator": 34.88,
+          "processN": 0.2907
+        },
+        {
+          "hour": 48.0,
+          "lightLux": 0.0,
+          "oscillator": 30.56,
+          "processN": 0.2321
+        }
+      ]
+    },
+    {
+      "id": "regular-morning",
+      "scenarioId": "regular",
+      "chronotypeId": "morning",
+      "model": {
+        "name": "Forger99",
+        "intrinsicPeriodHours": 23.9,
+        "dtHours": 0.5,
+        "simulationDays": 21,
+        "displayHours": 48
+      },
+      "metrics": {
+        "finalAmplitude": 1.0326,
+        "meanWindowAmplitude": 1.0682,
+        "finalPhaseRadians": 2.3828,
+        "latestCbtMinDisplayHour": 27.0,
+        "latestDlmoDisplayHour": 20.0,
+        "latestCbtMinClockHour": 3.0,
+        "latestDlmoClockHour": 20.0,
+        "esri": 0.3725,
+        "lightRegularity": 1.0,
+        "meanLightLux": 99.0,
+        "maxLightLux": 150.0
+      },
+      "display": {
+        "signalScale": 1.0,
+        "chronotypePhaseOffsetHours": -1.25,
+        "modelPhaseOffsetHours": -1.0
+      },
+      "points": [
+        {
+          "hour": 0.0,
+          "lightLux": 0.0,
+          "oscillator": 22.95,
+          "processN": 0.2321
+        },
+        {
+          "hour": 0.5,
+          "lightLux": 0.0,
+          "oscillator": 19.83,
+          "processN": 0.1853
+        },
+        {
+          "hour": 1.0,
+          "lightLux": 0.0,
+          "oscillator": 17.18,
+          "processN": 0.148
+        },
+        {
+          "hour": 1.5,
+          "lightLux": 0.0,
+          "oscillator": 15.06,
+          "processN": 0.1182
+        },
+        {
+          "hour": 2.0,
+          "lightLux": 0.0,
+          "oscillator": 13.5,
+          "processN": 0.0944
+        },
+        {
+          "hour": 2.5,
+          "lightLux": 0.0,
+          "oscillator": 12.54,
+          "processN": 0.0754
+        },
+        {
+          "hour": 3.0,
+          "lightLux": 0.0,
+          "oscillator": 12.21,
+          "processN": 0.0602
+        },
+        {
+          "hour": 3.5,
+          "lightLux": 0.0,
+          "oscillator": 12.53,
+          "processN": 0.048
+        },
+        {
+          "hour": 4.0,
+          "lightLux": 0.0,
+          "oscillator": 13.53,
+          "processN": 0.0384
+        },
+        {
+          "hour": 4.5,
+          "lightLux": 0.0,
+          "oscillator": 15.19,
+          "processN": 0.0306
+        },
+        {
+          "hour": 5.0,
+          "lightLux": 0.0,
+          "oscillator": 17.5,
+          "processN": 0.0245
+        },
+        {
+          "hour": 5.5,
+          "lightLux": 0.0,
+          "oscillator": 20.42,
+          "processN": 0.0195
+        },
+        {
+          "hour": 6.0,
+          "lightLux": 0.0,
+          "oscillator": 23.89,
+          "processN": 0.0156
+        },
+        {
+          "hour": 6.5,
+          "lightLux": 0.0,
+          "oscillator": 27.83,
+          "processN": 0.0125
+        },
+        {
+          "hour": 7.0,
+          "lightLux": 150.0,
+          "oscillator": 32.86,
+          "processN": 0.1626
+        },
+        {
+          "hour": 7.5,
+          "lightLux": 150.0,
+          "oscillator": 38.04,
+          "processN": 0.2619
+        },
+        {
+          "hour": 8.0,
+          "lightLux": 150.0,
+          "oscillator": 43.29,
+          "processN": 0.3275
+        },
+        {
+          "hour": 8.5,
+          "lightLux": 150.0,
+          "oscillator": 48.55,
+          "processN": 0.371
+        },
+        {
+          "hour": 9.0,
+          "lightLux": 150.0,
+          "oscillator": 53.73,
+          "processN": 0.3997
+        },
+        {
+          "hour": 9.5,
+          "lightLux": 150.0,
+          "oscillator": 58.76,
+          "processN": 0.4187
+        },
+        {
+          "hour": 10.0,
+          "lightLux": 150.0,
+          "oscillator": 63.58,
+          "processN": 0.4313
+        },
+        {
+          "hour": 10.5,
+          "lightLux": 150.0,
+          "oscillator": 68.12,
+          "processN": 0.4396
+        },
+        {
+          "hour": 11.0,
+          "lightLux": 150.0,
+          "oscillator": 72.32,
+          "processN": 0.4451
+        },
+        {
+          "hour": 11.5,
+          "lightLux": 150.0,
+          "oscillator": 76.13,
+          "processN": 0.4487
+        },
+        {
+          "hour": 12.0,
+          "lightLux": 150.0,
+          "oscillator": 79.51,
+          "processN": 0.4511
+        },
+        {
+          "hour": 12.5,
+          "lightLux": 150.0,
+          "oscillator": 82.4,
+          "processN": 0.4527
+        },
+        {
+          "hour": 13.0,
+          "lightLux": 150.0,
+          "oscillator": 84.75,
+          "processN": 0.4538
+        },
+        {
+          "hour": 13.5,
+          "lightLux": 150.0,
+          "oscillator": 86.53,
+          "processN": 0.4545
+        },
+        {
+          "hour": 14.0,
+          "lightLux": 150.0,
+          "oscillator": 87.7,
+          "processN": 0.4549
+        },
+        {
+          "hour": 14.5,
+          "lightLux": 150.0,
+          "oscillator": 88.21,
+          "processN": 0.4552
+        },
+        {
+          "hour": 15.0,
+          "lightLux": 150.0,
+          "oscillator": 88.05,
+          "processN": 0.4555
+        },
+        {
+          "hour": 15.5,
+          "lightLux": 150.0,
+          "oscillator": 87.2,
+          "processN": 0.4556
+        },
+        {
+          "hour": 16.0,
+          "lightLux": 150.0,
+          "oscillator": 85.66,
+          "processN": 0.4557
+        },
+        {
+          "hour": 16.5,
+          "lightLux": 150.0,
+          "oscillator": 83.46,
+          "processN": 0.4557
+        },
+        {
+          "hour": 17.0,
+          "lightLux": 150.0,
+          "oscillator": 80.65,
+          "processN": 0.4558
+        },
+        {
+          "hour": 17.5,
+          "lightLux": 150.0,
+          "oscillator": 77.29,
+          "processN": 0.4558
+        },
+        {
+          "hour": 18.0,
+          "lightLux": 150.0,
+          "oscillator": 73.48,
+          "processN": 0.4558
+        },
+        {
+          "hour": 18.5,
+          "lightLux": 150.0,
+          "oscillator": 69.31,
+          "processN": 0.4558
+        },
+        {
+          "hour": 19.0,
+          "lightLux": 150.0,
+          "oscillator": 64.9,
+          "processN": 0.4558
+        },
+        {
+          "hour": 19.5,
+          "lightLux": 150.0,
+          "oscillator": 60.35,
+          "processN": 0.4558
+        },
+        {
+          "hour": 20.0,
+          "lightLux": 150.0,
+          "oscillator": 55.75,
+          "processN": 0.4558
+        },
+        {
+          "hour": 20.5,
+          "lightLux": 150.0,
+          "oscillator": 51.19,
+          "processN": 0.4558
+        },
+        {
+          "hour": 21.0,
+          "lightLux": 150.0,
+          "oscillator": 46.75,
+          "processN": 0.4558
+        },
+        {
+          "hour": 21.5,
+          "lightLux": 150.0,
+          "oscillator": 42.5,
+          "processN": 0.4558
+        },
+        {
+          "hour": 22.0,
+          "lightLux": 150.0,
+          "oscillator": 38.48,
+          "processN": 0.4558
+        },
+        {
+          "hour": 22.5,
+          "lightLux": 150.0,
+          "oscillator": 34.76,
+          "processN": 0.4558
+        },
+        {
+          "hour": 23.0,
+          "lightLux": 0.0,
+          "oscillator": 30.46,
+          "processN": 0.364
+        },
+        {
+          "hour": 23.5,
+          "lightLux": 0.0,
+          "oscillator": 26.51,
+          "processN": 0.2907
+        },
+        {
+          "hour": 24.0,
+          "lightLux": 0.0,
+          "oscillator": 22.95,
+          "processN": 0.2321
+        },
+        {
+          "hour": 24.5,
+          "lightLux": 0.0,
+          "oscillator": 19.83,
+          "processN": 0.1853
+        },
+        {
+          "hour": 25.0,
+          "lightLux": 0.0,
+          "oscillator": 17.18,
+          "processN": 0.148
+        },
+        {
+          "hour": 25.5,
+          "lightLux": 0.0,
+          "oscillator": 15.06,
+          "processN": 0.1182
+        },
+        {
+          "hour": 26.0,
+          "lightLux": 0.0,
+          "oscillator": 13.5,
+          "processN": 0.0944
+        },
+        {
+          "hour": 26.5,
+          "lightLux": 0.0,
+          "oscillator": 12.54,
+          "processN": 0.0754
+        },
+        {
+          "hour": 27.0,
+          "lightLux": 0.0,
+          "oscillator": 12.21,
+          "processN": 0.0602
+        },
+        {
+          "hour": 27.5,
+          "lightLux": 0.0,
+          "oscillator": 12.53,
+          "processN": 0.048
+        },
+        {
+          "hour": 28.0,
+          "lightLux": 0.0,
+          "oscillator": 13.53,
+          "processN": 0.0384
+        },
+        {
+          "hour": 28.5,
+          "lightLux": 0.0,
+          "oscillator": 15.19,
+          "processN": 0.0306
+        },
+        {
+          "hour": 29.0,
+          "lightLux": 0.0,
+          "oscillator": 17.5,
+          "processN": 0.0245
+        },
+        {
+          "hour": 29.5,
+          "lightLux": 0.0,
+          "oscillator": 20.42,
+          "processN": 0.0195
+        },
+        {
+          "hour": 30.0,
+          "lightLux": 0.0,
+          "oscillator": 23.89,
+          "processN": 0.0156
+        },
+        {
+          "hour": 30.5,
+          "lightLux": 0.0,
+          "oscillator": 27.83,
+          "processN": 0.0125
+        },
+        {
+          "hour": 31.0,
+          "lightLux": 150.0,
+          "oscillator": 32.86,
+          "processN": 0.1626
+        },
+        {
+          "hour": 31.5,
+          "lightLux": 150.0,
+          "oscillator": 38.04,
+          "processN": 0.2619
+        },
+        {
+          "hour": 32.0,
+          "lightLux": 150.0,
+          "oscillator": 43.29,
+          "processN": 0.3275
+        },
+        {
+          "hour": 32.5,
+          "lightLux": 150.0,
+          "oscillator": 48.55,
+          "processN": 0.371
+        },
+        {
+          "hour": 33.0,
+          "lightLux": 150.0,
+          "oscillator": 53.73,
+          "processN": 0.3997
+        },
+        {
+          "hour": 33.5,
+          "lightLux": 150.0,
+          "oscillator": 58.76,
+          "processN": 0.4187
+        },
+        {
+          "hour": 34.0,
+          "lightLux": 150.0,
+          "oscillator": 63.58,
+          "processN": 0.4313
+        },
+        {
+          "hour": 34.5,
+          "lightLux": 150.0,
+          "oscillator": 68.12,
+          "processN": 0.4396
+        },
+        {
+          "hour": 35.0,
+          "lightLux": 150.0,
+          "oscillator": 72.32,
+          "processN": 0.4451
+        },
+        {
+          "hour": 35.5,
+          "lightLux": 150.0,
+          "oscillator": 76.13,
+          "processN": 0.4487
+        },
+        {
+          "hour": 36.0,
+          "lightLux": 150.0,
+          "oscillator": 79.51,
+          "processN": 0.4511
+        },
+        {
+          "hour": 36.5,
+          "lightLux": 150.0,
+          "oscillator": 82.4,
+          "processN": 0.4527
+        },
+        {
+          "hour": 37.0,
+          "lightLux": 150.0,
+          "oscillator": 84.75,
+          "processN": 0.4538
+        },
+        {
+          "hour": 37.5,
+          "lightLux": 150.0,
+          "oscillator": 86.53,
+          "processN": 0.4545
+        },
+        {
+          "hour": 38.0,
+          "lightLux": 150.0,
+          "oscillator": 87.7,
+          "processN": 0.4549
+        },
+        {
+          "hour": 38.5,
+          "lightLux": 150.0,
+          "oscillator": 88.21,
+          "processN": 0.4552
+        },
+        {
+          "hour": 39.0,
+          "lightLux": 150.0,
+          "oscillator": 88.05,
+          "processN": 0.4555
+        },
+        {
+          "hour": 39.5,
+          "lightLux": 150.0,
+          "oscillator": 87.2,
+          "processN": 0.4556
+        },
+        {
+          "hour": 40.0,
+          "lightLux": 150.0,
+          "oscillator": 85.66,
+          "processN": 0.4557
+        },
+        {
+          "hour": 40.5,
+          "lightLux": 150.0,
+          "oscillator": 83.46,
+          "processN": 0.4557
+        },
+        {
+          "hour": 41.0,
+          "lightLux": 150.0,
+          "oscillator": 80.65,
+          "processN": 0.4558
+        },
+        {
+          "hour": 41.5,
+          "lightLux": 150.0,
+          "oscillator": 77.29,
+          "processN": 0.4558
+        },
+        {
+          "hour": 42.0,
+          "lightLux": 150.0,
+          "oscillator": 73.48,
+          "processN": 0.4558
+        },
+        {
+          "hour": 42.5,
+          "lightLux": 150.0,
+          "oscillator": 69.31,
+          "processN": 0.4558
+        },
+        {
+          "hour": 43.0,
+          "lightLux": 150.0,
+          "oscillator": 64.9,
+          "processN": 0.4558
+        },
+        {
+          "hour": 43.5,
+          "lightLux": 150.0,
+          "oscillator": 60.35,
+          "processN": 0.4558
+        },
+        {
+          "hour": 44.0,
+          "lightLux": 150.0,
+          "oscillator": 55.75,
+          "processN": 0.4558
+        },
+        {
+          "hour": 44.5,
+          "lightLux": 150.0,
+          "oscillator": 51.19,
+          "processN": 0.4558
+        },
+        {
+          "hour": 45.0,
+          "lightLux": 150.0,
+          "oscillator": 46.75,
+          "processN": 0.4558
+        },
+        {
+          "hour": 45.5,
+          "lightLux": 150.0,
+          "oscillator": 42.5,
+          "processN": 0.4558
+        },
+        {
+          "hour": 46.0,
+          "lightLux": 150.0,
+          "oscillator": 38.48,
+          "processN": 0.4558
+        },
+        {
+          "hour": 46.5,
+          "lightLux": 150.0,
+          "oscillator": 34.76,
+          "processN": 0.4558
+        },
+        {
+          "hour": 47.0,
+          "lightLux": 0.0,
+          "oscillator": 30.46,
+          "processN": 0.364
+        },
+        {
+          "hour": 47.5,
+          "lightLux": 0.0,
+          "oscillator": 26.51,
+          "processN": 0.2907
+        },
+        {
+          "hour": 48.0,
+          "lightLux": 0.0,
+          "oscillator": 22.95,
+          "processN": 0.2321
+        }
+      ]
+    },
+    {
+      "id": "regular-nightOwl",
+      "scenarioId": "regular",
+      "chronotypeId": "nightOwl",
+      "model": {
+        "name": "Forger99",
+        "intrinsicPeriodHours": 24.45,
+        "dtHours": 0.5,
+        "simulationDays": 21,
+        "displayHours": 48
+      },
+      "metrics": {
+        "finalAmplitude": 1.071,
+        "meanWindowAmplitude": 1.0712,
+        "finalPhaseRadians": 1.9114,
+        "latestCbtMinDisplayHour": 29.0,
+        "latestDlmoDisplayHour": 22.0,
+        "latestCbtMinClockHour": 5.0,
+        "latestDlmoClockHour": 22.0,
+        "esri": 0.3725,
+        "lightRegularity": 1.0,
+        "meanLightLux": 99.0,
+        "maxLightLux": 150.0
+      },
+      "display": {
+        "signalScale": 1.0,
+        "chronotypePhaseOffsetHours": 1.5,
+        "modelPhaseOffsetHours": 1.0
+      },
+      "points": [
+        {
+          "hour": 0.0,
+          "lightLux": 0.0,
+          "oscillator": 37.3,
+          "processN": 0.2321
+        },
+        {
+          "hour": 0.5,
+          "lightLux": 0.0,
+          "oscillator": 32.83,
+          "processN": 0.1853
+        },
+        {
+          "hour": 1.0,
+          "lightLux": 0.0,
+          "oscillator": 28.67,
+          "processN": 0.148
+        },
+        {
+          "hour": 1.5,
+          "lightLux": 0.0,
+          "oscillator": 24.85,
+          "processN": 0.1182
+        },
+        {
+          "hour": 2.0,
+          "lightLux": 0.0,
+          "oscillator": 21.44,
+          "processN": 0.0944
+        },
+        {
+          "hour": 2.5,
+          "lightLux": 0.0,
+          "oscillator": 18.46,
+          "processN": 0.0754
+        },
+        {
+          "hour": 3.0,
+          "lightLux": 0.0,
+          "oscillator": 15.96,
+          "processN": 0.0602
+        },
+        {
+          "hour": 3.5,
+          "lightLux": 0.0,
+          "oscillator": 13.98,
+          "processN": 0.048
+        },
+        {
+          "hour": 4.0,
+          "lightLux": 0.0,
+          "oscillator": 12.54,
+          "processN": 0.0384
+        },
+        {
+          "hour": 4.5,
+          "lightLux": 0.0,
+          "oscillator": 11.7,
+          "processN": 0.0306
+        },
+        {
+          "hour": 5.0,
+          "lightLux": 0.0,
+          "oscillator": 11.47,
+          "processN": 0.0245
+        },
+        {
+          "hour": 5.5,
+          "lightLux": 0.0,
+          "oscillator": 11.88,
+          "processN": 0.0195
+        },
+        {
+          "hour": 6.0,
+          "lightLux": 0.0,
+          "oscillator": 12.95,
+          "processN": 0.0156
+        },
+        {
+          "hour": 6.5,
+          "lightLux": 0.0,
+          "oscillator": 14.65,
+          "processN": 0.0125
+        },
+        {
+          "hour": 7.0,
+          "lightLux": 150.0,
+          "oscillator": 17.99,
+          "processN": 0.1626
+        },
+        {
+          "hour": 7.5,
+          "lightLux": 150.0,
+          "oscillator": 21.74,
+          "processN": 0.2619
+        },
+        {
+          "hour": 8.0,
+          "lightLux": 150.0,
+          "oscillator": 25.88,
+          "processN": 0.3275
+        },
+        {
+          "hour": 8.5,
+          "lightLux": 150.0,
+          "oscillator": 30.36,
+          "processN": 0.371
+        },
+        {
+          "hour": 9.0,
+          "lightLux": 150.0,
+          "oscillator": 35.09,
+          "processN": 0.3997
+        },
+        {
+          "hour": 9.5,
+          "lightLux": 150.0,
+          "oscillator": 40.01,
+          "processN": 0.4187
+        },
+        {
+          "hour": 10.0,
+          "lightLux": 150.0,
+          "oscillator": 45.01,
+          "processN": 0.4313
+        },
+        {
+          "hour": 10.5,
+          "lightLux": 150.0,
+          "oscillator": 50.01,
+          "processN": 0.4396
+        },
+        {
+          "hour": 11.0,
+          "lightLux": 150.0,
+          "oscillator": 54.93,
+          "processN": 0.4451
+        },
+        {
+          "hour": 11.5,
+          "lightLux": 150.0,
+          "oscillator": 59.71,
+          "processN": 0.4487
+        },
+        {
+          "hour": 12.0,
+          "lightLux": 150.0,
+          "oscillator": 64.27,
+          "processN": 0.4511
+        },
+        {
+          "hour": 12.5,
+          "lightLux": 150.0,
+          "oscillator": 68.57,
+          "processN": 0.4527
+        },
+        {
+          "hour": 13.0,
+          "lightLux": 150.0,
+          "oscillator": 72.54,
+          "processN": 0.4538
+        },
+        {
+          "hour": 13.5,
+          "lightLux": 150.0,
+          "oscillator": 76.14,
+          "processN": 0.4545
+        },
+        {
+          "hour": 14.0,
+          "lightLux": 150.0,
+          "oscillator": 79.32,
+          "processN": 0.4549
+        },
+        {
+          "hour": 14.5,
+          "lightLux": 150.0,
+          "oscillator": 82.04,
+          "processN": 0.4552
+        },
+        {
+          "hour": 15.0,
+          "lightLux": 150.0,
+          "oscillator": 84.25,
+          "processN": 0.4555
+        },
+        {
+          "hour": 15.5,
+          "lightLux": 150.0,
+          "oscillator": 85.92,
+          "processN": 0.4556
+        },
+        {
+          "hour": 16.0,
+          "lightLux": 150.0,
+          "oscillator": 87.0,
+          "processN": 0.4557
+        },
+        {
+          "hour": 16.5,
+          "lightLux": 150.0,
+          "oscillator": 87.47,
+          "processN": 0.4557
+        },
+        {
+          "hour": 17.0,
+          "lightLux": 150.0,
+          "oscillator": 87.31,
+          "processN": 0.4558
+        },
+        {
+          "hour": 17.5,
+          "lightLux": 150.0,
+          "oscillator": 86.49,
+          "processN": 0.4558
+        },
+        {
+          "hour": 18.0,
+          "lightLux": 150.0,
+          "oscillator": 85.03,
+          "processN": 0.4558
+        },
+        {
+          "hour": 18.5,
+          "lightLux": 150.0,
+          "oscillator": 82.94,
+          "processN": 0.4558
+        },
+        {
+          "hour": 19.0,
+          "lightLux": 150.0,
+          "oscillator": 80.27,
+          "processN": 0.4558
+        },
+        {
+          "hour": 19.5,
+          "lightLux": 150.0,
+          "oscillator": 77.08,
+          "processN": 0.4558
+        },
+        {
+          "hour": 20.0,
+          "lightLux": 150.0,
+          "oscillator": 73.45,
+          "processN": 0.4558
+        },
+        {
+          "hour": 20.5,
+          "lightLux": 150.0,
+          "oscillator": 69.47,
+          "processN": 0.4558
+        },
+        {
+          "hour": 21.0,
+          "lightLux": 150.0,
+          "oscillator": 65.25,
+          "processN": 0.4558
+        },
+        {
+          "hour": 21.5,
+          "lightLux": 150.0,
+          "oscillator": 60.87,
+          "processN": 0.4558
+        },
+        {
+          "hour": 22.0,
+          "lightLux": 150.0,
+          "oscillator": 56.44,
+          "processN": 0.4558
+        },
+        {
+          "hour": 22.5,
+          "lightLux": 150.0,
+          "oscillator": 52.03,
+          "processN": 0.4558
+        },
+        {
+          "hour": 23.0,
+          "lightLux": 0.0,
+          "oscillator": 46.97,
+          "processN": 0.364
+        },
+        {
+          "hour": 23.5,
+          "lightLux": 0.0,
+          "oscillator": 42.03,
+          "processN": 0.2907
+        },
+        {
+          "hour": 24.0,
+          "lightLux": 0.0,
+          "oscillator": 37.3,
+          "processN": 0.2321
+        },
+        {
+          "hour": 24.5,
+          "lightLux": 0.0,
+          "oscillator": 32.83,
+          "processN": 0.1853
+        },
+        {
+          "hour": 25.0,
+          "lightLux": 0.0,
+          "oscillator": 28.67,
+          "processN": 0.148
+        },
+        {
+          "hour": 25.5,
+          "lightLux": 0.0,
+          "oscillator": 24.85,
+          "processN": 0.1182
+        },
+        {
+          "hour": 26.0,
+          "lightLux": 0.0,
+          "oscillator": 21.44,
+          "processN": 0.0944
+        },
+        {
+          "hour": 26.5,
+          "lightLux": 0.0,
+          "oscillator": 18.46,
+          "processN": 0.0754
+        },
+        {
+          "hour": 27.0,
+          "lightLux": 0.0,
+          "oscillator": 15.96,
+          "processN": 0.0602
+        },
+        {
+          "hour": 27.5,
+          "lightLux": 0.0,
+          "oscillator": 13.98,
+          "processN": 0.048
+        },
+        {
+          "hour": 28.0,
+          "lightLux": 0.0,
+          "oscillator": 12.54,
+          "processN": 0.0384
+        },
+        {
+          "hour": 28.5,
+          "lightLux": 0.0,
+          "oscillator": 11.7,
+          "processN": 0.0306
+        },
+        {
+          "hour": 29.0,
+          "lightLux": 0.0,
+          "oscillator": 11.47,
+          "processN": 0.0245
+        },
+        {
+          "hour": 29.5,
+          "lightLux": 0.0,
+          "oscillator": 11.88,
+          "processN": 0.0195
+        },
+        {
+          "hour": 30.0,
+          "lightLux": 0.0,
+          "oscillator": 12.95,
+          "processN": 0.0156
+        },
+        {
+          "hour": 30.5,
+          "lightLux": 0.0,
+          "oscillator": 14.65,
+          "processN": 0.0125
+        },
+        {
+          "hour": 31.0,
+          "lightLux": 150.0,
+          "oscillator": 17.99,
+          "processN": 0.1626
+        },
+        {
+          "hour": 31.5,
+          "lightLux": 150.0,
+          "oscillator": 21.74,
+          "processN": 0.2619
+        },
+        {
+          "hour": 32.0,
+          "lightLux": 150.0,
+          "oscillator": 25.88,
+          "processN": 0.3275
+        },
+        {
+          "hour": 32.5,
+          "lightLux": 150.0,
+          "oscillator": 30.36,
+          "processN": 0.371
+        },
+        {
+          "hour": 33.0,
+          "lightLux": 150.0,
+          "oscillator": 35.09,
+          "processN": 0.3997
+        },
+        {
+          "hour": 33.5,
+          "lightLux": 150.0,
+          "oscillator": 40.01,
+          "processN": 0.4187
+        },
+        {
+          "hour": 34.0,
+          "lightLux": 150.0,
+          "oscillator": 45.01,
+          "processN": 0.4313
+        },
+        {
+          "hour": 34.5,
+          "lightLux": 150.0,
+          "oscillator": 50.01,
+          "processN": 0.4396
+        },
+        {
+          "hour": 35.0,
+          "lightLux": 150.0,
+          "oscillator": 54.93,
+          "processN": 0.4451
+        },
+        {
+          "hour": 35.5,
+          "lightLux": 150.0,
+          "oscillator": 59.71,
+          "processN": 0.4487
+        },
+        {
+          "hour": 36.0,
+          "lightLux": 150.0,
+          "oscillator": 64.27,
+          "processN": 0.4511
+        },
+        {
+          "hour": 36.5,
+          "lightLux": 150.0,
+          "oscillator": 68.57,
+          "processN": 0.4527
+        },
+        {
+          "hour": 37.0,
+          "lightLux": 150.0,
+          "oscillator": 72.54,
+          "processN": 0.4538
+        },
+        {
+          "hour": 37.5,
+          "lightLux": 150.0,
+          "oscillator": 76.14,
+          "processN": 0.4545
+        },
+        {
+          "hour": 38.0,
+          "lightLux": 150.0,
+          "oscillator": 79.32,
+          "processN": 0.4549
+        },
+        {
+          "hour": 38.5,
+          "lightLux": 150.0,
+          "oscillator": 82.04,
+          "processN": 0.4552
+        },
+        {
+          "hour": 39.0,
+          "lightLux": 150.0,
+          "oscillator": 84.25,
+          "processN": 0.4555
+        },
+        {
+          "hour": 39.5,
+          "lightLux": 150.0,
+          "oscillator": 85.92,
+          "processN": 0.4556
+        },
+        {
+          "hour": 40.0,
+          "lightLux": 150.0,
+          "oscillator": 87.0,
+          "processN": 0.4557
+        },
+        {
+          "hour": 40.5,
+          "lightLux": 150.0,
+          "oscillator": 87.47,
+          "processN": 0.4557
+        },
+        {
+          "hour": 41.0,
+          "lightLux": 150.0,
+          "oscillator": 87.31,
+          "processN": 0.4558
+        },
+        {
+          "hour": 41.5,
+          "lightLux": 150.0,
+          "oscillator": 86.49,
+          "processN": 0.4558
+        },
+        {
+          "hour": 42.0,
+          "lightLux": 150.0,
+          "oscillator": 85.03,
+          "processN": 0.4558
+        },
+        {
+          "hour": 42.5,
+          "lightLux": 150.0,
+          "oscillator": 82.94,
+          "processN": 0.4558
+        },
+        {
+          "hour": 43.0,
+          "lightLux": 150.0,
+          "oscillator": 80.27,
+          "processN": 0.4558
+        },
+        {
+          "hour": 43.5,
+          "lightLux": 150.0,
+          "oscillator": 77.08,
+          "processN": 0.4558
+        },
+        {
+          "hour": 44.0,
+          "lightLux": 150.0,
+          "oscillator": 73.45,
+          "processN": 0.4558
+        },
+        {
+          "hour": 44.5,
+          "lightLux": 150.0,
+          "oscillator": 69.47,
+          "processN": 0.4558
+        },
+        {
+          "hour": 45.0,
+          "lightLux": 150.0,
+          "oscillator": 65.25,
+          "processN": 0.4558
+        },
+        {
+          "hour": 45.5,
+          "lightLux": 150.0,
+          "oscillator": 60.87,
+          "processN": 0.4558
+        },
+        {
+          "hour": 46.0,
+          "lightLux": 150.0,
+          "oscillator": 56.44,
+          "processN": 0.4558
+        },
+        {
+          "hour": 46.5,
+          "lightLux": 150.0,
+          "oscillator": 52.03,
+          "processN": 0.4558
+        },
+        {
+          "hour": 47.0,
+          "lightLux": 0.0,
+          "oscillator": 46.97,
+          "processN": 0.364
+        },
+        {
+          "hour": 47.5,
+          "lightLux": 0.0,
+          "oscillator": 42.03,
+          "processN": 0.2907
+        },
+        {
+          "hour": 48.0,
+          "lightLux": 0.0,
+          "oscillator": 37.3,
+          "processN": 0.2321
+        }
+      ]
+    },
+    {
+      "id": "camping-neutral",
+      "scenarioId": "camping",
+      "chronotypeId": "neutral",
+      "model": {
+        "name": "Forger99",
+        "intrinsicPeriodHours": 24.2,
+        "dtHours": 0.5,
+        "simulationDays": 21,
+        "displayHours": 48
+      },
+      "metrics": {
+        "finalAmplitude": 1.1229,
+        "meanWindowAmplitude": 1.1524,
+        "finalPhaseRadians": 2.7582,
+        "latestCbtMinDisplayHour": 25.5,
+        "latestDlmoDisplayHour": 18.5,
+        "latestCbtMinClockHour": 1.5,
+        "latestDlmoClockHour": 18.5,
+        "esri": null,
+        "lightRegularity": 1.0,
+        "meanLightLux": 5567.2,
+        "maxLightLux": 10000.0
+      },
+      "display": {
+        "signalScale": 1.15,
+        "chronotypePhaseOffsetHours": 0.0,
+        "modelPhaseOffsetHours": -2.5
+      },
+      "points": [
+        {
+          "hour": 0.0,
+          "lightLux": 0.5,
+          "oscillator": 14.77,
+          "processN": 0.145
+        },
+        {
+          "hour": 0.5,
+          "lightLux": 0.5,
+          "oscillator": 13.28,
+          "processN": 0.1243
+        },
+        {
+          "hour": 1.0,
+          "lightLux": 0.5,
+          "oscillator": 12.39,
+          "processN": 0.1078
+        },
+        {
+          "hour": 1.5,
+          "lightLux": 0.5,
+          "oscillator": 12.1,
+          "processN": 0.0949
+        },
+        {
+          "hour": 2.0,
+          "lightLux": 0.5,
+          "oscillator": 12.46,
+          "processN": 0.0846
+        },
+        {
+          "hour": 2.5,
+          "lightLux": 0.5,
+          "oscillator": 13.47,
+          "processN": 0.0765
+        },
+        {
+          "hour": 3.0,
+          "lightLux": 0.5,
+          "oscillator": 15.14,
+          "processN": 0.0702
+        },
+        {
+          "hour": 3.5,
+          "lightLux": 0.5,
+          "oscillator": 17.43,
+          "processN": 0.0651
+        },
+        {
+          "hour": 4.0,
+          "lightLux": 0.5,
+          "oscillator": 20.3,
+          "processN": 0.0611
+        },
+        {
+          "hour": 4.5,
+          "lightLux": 0.5,
+          "oscillator": 23.71,
+          "processN": 0.058
+        },
+        {
+          "hour": 5.0,
+          "lightLux": 0.5,
+          "oscillator": 27.57,
+          "processN": 0.0555
+        },
+        {
+          "hour": 5.5,
+          "lightLux": 0.5,
+          "oscillator": 31.79,
+          "processN": 0.0535
+        },
+        {
+          "hour": 6.0,
+          "lightLux": 0.5,
+          "oscillator": 36.28,
+          "processN": 0.052
+        },
+        {
+          "hour": 6.5,
+          "lightLux": 10000.0,
+          "oscillator": 43.29,
+          "processN": 0.6423
+        },
+        {
+          "hour": 7.0,
+          "lightLux": 10000.0,
+          "oscillator": 49.02,
+          "processN": 0.8079
+        },
+        {
+          "hour": 7.5,
+          "lightLux": 10000.0,
+          "oscillator": 54.34,
+          "processN": 0.8543
+        },
+        {
+          "hour": 8.0,
+          "lightLux": 10000.0,
+          "oscillator": 59.41,
+          "processN": 0.8674
+        },
+        {
+          "hour": 8.5,
+          "lightLux": 10000.0,
+          "oscillator": 64.22,
+          "processN": 0.871
+        },
+        {
+          "hour": 9.0,
+          "lightLux": 10000.0,
+          "oscillator": 68.73,
+          "processN": 0.872
+        },
+        {
+          "hour": 9.5,
+          "lightLux": 10000.0,
+          "oscillator": 72.88,
+          "processN": 0.8723
+        },
+        {
+          "hour": 10.0,
+          "lightLux": 10000.0,
+          "oscillator": 76.63,
+          "processN": 0.8724
+        },
+        {
+          "hour": 10.5,
+          "lightLux": 10000.0,
+          "oscillator": 79.93,
+          "processN": 0.8724
+        },
+        {
+          "hour": 11.0,
+          "lightLux": 10000.0,
+          "oscillator": 82.73,
+          "processN": 0.8724
+        },
+        {
+          "hour": 11.5,
+          "lightLux": 10000.0,
+          "oscillator": 84.99,
+          "processN": 0.8724
+        },
+        {
+          "hour": 12.0,
+          "lightLux": 10000.0,
+          "oscillator": 86.66,
+          "processN": 0.8724
+        },
+        {
+          "hour": 12.5,
+          "lightLux": 10000.0,
+          "oscillator": 87.71,
+          "processN": 0.8724
+        },
+        {
+          "hour": 13.0,
+          "lightLux": 10000.0,
+          "oscillator": 88.1,
+          "processN": 0.8724
+        },
+        {
+          "hour": 13.5,
+          "lightLux": 10000.0,
+          "oscillator": 87.83,
+          "processN": 0.8724
+        },
+        {
+          "hour": 14.0,
+          "lightLux": 10000.0,
+          "oscillator": 86.87,
+          "processN": 0.8724
+        },
+        {
+          "hour": 14.5,
+          "lightLux": 10000.0,
+          "oscillator": 85.24,
+          "processN": 0.8724
+        },
+        {
+          "hour": 15.0,
+          "lightLux": 10000.0,
+          "oscillator": 82.98,
+          "processN": 0.8724
+        },
+        {
+          "hour": 15.5,
+          "lightLux": 10000.0,
+          "oscillator": 80.16,
+          "processN": 0.8724
+        },
+        {
+          "hour": 16.0,
+          "lightLux": 10000.0,
+          "oscillator": 76.85,
+          "processN": 0.8724
+        },
+        {
+          "hour": 16.5,
+          "lightLux": 10000.0,
+          "oscillator": 73.17,
+          "processN": 0.8724
+        },
+        {
+          "hour": 17.0,
+          "lightLux": 10000.0,
+          "oscillator": 69.21,
+          "processN": 0.8724
+        },
+        {
+          "hour": 17.5,
+          "lightLux": 10000.0,
+          "oscillator": 65.1,
+          "processN": 0.8724
+        },
+        {
+          "hour": 18.0,
+          "lightLux": 10000.0,
+          "oscillator": 60.92,
+          "processN": 0.8724
+        },
+        {
+          "hour": 18.5,
+          "lightLux": 10000.0,
+          "oscillator": 56.77,
+          "processN": 0.8724
+        },
+        {
+          "hour": 19.0,
+          "lightLux": 10000.0,
+          "oscillator": 52.71,
+          "processN": 0.8724
+        },
+        {
+          "hour": 19.5,
+          "lightLux": 10000.0,
+          "oscillator": 48.82,
+          "processN": 0.8724
+        },
+        {
+          "hour": 20.0,
+          "lightLux": 0.5,
+          "oscillator": 43.68,
+          "processN": 0.6988
+        },
+        {
+          "hour": 20.5,
+          "lightLux": 0.5,
+          "oscillator": 38.78,
+          "processN": 0.5617
+        },
+        {
+          "hour": 21.0,
+          "lightLux": 0.5,
+          "oscillator": 34.16,
+          "processN": 0.4534
+        },
+        {
+          "hour": 21.5,
+          "lightLux": 0.5,
+          "oscillator": 29.87,
+          "processN": 0.3678
+        },
+        {
+          "hour": 22.0,
+          "lightLux": 0.5,
+          "oscillator": 25.95,
+          "processN": 0.3002
+        },
+        {
+          "hour": 22.5,
+          "lightLux": 0.5,
+          "oscillator": 22.44,
+          "processN": 0.2468
+        },
+        {
+          "hour": 23.0,
+          "lightLux": 0.5,
+          "oscillator": 19.39,
+          "processN": 0.2046
+        },
+        {
+          "hour": 23.5,
+          "lightLux": 0.5,
+          "oscillator": 16.82,
+          "processN": 0.1713
+        },
+        {
+          "hour": 24.0,
+          "lightLux": 0.5,
+          "oscillator": 14.77,
+          "processN": 0.145
+        },
+        {
+          "hour": 24.5,
+          "lightLux": 0.5,
+          "oscillator": 13.28,
+          "processN": 0.1243
+        },
+        {
+          "hour": 25.0,
+          "lightLux": 0.5,
+          "oscillator": 12.39,
+          "processN": 0.1078
+        },
+        {
+          "hour": 25.5,
+          "lightLux": 0.5,
+          "oscillator": 12.1,
+          "processN": 0.0949
+        },
+        {
+          "hour": 26.0,
+          "lightLux": 0.5,
+          "oscillator": 12.46,
+          "processN": 0.0846
+        },
+        {
+          "hour": 26.5,
+          "lightLux": 0.5,
+          "oscillator": 13.47,
+          "processN": 0.0765
+        },
+        {
+          "hour": 27.0,
+          "lightLux": 0.5,
+          "oscillator": 15.14,
+          "processN": 0.0702
+        },
+        {
+          "hour": 27.5,
+          "lightLux": 0.5,
+          "oscillator": 17.43,
+          "processN": 0.0651
+        },
+        {
+          "hour": 28.0,
+          "lightLux": 0.5,
+          "oscillator": 20.3,
+          "processN": 0.0611
+        },
+        {
+          "hour": 28.5,
+          "lightLux": 0.5,
+          "oscillator": 23.71,
+          "processN": 0.058
+        },
+        {
+          "hour": 29.0,
+          "lightLux": 0.5,
+          "oscillator": 27.57,
+          "processN": 0.0555
+        },
+        {
+          "hour": 29.5,
+          "lightLux": 0.5,
+          "oscillator": 31.79,
+          "processN": 0.0535
+        },
+        {
+          "hour": 30.0,
+          "lightLux": 0.5,
+          "oscillator": 36.28,
+          "processN": 0.052
+        },
+        {
+          "hour": 30.5,
+          "lightLux": 10000.0,
+          "oscillator": 43.29,
+          "processN": 0.6423
+        },
+        {
+          "hour": 31.0,
+          "lightLux": 10000.0,
+          "oscillator": 49.02,
+          "processN": 0.8079
+        },
+        {
+          "hour": 31.5,
+          "lightLux": 10000.0,
+          "oscillator": 54.34,
+          "processN": 0.8543
+        },
+        {
+          "hour": 32.0,
+          "lightLux": 10000.0,
+          "oscillator": 59.41,
+          "processN": 0.8674
+        },
+        {
+          "hour": 32.5,
+          "lightLux": 10000.0,
+          "oscillator": 64.22,
+          "processN": 0.871
+        },
+        {
+          "hour": 33.0,
+          "lightLux": 10000.0,
+          "oscillator": 68.73,
+          "processN": 0.872
+        },
+        {
+          "hour": 33.5,
+          "lightLux": 10000.0,
+          "oscillator": 72.88,
+          "processN": 0.8723
+        },
+        {
+          "hour": 34.0,
+          "lightLux": 10000.0,
+          "oscillator": 76.63,
+          "processN": 0.8724
+        },
+        {
+          "hour": 34.5,
+          "lightLux": 10000.0,
+          "oscillator": 79.93,
+          "processN": 0.8724
+        },
+        {
+          "hour": 35.0,
+          "lightLux": 10000.0,
+          "oscillator": 82.73,
+          "processN": 0.8724
+        },
+        {
+          "hour": 35.5,
+          "lightLux": 10000.0,
+          "oscillator": 84.99,
+          "processN": 0.8724
+        },
+        {
+          "hour": 36.0,
+          "lightLux": 10000.0,
+          "oscillator": 86.66,
+          "processN": 0.8724
+        },
+        {
+          "hour": 36.5,
+          "lightLux": 10000.0,
+          "oscillator": 87.71,
+          "processN": 0.8724
+        },
+        {
+          "hour": 37.0,
+          "lightLux": 10000.0,
+          "oscillator": 88.1,
+          "processN": 0.8724
+        },
+        {
+          "hour": 37.5,
+          "lightLux": 10000.0,
+          "oscillator": 87.83,
+          "processN": 0.8724
+        },
+        {
+          "hour": 38.0,
+          "lightLux": 10000.0,
+          "oscillator": 86.87,
+          "processN": 0.8724
+        },
+        {
+          "hour": 38.5,
+          "lightLux": 10000.0,
+          "oscillator": 85.24,
+          "processN": 0.8724
+        },
+        {
+          "hour": 39.0,
+          "lightLux": 10000.0,
+          "oscillator": 82.98,
+          "processN": 0.8724
+        },
+        {
+          "hour": 39.5,
+          "lightLux": 10000.0,
+          "oscillator": 80.16,
+          "processN": 0.8724
+        },
+        {
+          "hour": 40.0,
+          "lightLux": 10000.0,
+          "oscillator": 76.85,
+          "processN": 0.8724
+        },
+        {
+          "hour": 40.5,
+          "lightLux": 10000.0,
+          "oscillator": 73.17,
+          "processN": 0.8724
+        },
+        {
+          "hour": 41.0,
+          "lightLux": 10000.0,
+          "oscillator": 69.21,
+          "processN": 0.8724
+        },
+        {
+          "hour": 41.5,
+          "lightLux": 10000.0,
+          "oscillator": 65.1,
+          "processN": 0.8724
+        },
+        {
+          "hour": 42.0,
+          "lightLux": 10000.0,
+          "oscillator": 60.92,
+          "processN": 0.8724
+        },
+        {
+          "hour": 42.5,
+          "lightLux": 10000.0,
+          "oscillator": 56.77,
+          "processN": 0.8724
+        },
+        {
+          "hour": 43.0,
+          "lightLux": 10000.0,
+          "oscillator": 52.71,
+          "processN": 0.8724
+        },
+        {
+          "hour": 43.5,
+          "lightLux": 10000.0,
+          "oscillator": 48.82,
+          "processN": 0.8724
+        },
+        {
+          "hour": 44.0,
+          "lightLux": 0.5,
+          "oscillator": 43.68,
+          "processN": 0.6988
+        },
+        {
+          "hour": 44.5,
+          "lightLux": 0.5,
+          "oscillator": 38.78,
+          "processN": 0.5617
+        },
+        {
+          "hour": 45.0,
+          "lightLux": 0.5,
+          "oscillator": 34.16,
+          "processN": 0.4534
+        },
+        {
+          "hour": 45.5,
+          "lightLux": 0.5,
+          "oscillator": 29.87,
+          "processN": 0.3678
+        },
+        {
+          "hour": 46.0,
+          "lightLux": 0.5,
+          "oscillator": 25.95,
+          "processN": 0.3002
+        },
+        {
+          "hour": 46.5,
+          "lightLux": 0.5,
+          "oscillator": 22.44,
+          "processN": 0.2468
+        },
+        {
+          "hour": 47.0,
+          "lightLux": 0.5,
+          "oscillator": 19.39,
+          "processN": 0.2046
+        },
+        {
+          "hour": 47.5,
+          "lightLux": 0.5,
+          "oscillator": 16.82,
+          "processN": 0.1713
+        },
+        {
+          "hour": 48.0,
+          "lightLux": 0.5,
+          "oscillator": 14.77,
+          "processN": 0.145
+        }
+      ]
+    },
+    {
+      "id": "camping-morning",
+      "scenarioId": "camping",
+      "chronotypeId": "morning",
+      "model": {
+        "name": "Forger99",
+        "intrinsicPeriodHours": 23.9,
+        "dtHours": 0.5,
+        "simulationDays": 21,
+        "displayHours": 48
+      },
+      "metrics": {
+        "finalAmplitude": 1.0991,
+        "meanWindowAmplitude": 1.1311,
+        "finalPhaseRadians": 2.9,
+        "latestCbtMinDisplayHour": 25.0,
+        "latestDlmoDisplayHour": 18.0,
+        "latestCbtMinClockHour": 1.0,
+        "latestDlmoClockHour": 18.0,
+        "esri": null,
+        "lightRegularity": 1.0,
+        "meanLightLux": 5567.2,
+        "maxLightLux": 10000.0
+      },
+      "display": {
+        "signalScale": 1.15,
+        "chronotypePhaseOffsetHours": -1.25,
+        "modelPhaseOffsetHours": -3.0
+      },
+      "points": [
+        {
+          "hour": 0.0,
+          "lightLux": 0.5,
+          "oscillator": 13.26,
+          "processN": 0.145
+        },
+        {
+          "hour": 0.5,
+          "lightLux": 0.5,
+          "oscillator": 12.46,
+          "processN": 0.1243
+        },
+        {
+          "hour": 1.0,
+          "lightLux": 0.5,
+          "oscillator": 12.3,
+          "processN": 0.1078
+        },
+        {
+          "hour": 1.5,
+          "lightLux": 0.5,
+          "oscillator": 12.8,
+          "processN": 0.0949
+        },
+        {
+          "hour": 2.0,
+          "lightLux": 0.5,
+          "oscillator": 13.96,
+          "processN": 0.0846
+        },
+        {
+          "hour": 2.5,
+          "lightLux": 0.5,
+          "oscillator": 15.78,
+          "processN": 0.0765
+        },
+        {
+          "hour": 3.0,
+          "lightLux": 0.5,
+          "oscillator": 18.24,
+          "processN": 0.0702
+        },
+        {
+          "hour": 3.5,
+          "lightLux": 0.5,
+          "oscillator": 21.29,
+          "processN": 0.0651
+        },
+        {
+          "hour": 4.0,
+          "lightLux": 0.5,
+          "oscillator": 24.85,
+          "processN": 0.0611
+        },
+        {
+          "hour": 4.5,
+          "lightLux": 0.5,
+          "oscillator": 28.86,
+          "processN": 0.058
+        },
+        {
+          "hour": 5.0,
+          "lightLux": 0.5,
+          "oscillator": 33.21,
+          "processN": 0.0555
+        },
+        {
+          "hour": 5.5,
+          "lightLux": 0.5,
+          "oscillator": 37.8,
+          "processN": 0.0535
+        },
+        {
+          "hour": 6.0,
+          "lightLux": 0.5,
+          "oscillator": 42.54,
+          "processN": 0.052
+        },
+        {
+          "hour": 6.5,
+          "lightLux": 10000.0,
+          "oscillator": 49.53,
+          "processN": 0.6423
+        },
+        {
+          "hour": 7.0,
+          "lightLux": 10000.0,
+          "oscillator": 55.21,
+          "processN": 0.8079
+        },
+        {
+          "hour": 7.5,
+          "lightLux": 10000.0,
+          "oscillator": 60.4,
+          "processN": 0.8543
+        },
+        {
+          "hour": 8.0,
+          "lightLux": 10000.0,
+          "oscillator": 65.26,
+          "processN": 0.8674
+        },
+        {
+          "hour": 8.5,
+          "lightLux": 10000.0,
+          "oscillator": 69.78,
+          "processN": 0.871
+        },
+        {
+          "hour": 9.0,
+          "lightLux": 10000.0,
+          "oscillator": 73.92,
+          "processN": 0.872
+        },
+        {
+          "hour": 9.5,
+          "lightLux": 10000.0,
+          "oscillator": 77.63,
+          "processN": 0.8723
+        },
+        {
+          "hour": 10.0,
+          "lightLux": 10000.0,
+          "oscillator": 80.87,
+          "processN": 0.8724
+        },
+        {
+          "hour": 10.5,
+          "lightLux": 10000.0,
+          "oscillator": 83.57,
+          "processN": 0.8724
+        },
+        {
+          "hour": 11.0,
+          "lightLux": 10000.0,
+          "oscillator": 85.71,
+          "processN": 0.8724
+        },
+        {
+          "hour": 11.5,
+          "lightLux": 10000.0,
+          "oscillator": 87.24,
+          "processN": 0.8724
+        },
+        {
+          "hour": 12.0,
+          "lightLux": 10000.0,
+          "oscillator": 88.11,
+          "processN": 0.8724
+        },
+        {
+          "hour": 12.5,
+          "lightLux": 10000.0,
+          "oscillator": 88.3,
+          "processN": 0.8724
+        },
+        {
+          "hour": 13.0,
+          "lightLux": 10000.0,
+          "oscillator": 87.8,
+          "processN": 0.8724
+        },
+        {
+          "hour": 13.5,
+          "lightLux": 10000.0,
+          "oscillator": 86.59,
+          "processN": 0.8724
+        },
+        {
+          "hour": 14.0,
+          "lightLux": 10000.0,
+          "oscillator": 84.71,
+          "processN": 0.8724
+        },
+        {
+          "hour": 14.5,
+          "lightLux": 10000.0,
+          "oscillator": 82.2,
+          "processN": 0.8724
+        },
+        {
+          "hour": 15.0,
+          "lightLux": 10000.0,
+          "oscillator": 79.14,
+          "processN": 0.8724
+        },
+        {
+          "hour": 15.5,
+          "lightLux": 10000.0,
+          "oscillator": 75.62,
+          "processN": 0.8724
+        },
+        {
+          "hour": 16.0,
+          "lightLux": 10000.0,
+          "oscillator": 71.75,
+          "processN": 0.8724
+        },
+        {
+          "hour": 16.5,
+          "lightLux": 10000.0,
+          "oscillator": 67.64,
+          "processN": 0.8724
+        },
+        {
+          "hour": 17.0,
+          "lightLux": 10000.0,
+          "oscillator": 63.41,
+          "processN": 0.8724
+        },
+        {
+          "hour": 17.5,
+          "lightLux": 10000.0,
+          "oscillator": 59.16,
+          "processN": 0.8724
+        },
+        {
+          "hour": 18.0,
+          "lightLux": 10000.0,
+          "oscillator": 54.96,
+          "processN": 0.8724
+        },
+        {
+          "hour": 18.5,
+          "lightLux": 10000.0,
+          "oscillator": 50.9,
+          "processN": 0.8724
+        },
+        {
+          "hour": 19.0,
+          "lightLux": 10000.0,
+          "oscillator": 47.03,
+          "processN": 0.8724
+        },
+        {
+          "hour": 19.5,
+          "lightLux": 10000.0,
+          "oscillator": 43.39,
+          "processN": 0.8724
+        },
+        {
+          "hour": 20.0,
+          "lightLux": 0.5,
+          "oscillator": 38.47,
+          "processN": 0.6988
+        },
+        {
+          "hour": 20.5,
+          "lightLux": 0.5,
+          "oscillator": 33.85,
+          "processN": 0.5617
+        },
+        {
+          "hour": 21.0,
+          "lightLux": 0.5,
+          "oscillator": 29.56,
+          "processN": 0.4534
+        },
+        {
+          "hour": 21.5,
+          "lightLux": 0.5,
+          "oscillator": 25.66,
+          "processN": 0.3678
+        },
+        {
+          "hour": 22.0,
+          "lightLux": 0.5,
+          "oscillator": 22.18,
+          "processN": 0.3002
+        },
+        {
+          "hour": 22.5,
+          "lightLux": 0.5,
+          "oscillator": 19.16,
+          "processN": 0.2468
+        },
+        {
+          "hour": 23.0,
+          "lightLux": 0.5,
+          "oscillator": 16.64,
+          "processN": 0.2046
+        },
+        {
+          "hour": 23.5,
+          "lightLux": 0.5,
+          "oscillator": 14.66,
+          "processN": 0.1713
+        },
+        {
+          "hour": 24.0,
+          "lightLux": 0.5,
+          "oscillator": 13.26,
+          "processN": 0.145
+        },
+        {
+          "hour": 24.5,
+          "lightLux": 0.5,
+          "oscillator": 12.46,
+          "processN": 0.1243
+        },
+        {
+          "hour": 25.0,
+          "lightLux": 0.5,
+          "oscillator": 12.3,
+          "processN": 0.1078
+        },
+        {
+          "hour": 25.5,
+          "lightLux": 0.5,
+          "oscillator": 12.8,
+          "processN": 0.0949
+        },
+        {
+          "hour": 26.0,
+          "lightLux": 0.5,
+          "oscillator": 13.96,
+          "processN": 0.0846
+        },
+        {
+          "hour": 26.5,
+          "lightLux": 0.5,
+          "oscillator": 15.78,
+          "processN": 0.0765
+        },
+        {
+          "hour": 27.0,
+          "lightLux": 0.5,
+          "oscillator": 18.24,
+          "processN": 0.0702
+        },
+        {
+          "hour": 27.5,
+          "lightLux": 0.5,
+          "oscillator": 21.29,
+          "processN": 0.0651
+        },
+        {
+          "hour": 28.0,
+          "lightLux": 0.5,
+          "oscillator": 24.85,
+          "processN": 0.0611
+        },
+        {
+          "hour": 28.5,
+          "lightLux": 0.5,
+          "oscillator": 28.86,
+          "processN": 0.058
+        },
+        {
+          "hour": 29.0,
+          "lightLux": 0.5,
+          "oscillator": 33.21,
+          "processN": 0.0555
+        },
+        {
+          "hour": 29.5,
+          "lightLux": 0.5,
+          "oscillator": 37.8,
+          "processN": 0.0535
+        },
+        {
+          "hour": 30.0,
+          "lightLux": 0.5,
+          "oscillator": 42.54,
+          "processN": 0.052
+        },
+        {
+          "hour": 30.5,
+          "lightLux": 10000.0,
+          "oscillator": 49.53,
+          "processN": 0.6423
+        },
+        {
+          "hour": 31.0,
+          "lightLux": 10000.0,
+          "oscillator": 55.21,
+          "processN": 0.8079
+        },
+        {
+          "hour": 31.5,
+          "lightLux": 10000.0,
+          "oscillator": 60.4,
+          "processN": 0.8543
+        },
+        {
+          "hour": 32.0,
+          "lightLux": 10000.0,
+          "oscillator": 65.26,
+          "processN": 0.8674
+        },
+        {
+          "hour": 32.5,
+          "lightLux": 10000.0,
+          "oscillator": 69.78,
+          "processN": 0.871
+        },
+        {
+          "hour": 33.0,
+          "lightLux": 10000.0,
+          "oscillator": 73.92,
+          "processN": 0.872
+        },
+        {
+          "hour": 33.5,
+          "lightLux": 10000.0,
+          "oscillator": 77.63,
+          "processN": 0.8723
+        },
+        {
+          "hour": 34.0,
+          "lightLux": 10000.0,
+          "oscillator": 80.87,
+          "processN": 0.8724
+        },
+        {
+          "hour": 34.5,
+          "lightLux": 10000.0,
+          "oscillator": 83.57,
+          "processN": 0.8724
+        },
+        {
+          "hour": 35.0,
+          "lightLux": 10000.0,
+          "oscillator": 85.71,
+          "processN": 0.8724
+        },
+        {
+          "hour": 35.5,
+          "lightLux": 10000.0,
+          "oscillator": 87.24,
+          "processN": 0.8724
+        },
+        {
+          "hour": 36.0,
+          "lightLux": 10000.0,
+          "oscillator": 88.11,
+          "processN": 0.8724
+        },
+        {
+          "hour": 36.5,
+          "lightLux": 10000.0,
+          "oscillator": 88.3,
+          "processN": 0.8724
+        },
+        {
+          "hour": 37.0,
+          "lightLux": 10000.0,
+          "oscillator": 87.8,
+          "processN": 0.8724
+        },
+        {
+          "hour": 37.5,
+          "lightLux": 10000.0,
+          "oscillator": 86.59,
+          "processN": 0.8724
+        },
+        {
+          "hour": 38.0,
+          "lightLux": 10000.0,
+          "oscillator": 84.71,
+          "processN": 0.8724
+        },
+        {
+          "hour": 38.5,
+          "lightLux": 10000.0,
+          "oscillator": 82.2,
+          "processN": 0.8724
+        },
+        {
+          "hour": 39.0,
+          "lightLux": 10000.0,
+          "oscillator": 79.14,
+          "processN": 0.8724
+        },
+        {
+          "hour": 39.5,
+          "lightLux": 10000.0,
+          "oscillator": 75.62,
+          "processN": 0.8724
+        },
+        {
+          "hour": 40.0,
+          "lightLux": 10000.0,
+          "oscillator": 71.75,
+          "processN": 0.8724
+        },
+        {
+          "hour": 40.5,
+          "lightLux": 10000.0,
+          "oscillator": 67.64,
+          "processN": 0.8724
+        },
+        {
+          "hour": 41.0,
+          "lightLux": 10000.0,
+          "oscillator": 63.41,
+          "processN": 0.8724
+        },
+        {
+          "hour": 41.5,
+          "lightLux": 10000.0,
+          "oscillator": 59.16,
+          "processN": 0.8724
+        },
+        {
+          "hour": 42.0,
+          "lightLux": 10000.0,
+          "oscillator": 54.96,
+          "processN": 0.8724
+        },
+        {
+          "hour": 42.5,
+          "lightLux": 10000.0,
+          "oscillator": 50.9,
+          "processN": 0.8724
+        },
+        {
+          "hour": 43.0,
+          "lightLux": 10000.0,
+          "oscillator": 47.03,
+          "processN": 0.8724
+        },
+        {
+          "hour": 43.5,
+          "lightLux": 10000.0,
+          "oscillator": 43.39,
+          "processN": 0.8724
+        },
+        {
+          "hour": 44.0,
+          "lightLux": 0.5,
+          "oscillator": 38.47,
+          "processN": 0.6988
+        },
+        {
+          "hour": 44.5,
+          "lightLux": 0.5,
+          "oscillator": 33.85,
+          "processN": 0.5617
+        },
+        {
+          "hour": 45.0,
+          "lightLux": 0.5,
+          "oscillator": 29.56,
+          "processN": 0.4534
+        },
+        {
+          "hour": 45.5,
+          "lightLux": 0.5,
+          "oscillator": 25.66,
+          "processN": 0.3678
+        },
+        {
+          "hour": 46.0,
+          "lightLux": 0.5,
+          "oscillator": 22.18,
+          "processN": 0.3002
+        },
+        {
+          "hour": 46.5,
+          "lightLux": 0.5,
+          "oscillator": 19.16,
+          "processN": 0.2468
+        },
+        {
+          "hour": 47.0,
+          "lightLux": 0.5,
+          "oscillator": 16.64,
+          "processN": 0.2046
+        },
+        {
+          "hour": 47.5,
+          "lightLux": 0.5,
+          "oscillator": 14.66,
+          "processN": 0.1713
+        },
+        {
+          "hour": 48.0,
+          "lightLux": 0.5,
+          "oscillator": 13.26,
+          "processN": 0.145
+        }
+      ]
+    },
+    {
+      "id": "camping-nightOwl",
+      "scenarioId": "camping",
+      "chronotypeId": "nightOwl",
+      "model": {
+        "name": "Forger99",
+        "intrinsicPeriodHours": 24.45,
+        "dtHours": 0.5,
+        "simulationDays": 21,
+        "displayHours": 48
+      },
+      "metrics": {
+        "finalAmplitude": 1.1312,
+        "meanWindowAmplitude": 1.1605,
+        "finalPhaseRadians": 2.6458,
+        "latestCbtMinDisplayHour": 26.0,
+        "latestDlmoDisplayHour": 19.0,
+        "latestCbtMinClockHour": 2.0,
+        "latestDlmoClockHour": 19.0,
+        "esri": null,
+        "lightRegularity": 1.0,
+        "meanLightLux": 5567.2,
+        "maxLightLux": 10000.0
+      },
+      "display": {
+        "signalScale": 1.15,
+        "chronotypePhaseOffsetHours": 1.5,
+        "modelPhaseOffsetHours": -2.0
+      },
+      "points": [
+        {
+          "hour": 0.0,
+          "lightLux": 0.5,
+          "oscillator": 16.6,
+          "processN": 0.145
+        },
+        {
+          "hour": 0.5,
+          "lightLux": 0.5,
+          "oscillator": 14.59,
+          "processN": 0.1243
+        },
+        {
+          "hour": 1.0,
+          "lightLux": 0.5,
+          "oscillator": 13.13,
+          "processN": 0.1078
+        },
+        {
+          "hour": 1.5,
+          "lightLux": 0.5,
+          "oscillator": 12.25,
+          "processN": 0.0949
+        },
+        {
+          "hour": 2.0,
+          "lightLux": 0.5,
+          "oscillator": 11.97,
+          "processN": 0.0846
+        },
+        {
+          "hour": 2.5,
+          "lightLux": 0.5,
+          "oscillator": 12.33,
+          "processN": 0.0765
+        },
+        {
+          "hour": 3.0,
+          "lightLux": 0.5,
+          "oscillator": 13.33,
+          "processN": 0.0702
+        },
+        {
+          "hour": 3.5,
+          "lightLux": 0.5,
+          "oscillator": 14.96,
+          "processN": 0.0651
+        },
+        {
+          "hour": 4.0,
+          "lightLux": 0.5,
+          "oscillator": 17.21,
+          "processN": 0.0611
+        },
+        {
+          "hour": 4.5,
+          "lightLux": 0.5,
+          "oscillator": 20.05,
+          "processN": 0.058
+        },
+        {
+          "hour": 5.0,
+          "lightLux": 0.5,
+          "oscillator": 23.4,
+          "processN": 0.0555
+        },
+        {
+          "hour": 5.5,
+          "lightLux": 0.5,
+          "oscillator": 27.21,
+          "processN": 0.0535
+        },
+        {
+          "hour": 6.0,
+          "lightLux": 0.5,
+          "oscillator": 31.38,
+          "processN": 0.052
+        },
+        {
+          "hour": 6.5,
+          "lightLux": 10000.0,
+          "oscillator": 38.36,
+          "processN": 0.6423
+        },
+        {
+          "hour": 7.0,
+          "lightLux": 10000.0,
+          "oscillator": 44.06,
+          "processN": 0.8079
+        },
+        {
+          "hour": 7.5,
+          "lightLux": 10000.0,
+          "oscillator": 49.4,
+          "processN": 0.8543
+        },
+        {
+          "hour": 8.0,
+          "lightLux": 10000.0,
+          "oscillator": 54.57,
+          "processN": 0.8674
+        },
+        {
+          "hour": 8.5,
+          "lightLux": 10000.0,
+          "oscillator": 59.54,
+          "processN": 0.871
+        },
+        {
+          "hour": 9.0,
+          "lightLux": 10000.0,
+          "oscillator": 64.28,
+          "processN": 0.872
+        },
+        {
+          "hour": 9.5,
+          "lightLux": 10000.0,
+          "oscillator": 68.72,
+          "processN": 0.8723
+        },
+        {
+          "hour": 10.0,
+          "lightLux": 10000.0,
+          "oscillator": 72.82,
+          "processN": 0.8724
+        },
+        {
+          "hour": 10.5,
+          "lightLux": 10000.0,
+          "oscillator": 76.52,
+          "processN": 0.8724
+        },
+        {
+          "hour": 11.0,
+          "lightLux": 10000.0,
+          "oscillator": 79.78,
+          "processN": 0.8724
+        },
+        {
+          "hour": 11.5,
+          "lightLux": 10000.0,
+          "oscillator": 82.56,
+          "processN": 0.8724
+        },
+        {
+          "hour": 12.0,
+          "lightLux": 10000.0,
+          "oscillator": 84.8,
+          "processN": 0.8724
+        },
+        {
+          "hour": 12.5,
+          "lightLux": 10000.0,
+          "oscillator": 86.48,
+          "processN": 0.8724
+        },
+        {
+          "hour": 13.0,
+          "lightLux": 10000.0,
+          "oscillator": 87.55,
+          "processN": 0.8724
+        },
+        {
+          "hour": 13.5,
+          "lightLux": 10000.0,
+          "oscillator": 87.97,
+          "processN": 0.8724
+        },
+        {
+          "hour": 14.0,
+          "lightLux": 10000.0,
+          "oscillator": 87.74,
+          "processN": 0.8724
+        },
+        {
+          "hour": 14.5,
+          "lightLux": 10000.0,
+          "oscillator": 86.85,
+          "processN": 0.8724
+        },
+        {
+          "hour": 15.0,
+          "lightLux": 10000.0,
+          "oscillator": 85.29,
+          "processN": 0.8724
+        },
+        {
+          "hour": 15.5,
+          "lightLux": 10000.0,
+          "oscillator": 83.12,
+          "processN": 0.8724
+        },
+        {
+          "hour": 16.0,
+          "lightLux": 10000.0,
+          "oscillator": 80.38,
+          "processN": 0.8724
+        },
+        {
+          "hour": 16.5,
+          "lightLux": 10000.0,
+          "oscillator": 77.16,
+          "processN": 0.8724
+        },
+        {
+          "hour": 17.0,
+          "lightLux": 10000.0,
+          "oscillator": 73.56,
+          "processN": 0.8724
+        },
+        {
+          "hour": 17.5,
+          "lightLux": 10000.0,
+          "oscillator": 69.68,
+          "processN": 0.8724
+        },
+        {
+          "hour": 18.0,
+          "lightLux": 10000.0,
+          "oscillator": 65.63,
+          "processN": 0.8724
+        },
+        {
+          "hour": 18.5,
+          "lightLux": 10000.0,
+          "oscillator": 61.5,
+          "processN": 0.8724
+        },
+        {
+          "hour": 19.0,
+          "lightLux": 10000.0,
+          "oscillator": 57.39,
+          "processN": 0.8724
+        },
+        {
+          "hour": 19.5,
+          "lightLux": 10000.0,
+          "oscillator": 53.36,
+          "processN": 0.8724
+        },
+        {
+          "hour": 20.0,
+          "lightLux": 0.5,
+          "oscillator": 48.11,
+          "processN": 0.6988
+        },
+        {
+          "hour": 20.5,
+          "lightLux": 0.5,
+          "oscillator": 43.03,
+          "processN": 0.5617
+        },
+        {
+          "hour": 21.0,
+          "lightLux": 0.5,
+          "oscillator": 38.19,
+          "processN": 0.4534
+        },
+        {
+          "hour": 21.5,
+          "lightLux": 0.5,
+          "oscillator": 33.64,
+          "processN": 0.3678
+        },
+        {
+          "hour": 22.0,
+          "lightLux": 0.5,
+          "oscillator": 29.42,
+          "processN": 0.3002
+        },
+        {
+          "hour": 22.5,
+          "lightLux": 0.5,
+          "oscillator": 25.57,
+          "processN": 0.2468
+        },
+        {
+          "hour": 23.0,
+          "lightLux": 0.5,
+          "oscillator": 22.12,
+          "processN": 0.2046
+        },
+        {
+          "hour": 23.5,
+          "lightLux": 0.5,
+          "oscillator": 19.12,
+          "processN": 0.1713
+        },
+        {
+          "hour": 24.0,
+          "lightLux": 0.5,
+          "oscillator": 16.6,
+          "processN": 0.145
+        },
+        {
+          "hour": 24.5,
+          "lightLux": 0.5,
+          "oscillator": 14.59,
+          "processN": 0.1243
+        },
+        {
+          "hour": 25.0,
+          "lightLux": 0.5,
+          "oscillator": 13.13,
+          "processN": 0.1078
+        },
+        {
+          "hour": 25.5,
+          "lightLux": 0.5,
+          "oscillator": 12.25,
+          "processN": 0.0949
+        },
+        {
+          "hour": 26.0,
+          "lightLux": 0.5,
+          "oscillator": 11.97,
+          "processN": 0.0846
+        },
+        {
+          "hour": 26.5,
+          "lightLux": 0.5,
+          "oscillator": 12.33,
+          "processN": 0.0765
+        },
+        {
+          "hour": 27.0,
+          "lightLux": 0.5,
+          "oscillator": 13.33,
+          "processN": 0.0702
+        },
+        {
+          "hour": 27.5,
+          "lightLux": 0.5,
+          "oscillator": 14.96,
+          "processN": 0.0651
+        },
+        {
+          "hour": 28.0,
+          "lightLux": 0.5,
+          "oscillator": 17.21,
+          "processN": 0.0611
+        },
+        {
+          "hour": 28.5,
+          "lightLux": 0.5,
+          "oscillator": 20.05,
+          "processN": 0.058
+        },
+        {
+          "hour": 29.0,
+          "lightLux": 0.5,
+          "oscillator": 23.4,
+          "processN": 0.0555
+        },
+        {
+          "hour": 29.5,
+          "lightLux": 0.5,
+          "oscillator": 27.21,
+          "processN": 0.0535
+        },
+        {
+          "hour": 30.0,
+          "lightLux": 0.5,
+          "oscillator": 31.38,
+          "processN": 0.052
+        },
+        {
+          "hour": 30.5,
+          "lightLux": 10000.0,
+          "oscillator": 38.36,
+          "processN": 0.6423
+        },
+        {
+          "hour": 31.0,
+          "lightLux": 10000.0,
+          "oscillator": 44.06,
+          "processN": 0.8079
+        },
+        {
+          "hour": 31.5,
+          "lightLux": 10000.0,
+          "oscillator": 49.4,
+          "processN": 0.8543
+        },
+        {
+          "hour": 32.0,
+          "lightLux": 10000.0,
+          "oscillator": 54.57,
+          "processN": 0.8674
+        },
+        {
+          "hour": 32.5,
+          "lightLux": 10000.0,
+          "oscillator": 59.54,
+          "processN": 0.871
+        },
+        {
+          "hour": 33.0,
+          "lightLux": 10000.0,
+          "oscillator": 64.28,
+          "processN": 0.872
+        },
+        {
+          "hour": 33.5,
+          "lightLux": 10000.0,
+          "oscillator": 68.72,
+          "processN": 0.8723
+        },
+        {
+          "hour": 34.0,
+          "lightLux": 10000.0,
+          "oscillator": 72.82,
+          "processN": 0.8724
+        },
+        {
+          "hour": 34.5,
+          "lightLux": 10000.0,
+          "oscillator": 76.52,
+          "processN": 0.8724
+        },
+        {
+          "hour": 35.0,
+          "lightLux": 10000.0,
+          "oscillator": 79.78,
+          "processN": 0.8724
+        },
+        {
+          "hour": 35.5,
+          "lightLux": 10000.0,
+          "oscillator": 82.56,
+          "processN": 0.8724
+        },
+        {
+          "hour": 36.0,
+          "lightLux": 10000.0,
+          "oscillator": 84.8,
+          "processN": 0.8724
+        },
+        {
+          "hour": 36.5,
+          "lightLux": 10000.0,
+          "oscillator": 86.48,
+          "processN": 0.8724
+        },
+        {
+          "hour": 37.0,
+          "lightLux": 10000.0,
+          "oscillator": 87.55,
+          "processN": 0.8724
+        },
+        {
+          "hour": 37.5,
+          "lightLux": 10000.0,
+          "oscillator": 87.97,
+          "processN": 0.8724
+        },
+        {
+          "hour": 38.0,
+          "lightLux": 10000.0,
+          "oscillator": 87.74,
+          "processN": 0.8724
+        },
+        {
+          "hour": 38.5,
+          "lightLux": 10000.0,
+          "oscillator": 86.85,
+          "processN": 0.8724
+        },
+        {
+          "hour": 39.0,
+          "lightLux": 10000.0,
+          "oscillator": 85.29,
+          "processN": 0.8724
+        },
+        {
+          "hour": 39.5,
+          "lightLux": 10000.0,
+          "oscillator": 83.12,
+          "processN": 0.8724
+        },
+        {
+          "hour": 40.0,
+          "lightLux": 10000.0,
+          "oscillator": 80.38,
+          "processN": 0.8724
+        },
+        {
+          "hour": 40.5,
+          "lightLux": 10000.0,
+          "oscillator": 77.16,
+          "processN": 0.8724
+        },
+        {
+          "hour": 41.0,
+          "lightLux": 10000.0,
+          "oscillator": 73.56,
+          "processN": 0.8724
+        },
+        {
+          "hour": 41.5,
+          "lightLux": 10000.0,
+          "oscillator": 69.68,
+          "processN": 0.8724
+        },
+        {
+          "hour": 42.0,
+          "lightLux": 10000.0,
+          "oscillator": 65.63,
+          "processN": 0.8724
+        },
+        {
+          "hour": 42.5,
+          "lightLux": 10000.0,
+          "oscillator": 61.5,
+          "processN": 0.8724
+        },
+        {
+          "hour": 43.0,
+          "lightLux": 10000.0,
+          "oscillator": 57.39,
+          "processN": 0.8724
+        },
+        {
+          "hour": 43.5,
+          "lightLux": 10000.0,
+          "oscillator": 53.36,
+          "processN": 0.8724
+        },
+        {
+          "hour": 44.0,
+          "lightLux": 0.5,
+          "oscillator": 48.11,
+          "processN": 0.6988
+        },
+        {
+          "hour": 44.5,
+          "lightLux": 0.5,
+          "oscillator": 43.03,
+          "processN": 0.5617
+        },
+        {
+          "hour": 45.0,
+          "lightLux": 0.5,
+          "oscillator": 38.19,
+          "processN": 0.4534
+        },
+        {
+          "hour": 45.5,
+          "lightLux": 0.5,
+          "oscillator": 33.64,
+          "processN": 0.3678
+        },
+        {
+          "hour": 46.0,
+          "lightLux": 0.5,
+          "oscillator": 29.42,
+          "processN": 0.3002
+        },
+        {
+          "hour": 46.5,
+          "lightLux": 0.5,
+          "oscillator": 25.57,
+          "processN": 0.2468
+        },
+        {
+          "hour": 47.0,
+          "lightLux": 0.5,
+          "oscillator": 22.12,
+          "processN": 0.2046
+        },
+        {
+          "hour": 47.5,
+          "lightLux": 0.5,
+          "oscillator": 19.12,
+          "processN": 0.1713
+        },
+        {
+          "hour": 48.0,
+          "lightLux": 0.5,
+          "oscillator": 16.6,
+          "processN": 0.145
+        }
+      ]
+    },
+    {
+      "id": "aging-neutral",
+      "scenarioId": "aging",
+      "chronotypeId": "neutral",
+      "model": {
+        "name": "Forger99",
+        "intrinsicPeriodHours": 24.2,
+        "dtHours": 0.5,
+        "simulationDays": 21,
+        "displayHours": 48
+      },
+      "metrics": {
+        "finalAmplitude": 1.0612,
+        "meanWindowAmplitude": 1.0781,
+        "finalPhaseRadians": 2.1623,
+        "latestCbtMinDisplayHour": 28.0,
+        "latestDlmoDisplayHour": 21.0,
+        "latestCbtMinClockHour": 4.0,
+        "latestDlmoClockHour": 21.0,
+        "esri": 0.348,
+        "lightRegularity": 1.0,
+        "meanLightLux": 57.7,
+        "maxLightLux": 100.0
+      },
+      "display": {
+        "signalScale": 0.68,
+        "chronotypePhaseOffsetHours": 0.0,
+        "modelPhaseOffsetHours": 0.0
+      },
+      "points": [
+        {
+          "hour": 0.0,
+          "lightLux": 0.0,
+          "oscillator": 29.32,
+          "processN": 0.1319
+        },
+        {
+          "hour": 0.5,
+          "lightLux": 0.0,
+          "oscillator": 25.47,
+          "processN": 0.1053
+        },
+        {
+          "hour": 1.0,
+          "lightLux": 0.0,
+          "oscillator": 22.01,
+          "processN": 0.0841
+        },
+        {
+          "hour": 1.5,
+          "lightLux": 0.0,
+          "oscillator": 19.0,
+          "processN": 0.0671
+        },
+        {
+          "hour": 2.0,
+          "lightLux": 0.0,
+          "oscillator": 16.47,
+          "processN": 0.0536
+        },
+        {
+          "hour": 2.5,
+          "lightLux": 0.0,
+          "oscillator": 14.46,
+          "processN": 0.0428
+        },
+        {
+          "hour": 3.0,
+          "lightLux": 0.0,
+          "oscillator": 13.02,
+          "processN": 0.0342
+        },
+        {
+          "hour": 3.5,
+          "lightLux": 0.0,
+          "oscillator": 12.17,
+          "processN": 0.0273
+        },
+        {
+          "hour": 4.0,
+          "lightLux": 0.0,
+          "oscillator": 11.95,
+          "processN": 0.0218
+        },
+        {
+          "hour": 4.5,
+          "lightLux": 0.0,
+          "oscillator": 12.38,
+          "processN": 0.0174
+        },
+        {
+          "hour": 5.0,
+          "lightLux": 0.0,
+          "oscillator": 13.47,
+          "processN": 0.0139
+        },
+        {
+          "hour": 5.5,
+          "lightLux": 0.0,
+          "oscillator": 15.21,
+          "processN": 0.0111
+        },
+        {
+          "hour": 6.0,
+          "lightLux": 0.0,
+          "oscillator": 17.59,
+          "processN": 0.0089
+        },
+        {
+          "hour": 6.5,
+          "lightLux": 0.0,
+          "oscillator": 20.57,
+          "processN": 0.0071
+        },
+        {
+          "hour": 7.0,
+          "lightLux": 0.0,
+          "oscillator": 24.07,
+          "processN": 0.0057
+        },
+        {
+          "hour": 7.5,
+          "lightLux": 0.0,
+          "oscillator": 28.03,
+          "processN": 0.0045
+        },
+        {
+          "hour": 8.0,
+          "lightLux": 100.0,
+          "oscillator": 32.92,
+          "processN": 0.1312
+        },
+        {
+          "hour": 8.5,
+          "lightLux": 100.0,
+          "oscillator": 37.98,
+          "processN": 0.2179
+        },
+        {
+          "hour": 9.0,
+          "lightLux": 100.0,
+          "oscillator": 43.13,
+          "processN": 0.2773
+        },
+        {
+          "hour": 9.5,
+          "lightLux": 100.0,
+          "oscillator": 48.28,
+          "processN": 0.3179
+        },
+        {
+          "hour": 10.0,
+          "lightLux": 100.0,
+          "oscillator": 53.37,
+          "processN": 0.3457
+        },
+        {
+          "hour": 10.5,
+          "lightLux": 100.0,
+          "oscillator": 58.32,
+          "processN": 0.3648
+        },
+        {
+          "hour": 11.0,
+          "lightLux": 100.0,
+          "oscillator": 63.07,
+          "processN": 0.3778
+        },
+        {
+          "hour": 11.5,
+          "lightLux": 100.0,
+          "oscillator": 67.54,
+          "processN": 0.3868
+        },
+        {
+          "hour": 12.0,
+          "lightLux": 100.0,
+          "oscillator": 71.7,
+          "processN": 0.3929
+        },
+        {
+          "hour": 12.5,
+          "lightLux": 100.0,
+          "oscillator": 75.49,
+          "processN": 0.3971
+        },
+        {
+          "hour": 13.0,
+          "lightLux": 100.0,
+          "oscillator": 78.86,
+          "processN": 0.3999
+        },
+        {
+          "hour": 13.5,
+          "lightLux": 100.0,
+          "oscillator": 81.77,
+          "processN": 0.4019
+        },
+        {
+          "hour": 14.0,
+          "lightLux": 100.0,
+          "oscillator": 84.18,
+          "processN": 0.4033
+        },
+        {
+          "hour": 14.5,
+          "lightLux": 100.0,
+          "oscillator": 86.03,
+          "processN": 0.4042
+        },
+        {
+          "hour": 15.0,
+          "lightLux": 100.0,
+          "oscillator": 87.3,
+          "processN": 0.4048
+        },
+        {
+          "hour": 15.5,
+          "lightLux": 100.0,
+          "oscillator": 87.95,
+          "processN": 0.4052
+        },
+        {
+          "hour": 16.0,
+          "lightLux": 100.0,
+          "oscillator": 87.95,
+          "processN": 0.4055
+        },
+        {
+          "hour": 16.5,
+          "lightLux": 100.0,
+          "oscillator": 87.29,
+          "processN": 0.4057
+        },
+        {
+          "hour": 17.0,
+          "lightLux": 100.0,
+          "oscillator": 85.96,
+          "processN": 0.4059
+        },
+        {
+          "hour": 17.5,
+          "lightLux": 100.0,
+          "oscillator": 83.99,
+          "processN": 0.406
+        },
+        {
+          "hour": 18.0,
+          "lightLux": 100.0,
+          "oscillator": 81.4,
+          "processN": 0.406
+        },
+        {
+          "hour": 18.5,
+          "lightLux": 100.0,
+          "oscillator": 78.26,
+          "processN": 0.4061
+        },
+        {
+          "hour": 19.0,
+          "lightLux": 100.0,
+          "oscillator": 74.65,
+          "processN": 0.4061
+        },
+        {
+          "hour": 19.5,
+          "lightLux": 100.0,
+          "oscillator": 70.66,
+          "processN": 0.4061
+        },
+        {
+          "hour": 20.0,
+          "lightLux": 100.0,
+          "oscillator": 66.39,
+          "processN": 0.4061
+        },
+        {
+          "hour": 20.5,
+          "lightLux": 100.0,
+          "oscillator": 61.95,
+          "processN": 0.4061
+        },
+        {
+          "hour": 21.0,
+          "lightLux": 100.0,
+          "oscillator": 57.43,
+          "processN": 0.4062
+        },
+        {
+          "hour": 21.5,
+          "lightLux": 100.0,
+          "oscillator": 52.91,
+          "processN": 0.4062
+        },
+        {
+          "hour": 22.0,
+          "lightLux": 0.0,
+          "oscillator": 47.81,
+          "processN": 0.3243
+        },
+        {
+          "hour": 22.5,
+          "lightLux": 0.0,
+          "oscillator": 42.83,
+          "processN": 0.259
+        },
+        {
+          "hour": 23.0,
+          "lightLux": 0.0,
+          "oscillator": 38.06,
+          "processN": 0.2068
+        },
+        {
+          "hour": 23.5,
+          "lightLux": 0.0,
+          "oscillator": 33.53,
+          "processN": 0.1651
+        },
+        {
+          "hour": 24.0,
+          "lightLux": 0.0,
+          "oscillator": 29.32,
+          "processN": 0.1319
+        },
+        {
+          "hour": 24.5,
+          "lightLux": 0.0,
+          "oscillator": 25.47,
+          "processN": 0.1053
+        },
+        {
+          "hour": 25.0,
+          "lightLux": 0.0,
+          "oscillator": 22.01,
+          "processN": 0.0841
+        },
+        {
+          "hour": 25.5,
+          "lightLux": 0.0,
+          "oscillator": 19.0,
+          "processN": 0.0671
+        },
+        {
+          "hour": 26.0,
+          "lightLux": 0.0,
+          "oscillator": 16.47,
+          "processN": 0.0536
+        },
+        {
+          "hour": 26.5,
+          "lightLux": 0.0,
+          "oscillator": 14.46,
+          "processN": 0.0428
+        },
+        {
+          "hour": 27.0,
+          "lightLux": 0.0,
+          "oscillator": 13.02,
+          "processN": 0.0342
+        },
+        {
+          "hour": 27.5,
+          "lightLux": 0.0,
+          "oscillator": 12.17,
+          "processN": 0.0273
+        },
+        {
+          "hour": 28.0,
+          "lightLux": 0.0,
+          "oscillator": 11.95,
+          "processN": 0.0218
+        },
+        {
+          "hour": 28.5,
+          "lightLux": 0.0,
+          "oscillator": 12.38,
+          "processN": 0.0174
+        },
+        {
+          "hour": 29.0,
+          "lightLux": 0.0,
+          "oscillator": 13.47,
+          "processN": 0.0139
+        },
+        {
+          "hour": 29.5,
+          "lightLux": 0.0,
+          "oscillator": 15.21,
+          "processN": 0.0111
+        },
+        {
+          "hour": 30.0,
+          "lightLux": 0.0,
+          "oscillator": 17.59,
+          "processN": 0.0089
+        },
+        {
+          "hour": 30.5,
+          "lightLux": 0.0,
+          "oscillator": 20.57,
+          "processN": 0.0071
+        },
+        {
+          "hour": 31.0,
+          "lightLux": 0.0,
+          "oscillator": 24.07,
+          "processN": 0.0057
+        },
+        {
+          "hour": 31.5,
+          "lightLux": 0.0,
+          "oscillator": 28.03,
+          "processN": 0.0045
+        },
+        {
+          "hour": 32.0,
+          "lightLux": 100.0,
+          "oscillator": 32.92,
+          "processN": 0.1312
+        },
+        {
+          "hour": 32.5,
+          "lightLux": 100.0,
+          "oscillator": 37.98,
+          "processN": 0.2179
+        },
+        {
+          "hour": 33.0,
+          "lightLux": 100.0,
+          "oscillator": 43.13,
+          "processN": 0.2773
+        },
+        {
+          "hour": 33.5,
+          "lightLux": 100.0,
+          "oscillator": 48.28,
+          "processN": 0.3179
+        },
+        {
+          "hour": 34.0,
+          "lightLux": 100.0,
+          "oscillator": 53.37,
+          "processN": 0.3457
+        },
+        {
+          "hour": 34.5,
+          "lightLux": 100.0,
+          "oscillator": 58.32,
+          "processN": 0.3648
+        },
+        {
+          "hour": 35.0,
+          "lightLux": 100.0,
+          "oscillator": 63.07,
+          "processN": 0.3778
+        },
+        {
+          "hour": 35.5,
+          "lightLux": 100.0,
+          "oscillator": 67.54,
+          "processN": 0.3868
+        },
+        {
+          "hour": 36.0,
+          "lightLux": 100.0,
+          "oscillator": 71.7,
+          "processN": 0.3929
+        },
+        {
+          "hour": 36.5,
+          "lightLux": 100.0,
+          "oscillator": 75.49,
+          "processN": 0.3971
+        },
+        {
+          "hour": 37.0,
+          "lightLux": 100.0,
+          "oscillator": 78.86,
+          "processN": 0.3999
+        },
+        {
+          "hour": 37.5,
+          "lightLux": 100.0,
+          "oscillator": 81.77,
+          "processN": 0.4019
+        },
+        {
+          "hour": 38.0,
+          "lightLux": 100.0,
+          "oscillator": 84.18,
+          "processN": 0.4033
+        },
+        {
+          "hour": 38.5,
+          "lightLux": 100.0,
+          "oscillator": 86.03,
+          "processN": 0.4042
+        },
+        {
+          "hour": 39.0,
+          "lightLux": 100.0,
+          "oscillator": 87.3,
+          "processN": 0.4048
+        },
+        {
+          "hour": 39.5,
+          "lightLux": 100.0,
+          "oscillator": 87.95,
+          "processN": 0.4052
+        },
+        {
+          "hour": 40.0,
+          "lightLux": 100.0,
+          "oscillator": 87.95,
+          "processN": 0.4055
+        },
+        {
+          "hour": 40.5,
+          "lightLux": 100.0,
+          "oscillator": 87.29,
+          "processN": 0.4057
+        },
+        {
+          "hour": 41.0,
+          "lightLux": 100.0,
+          "oscillator": 85.96,
+          "processN": 0.4059
+        },
+        {
+          "hour": 41.5,
+          "lightLux": 100.0,
+          "oscillator": 83.99,
+          "processN": 0.406
+        },
+        {
+          "hour": 42.0,
+          "lightLux": 100.0,
+          "oscillator": 81.4,
+          "processN": 0.406
+        },
+        {
+          "hour": 42.5,
+          "lightLux": 100.0,
+          "oscillator": 78.26,
+          "processN": 0.4061
+        },
+        {
+          "hour": 43.0,
+          "lightLux": 100.0,
+          "oscillator": 74.65,
+          "processN": 0.4061
+        },
+        {
+          "hour": 43.5,
+          "lightLux": 100.0,
+          "oscillator": 70.66,
+          "processN": 0.4061
+        },
+        {
+          "hour": 44.0,
+          "lightLux": 100.0,
+          "oscillator": 66.39,
+          "processN": 0.4061
+        },
+        {
+          "hour": 44.5,
+          "lightLux": 100.0,
+          "oscillator": 61.95,
+          "processN": 0.4061
+        },
+        {
+          "hour": 45.0,
+          "lightLux": 100.0,
+          "oscillator": 57.43,
+          "processN": 0.4062
+        },
+        {
+          "hour": 45.5,
+          "lightLux": 100.0,
+          "oscillator": 52.91,
+          "processN": 0.4062
+        },
+        {
+          "hour": 46.0,
+          "lightLux": 0.0,
+          "oscillator": 47.81,
+          "processN": 0.3243
+        },
+        {
+          "hour": 46.5,
+          "lightLux": 0.0,
+          "oscillator": 42.83,
+          "processN": 0.259
+        },
+        {
+          "hour": 47.0,
+          "lightLux": 0.0,
+          "oscillator": 38.06,
+          "processN": 0.2068
+        },
+        {
+          "hour": 47.5,
+          "lightLux": 0.0,
+          "oscillator": 33.53,
+          "processN": 0.1651
+        },
+        {
+          "hour": 48.0,
+          "lightLux": 0.0,
+          "oscillator": 29.32,
+          "processN": 0.1319
+        }
+      ]
+    },
+    {
+      "id": "aging-morning",
+      "scenarioId": "aging",
+      "chronotypeId": "morning",
+      "model": {
+        "name": "Forger99",
+        "intrinsicPeriodHours": 23.9,
+        "dtHours": 0.5,
+        "simulationDays": 21,
+        "displayHours": 48
+      },
+      "metrics": {
+        "finalAmplitude": 1.0513,
+        "meanWindowAmplitude": 1.0811,
+        "finalPhaseRadians": 2.4855,
+        "latestCbtMinDisplayHour": 26.5,
+        "latestDlmoDisplayHour": 19.5,
+        "latestCbtMinClockHour": 2.5,
+        "latestDlmoClockHour": 19.5,
+        "esri": 0.348,
+        "lightRegularity": 1.0,
+        "meanLightLux": 57.7,
+        "maxLightLux": 100.0
+      },
+      "display": {
+        "signalScale": 0.68,
+        "chronotypePhaseOffsetHours": -1.25,
+        "modelPhaseOffsetHours": -1.5
+      },
+      "points": [
+        {
+          "hour": 0.0,
+          "lightLux": 0.0,
+          "oscillator": 20.39,
+          "processN": 0.1319
+        },
+        {
+          "hour": 0.5,
+          "lightLux": 0.0,
+          "oscillator": 17.64,
+          "processN": 0.1053
+        },
+        {
+          "hour": 1.0,
+          "lightLux": 0.0,
+          "oscillator": 15.41,
+          "processN": 0.0841
+        },
+        {
+          "hour": 1.5,
+          "lightLux": 0.0,
+          "oscillator": 13.74,
+          "processN": 0.0671
+        },
+        {
+          "hour": 2.0,
+          "lightLux": 0.0,
+          "oscillator": 12.66,
+          "processN": 0.0536
+        },
+        {
+          "hour": 2.5,
+          "lightLux": 0.0,
+          "oscillator": 12.21,
+          "processN": 0.0428
+        },
+        {
+          "hour": 3.0,
+          "lightLux": 0.0,
+          "oscillator": 12.42,
+          "processN": 0.0342
+        },
+        {
+          "hour": 3.5,
+          "lightLux": 0.0,
+          "oscillator": 13.29,
+          "processN": 0.0273
+        },
+        {
+          "hour": 4.0,
+          "lightLux": 0.0,
+          "oscillator": 14.84,
+          "processN": 0.0218
+        },
+        {
+          "hour": 4.5,
+          "lightLux": 0.0,
+          "oscillator": 17.04,
+          "processN": 0.0174
+        },
+        {
+          "hour": 5.0,
+          "lightLux": 0.0,
+          "oscillator": 19.87,
+          "processN": 0.0139
+        },
+        {
+          "hour": 5.5,
+          "lightLux": 0.0,
+          "oscillator": 23.25,
+          "processN": 0.0111
+        },
+        {
+          "hour": 6.0,
+          "lightLux": 0.0,
+          "oscillator": 27.12,
+          "processN": 0.0089
+        },
+        {
+          "hour": 6.5,
+          "lightLux": 0.0,
+          "oscillator": 31.39,
+          "processN": 0.0071
+        },
+        {
+          "hour": 7.0,
+          "lightLux": 0.0,
+          "oscillator": 35.96,
+          "processN": 0.0057
+        },
+        {
+          "hour": 7.5,
+          "lightLux": 0.0,
+          "oscillator": 40.73,
+          "processN": 0.0045
+        },
+        {
+          "hour": 8.0,
+          "lightLux": 100.0,
+          "oscillator": 46.07,
+          "processN": 0.1312
+        },
+        {
+          "hour": 8.5,
+          "lightLux": 100.0,
+          "oscillator": 51.34,
+          "processN": 0.2179
+        },
+        {
+          "hour": 9.0,
+          "lightLux": 100.0,
+          "oscillator": 56.47,
+          "processN": 0.2773
+        },
+        {
+          "hour": 9.5,
+          "lightLux": 100.0,
+          "oscillator": 61.4,
+          "processN": 0.3179
+        },
+        {
+          "hour": 10.0,
+          "lightLux": 100.0,
+          "oscillator": 66.08,
+          "processN": 0.3457
+        },
+        {
+          "hour": 10.5,
+          "lightLux": 100.0,
+          "oscillator": 70.44,
+          "processN": 0.3648
+        },
+        {
+          "hour": 11.0,
+          "lightLux": 100.0,
+          "oscillator": 74.43,
+          "processN": 0.3778
+        },
+        {
+          "hour": 11.5,
+          "lightLux": 100.0,
+          "oscillator": 78.0,
+          "processN": 0.3868
+        },
+        {
+          "hour": 12.0,
+          "lightLux": 100.0,
+          "oscillator": 81.11,
+          "processN": 0.3929
+        },
+        {
+          "hour": 12.5,
+          "lightLux": 100.0,
+          "oscillator": 83.72,
+          "processN": 0.3971
+        },
+        {
+          "hour": 13.0,
+          "lightLux": 100.0,
+          "oscillator": 85.76,
+          "processN": 0.3999
+        },
+        {
+          "hour": 13.5,
+          "lightLux": 100.0,
+          "oscillator": 87.22,
+          "processN": 0.4019
+        },
+        {
+          "hour": 14.0,
+          "lightLux": 100.0,
+          "oscillator": 88.05,
+          "processN": 0.4033
+        },
+        {
+          "hour": 14.5,
+          "lightLux": 100.0,
+          "oscillator": 88.21,
+          "processN": 0.4042
+        },
+        {
+          "hour": 15.0,
+          "lightLux": 100.0,
+          "oscillator": 87.7,
+          "processN": 0.4048
+        },
+        {
+          "hour": 15.5,
+          "lightLux": 100.0,
+          "oscillator": 86.49,
+          "processN": 0.4052
+        },
+        {
+          "hour": 16.0,
+          "lightLux": 100.0,
+          "oscillator": 84.62,
+          "processN": 0.4055
+        },
+        {
+          "hour": 16.5,
+          "lightLux": 100.0,
+          "oscillator": 82.11,
+          "processN": 0.4057
+        },
+        {
+          "hour": 17.0,
+          "lightLux": 100.0,
+          "oscillator": 79.02,
+          "processN": 0.4059
+        },
+        {
+          "hour": 17.5,
+          "lightLux": 100.0,
+          "oscillator": 75.42,
+          "processN": 0.406
+        },
+        {
+          "hour": 18.0,
+          "lightLux": 100.0,
+          "oscillator": 71.42,
+          "processN": 0.406
+        },
+        {
+          "hour": 18.5,
+          "lightLux": 100.0,
+          "oscillator": 67.12,
+          "processN": 0.4061
+        },
+        {
+          "hour": 19.0,
+          "lightLux": 100.0,
+          "oscillator": 62.62,
+          "processN": 0.4061
+        },
+        {
+          "hour": 19.5,
+          "lightLux": 100.0,
+          "oscillator": 58.02,
+          "processN": 0.4061
+        },
+        {
+          "hour": 20.0,
+          "lightLux": 100.0,
+          "oscillator": 53.42,
+          "processN": 0.4061
+        },
+        {
+          "hour": 20.5,
+          "lightLux": 100.0,
+          "oscillator": 48.9,
+          "processN": 0.4061
+        },
+        {
+          "hour": 21.0,
+          "lightLux": 100.0,
+          "oscillator": 44.53,
+          "processN": 0.4062
+        },
+        {
+          "hour": 21.5,
+          "lightLux": 100.0,
+          "oscillator": 40.37,
+          "processN": 0.4062
+        },
+        {
+          "hour": 22.0,
+          "lightLux": 0.0,
+          "oscillator": 35.7,
+          "processN": 0.3243
+        },
+        {
+          "hour": 22.5,
+          "lightLux": 0.0,
+          "oscillator": 31.32,
+          "processN": 0.259
+        },
+        {
+          "hour": 23.0,
+          "lightLux": 0.0,
+          "oscillator": 27.27,
+          "processN": 0.2068
+        },
+        {
+          "hour": 23.5,
+          "lightLux": 0.0,
+          "oscillator": 23.62,
+          "processN": 0.1651
+        },
+        {
+          "hour": 24.0,
+          "lightLux": 0.0,
+          "oscillator": 20.39,
+          "processN": 0.1319
+        },
+        {
+          "hour": 24.5,
+          "lightLux": 0.0,
+          "oscillator": 17.64,
+          "processN": 0.1053
+        },
+        {
+          "hour": 25.0,
+          "lightLux": 0.0,
+          "oscillator": 15.41,
+          "processN": 0.0841
+        },
+        {
+          "hour": 25.5,
+          "lightLux": 0.0,
+          "oscillator": 13.74,
+          "processN": 0.0671
+        },
+        {
+          "hour": 26.0,
+          "lightLux": 0.0,
+          "oscillator": 12.66,
+          "processN": 0.0536
+        },
+        {
+          "hour": 26.5,
+          "lightLux": 0.0,
+          "oscillator": 12.21,
+          "processN": 0.0428
+        },
+        {
+          "hour": 27.0,
+          "lightLux": 0.0,
+          "oscillator": 12.42,
+          "processN": 0.0342
+        },
+        {
+          "hour": 27.5,
+          "lightLux": 0.0,
+          "oscillator": 13.29,
+          "processN": 0.0273
+        },
+        {
+          "hour": 28.0,
+          "lightLux": 0.0,
+          "oscillator": 14.84,
+          "processN": 0.0218
+        },
+        {
+          "hour": 28.5,
+          "lightLux": 0.0,
+          "oscillator": 17.04,
+          "processN": 0.0174
+        },
+        {
+          "hour": 29.0,
+          "lightLux": 0.0,
+          "oscillator": 19.87,
+          "processN": 0.0139
+        },
+        {
+          "hour": 29.5,
+          "lightLux": 0.0,
+          "oscillator": 23.25,
+          "processN": 0.0111
+        },
+        {
+          "hour": 30.0,
+          "lightLux": 0.0,
+          "oscillator": 27.12,
+          "processN": 0.0089
+        },
+        {
+          "hour": 30.5,
+          "lightLux": 0.0,
+          "oscillator": 31.39,
+          "processN": 0.0071
+        },
+        {
+          "hour": 31.0,
+          "lightLux": 0.0,
+          "oscillator": 35.96,
+          "processN": 0.0057
+        },
+        {
+          "hour": 31.5,
+          "lightLux": 0.0,
+          "oscillator": 40.73,
+          "processN": 0.0045
+        },
+        {
+          "hour": 32.0,
+          "lightLux": 100.0,
+          "oscillator": 46.07,
+          "processN": 0.1312
+        },
+        {
+          "hour": 32.5,
+          "lightLux": 100.0,
+          "oscillator": 51.34,
+          "processN": 0.2179
+        },
+        {
+          "hour": 33.0,
+          "lightLux": 100.0,
+          "oscillator": 56.47,
+          "processN": 0.2773
+        },
+        {
+          "hour": 33.5,
+          "lightLux": 100.0,
+          "oscillator": 61.4,
+          "processN": 0.3179
+        },
+        {
+          "hour": 34.0,
+          "lightLux": 100.0,
+          "oscillator": 66.08,
+          "processN": 0.3457
+        },
+        {
+          "hour": 34.5,
+          "lightLux": 100.0,
+          "oscillator": 70.44,
+          "processN": 0.3648
+        },
+        {
+          "hour": 35.0,
+          "lightLux": 100.0,
+          "oscillator": 74.43,
+          "processN": 0.3778
+        },
+        {
+          "hour": 35.5,
+          "lightLux": 100.0,
+          "oscillator": 78.0,
+          "processN": 0.3868
+        },
+        {
+          "hour": 36.0,
+          "lightLux": 100.0,
+          "oscillator": 81.11,
+          "processN": 0.3929
+        },
+        {
+          "hour": 36.5,
+          "lightLux": 100.0,
+          "oscillator": 83.72,
+          "processN": 0.3971
+        },
+        {
+          "hour": 37.0,
+          "lightLux": 100.0,
+          "oscillator": 85.76,
+          "processN": 0.3999
+        },
+        {
+          "hour": 37.5,
+          "lightLux": 100.0,
+          "oscillator": 87.22,
+          "processN": 0.4019
+        },
+        {
+          "hour": 38.0,
+          "lightLux": 100.0,
+          "oscillator": 88.05,
+          "processN": 0.4033
+        },
+        {
+          "hour": 38.5,
+          "lightLux": 100.0,
+          "oscillator": 88.21,
+          "processN": 0.4042
+        },
+        {
+          "hour": 39.0,
+          "lightLux": 100.0,
+          "oscillator": 87.7,
+          "processN": 0.4048
+        },
+        {
+          "hour": 39.5,
+          "lightLux": 100.0,
+          "oscillator": 86.49,
+          "processN": 0.4052
+        },
+        {
+          "hour": 40.0,
+          "lightLux": 100.0,
+          "oscillator": 84.62,
+          "processN": 0.4055
+        },
+        {
+          "hour": 40.5,
+          "lightLux": 100.0,
+          "oscillator": 82.11,
+          "processN": 0.4057
+        },
+        {
+          "hour": 41.0,
+          "lightLux": 100.0,
+          "oscillator": 79.02,
+          "processN": 0.4059
+        },
+        {
+          "hour": 41.5,
+          "lightLux": 100.0,
+          "oscillator": 75.42,
+          "processN": 0.406
+        },
+        {
+          "hour": 42.0,
+          "lightLux": 100.0,
+          "oscillator": 71.42,
+          "processN": 0.406
+        },
+        {
+          "hour": 42.5,
+          "lightLux": 100.0,
+          "oscillator": 67.12,
+          "processN": 0.4061
+        },
+        {
+          "hour": 43.0,
+          "lightLux": 100.0,
+          "oscillator": 62.62,
+          "processN": 0.4061
+        },
+        {
+          "hour": 43.5,
+          "lightLux": 100.0,
+          "oscillator": 58.02,
+          "processN": 0.4061
+        },
+        {
+          "hour": 44.0,
+          "lightLux": 100.0,
+          "oscillator": 53.42,
+          "processN": 0.4061
+        },
+        {
+          "hour": 44.5,
+          "lightLux": 100.0,
+          "oscillator": 48.9,
+          "processN": 0.4061
+        },
+        {
+          "hour": 45.0,
+          "lightLux": 100.0,
+          "oscillator": 44.53,
+          "processN": 0.4062
+        },
+        {
+          "hour": 45.5,
+          "lightLux": 100.0,
+          "oscillator": 40.37,
+          "processN": 0.4062
+        },
+        {
+          "hour": 46.0,
+          "lightLux": 0.0,
+          "oscillator": 35.7,
+          "processN": 0.3243
+        },
+        {
+          "hour": 46.5,
+          "lightLux": 0.0,
+          "oscillator": 31.32,
+          "processN": 0.259
+        },
+        {
+          "hour": 47.0,
+          "lightLux": 0.0,
+          "oscillator": 27.27,
+          "processN": 0.2068
+        },
+        {
+          "hour": 47.5,
+          "lightLux": 0.0,
+          "oscillator": 23.62,
+          "processN": 0.1651
+        },
+        {
+          "hour": 48.0,
+          "lightLux": 0.0,
+          "oscillator": 20.39,
+          "processN": 0.1319
+        }
+      ]
+    },
+    {
+      "id": "aging-nightOwl",
+      "scenarioId": "aging",
+      "chronotypeId": "nightOwl",
+      "model": {
+        "name": "Forger99",
+        "intrinsicPeriodHours": 24.45,
+        "dtHours": 0.5,
+        "simulationDays": 21,
+        "displayHours": 48
+      },
+      "metrics": {
+        "finalAmplitude": 1.0636,
+        "meanWindowAmplitude": 1.0672,
+        "finalPhaseRadians": 1.8825,
+        "latestCbtMinDisplayHour": 29.0,
+        "latestDlmoDisplayHour": 22.0,
+        "latestCbtMinClockHour": 5.0,
+        "latestDlmoClockHour": 22.0,
+        "esri": 0.348,
+        "lightRegularity": 1.0,
+        "meanLightLux": 57.7,
+        "maxLightLux": 100.0
+      },
+      "display": {
+        "signalScale": 0.68,
+        "chronotypePhaseOffsetHours": 1.5,
+        "modelPhaseOffsetHours": 1.0
+      },
+      "points": [
+        {
+          "hour": 0.0,
+          "lightLux": 0.0,
+          "oscillator": 38.55,
+          "processN": 0.1319
+        },
+        {
+          "hour": 0.5,
+          "lightLux": 0.0,
+          "oscillator": 34.04,
+          "processN": 0.1053
+        },
+        {
+          "hour": 1.0,
+          "lightLux": 0.0,
+          "oscillator": 29.83,
+          "processN": 0.0841
+        },
+        {
+          "hour": 1.5,
+          "lightLux": 0.0,
+          "oscillator": 25.96,
+          "processN": 0.0671
+        },
+        {
+          "hour": 2.0,
+          "lightLux": 0.0,
+          "oscillator": 22.47,
+          "processN": 0.0536
+        },
+        {
+          "hour": 2.5,
+          "lightLux": 0.0,
+          "oscillator": 19.41,
+          "processN": 0.0428
+        },
+        {
+          "hour": 3.0,
+          "lightLux": 0.0,
+          "oscillator": 16.81,
+          "processN": 0.0342
+        },
+        {
+          "hour": 3.5,
+          "lightLux": 0.0,
+          "oscillator": 14.72,
+          "processN": 0.0273
+        },
+        {
+          "hour": 4.0,
+          "lightLux": 0.0,
+          "oscillator": 13.17,
+          "processN": 0.0218
+        },
+        {
+          "hour": 4.5,
+          "lightLux": 0.0,
+          "oscillator": 12.19,
+          "processN": 0.0174
+        },
+        {
+          "hour": 5.0,
+          "lightLux": 0.0,
+          "oscillator": 11.83,
+          "processN": 0.0139
+        },
+        {
+          "hour": 5.5,
+          "lightLux": 0.0,
+          "oscillator": 12.09,
+          "processN": 0.0111
+        },
+        {
+          "hour": 6.0,
+          "lightLux": 0.0,
+          "oscillator": 13.0,
+          "processN": 0.0089
+        },
+        {
+          "hour": 6.5,
+          "lightLux": 0.0,
+          "oscillator": 14.56,
+          "processN": 0.0071
+        },
+        {
+          "hour": 7.0,
+          "lightLux": 0.0,
+          "oscillator": 16.75,
+          "processN": 0.0057
+        },
+        {
+          "hour": 7.5,
+          "lightLux": 0.0,
+          "oscillator": 19.53,
+          "processN": 0.0045
+        },
+        {
+          "hour": 8.0,
+          "lightLux": 100.0,
+          "oscillator": 23.56,
+          "processN": 0.1312
+        },
+        {
+          "hour": 8.5,
+          "lightLux": 100.0,
+          "oscillator": 27.95,
+          "processN": 0.2179
+        },
+        {
+          "hour": 9.0,
+          "lightLux": 100.0,
+          "oscillator": 32.63,
+          "processN": 0.2773
+        },
+        {
+          "hour": 9.5,
+          "lightLux": 100.0,
+          "oscillator": 37.51,
+          "processN": 0.3179
+        },
+        {
+          "hour": 10.0,
+          "lightLux": 100.0,
+          "oscillator": 42.52,
+          "processN": 0.3457
+        },
+        {
+          "hour": 10.5,
+          "lightLux": 100.0,
+          "oscillator": 47.57,
+          "processN": 0.3648
+        },
+        {
+          "hour": 11.0,
+          "lightLux": 100.0,
+          "oscillator": 52.58,
+          "processN": 0.3778
+        },
+        {
+          "hour": 11.5,
+          "lightLux": 100.0,
+          "oscillator": 57.47,
+          "processN": 0.3868
+        },
+        {
+          "hour": 12.0,
+          "lightLux": 100.0,
+          "oscillator": 62.17,
+          "processN": 0.3929
+        },
+        {
+          "hour": 12.5,
+          "lightLux": 100.0,
+          "oscillator": 66.63,
+          "processN": 0.3971
+        },
+        {
+          "hour": 13.0,
+          "lightLux": 100.0,
+          "oscillator": 70.79,
+          "processN": 0.3999
+        },
+        {
+          "hour": 13.5,
+          "lightLux": 100.0,
+          "oscillator": 74.61,
+          "processN": 0.4019
+        },
+        {
+          "hour": 14.0,
+          "lightLux": 100.0,
+          "oscillator": 78.02,
+          "processN": 0.4033
+        },
+        {
+          "hour": 14.5,
+          "lightLux": 100.0,
+          "oscillator": 81.0,
+          "processN": 0.4042
+        },
+        {
+          "hour": 15.0,
+          "lightLux": 100.0,
+          "oscillator": 83.49,
+          "processN": 0.4048
+        },
+        {
+          "hour": 15.5,
+          "lightLux": 100.0,
+          "oscillator": 85.45,
+          "processN": 0.4052
+        },
+        {
+          "hour": 16.0,
+          "lightLux": 100.0,
+          "oscillator": 86.85,
+          "processN": 0.4055
+        },
+        {
+          "hour": 16.5,
+          "lightLux": 100.0,
+          "oscillator": 87.65,
+          "processN": 0.4057
+        },
+        {
+          "hour": 17.0,
+          "lightLux": 100.0,
+          "oscillator": 87.83,
+          "processN": 0.4059
+        },
+        {
+          "hour": 17.5,
+          "lightLux": 100.0,
+          "oscillator": 87.35,
+          "processN": 0.406
+        },
+        {
+          "hour": 18.0,
+          "lightLux": 100.0,
+          "oscillator": 86.23,
+          "processN": 0.406
+        },
+        {
+          "hour": 18.5,
+          "lightLux": 100.0,
+          "oscillator": 84.46,
+          "processN": 0.4061
+        },
+        {
+          "hour": 19.0,
+          "lightLux": 100.0,
+          "oscillator": 82.08,
+          "processN": 0.4061
+        },
+        {
+          "hour": 19.5,
+          "lightLux": 100.0,
+          "oscillator": 79.14,
+          "processN": 0.4061
+        },
+        {
+          "hour": 20.0,
+          "lightLux": 100.0,
+          "oscillator": 75.71,
+          "processN": 0.4061
+        },
+        {
+          "hour": 20.5,
+          "lightLux": 100.0,
+          "oscillator": 71.88,
+          "processN": 0.4061
+        },
+        {
+          "hour": 21.0,
+          "lightLux": 100.0,
+          "oscillator": 67.74,
+          "processN": 0.4062
+        },
+        {
+          "hour": 21.5,
+          "lightLux": 100.0,
+          "oscillator": 63.39,
+          "processN": 0.4062
+        },
+        {
+          "hour": 22.0,
+          "lightLux": 0.0,
+          "oscillator": 58.35,
+          "processN": 0.3243
+        },
+        {
+          "hour": 22.5,
+          "lightLux": 0.0,
+          "oscillator": 53.26,
+          "processN": 0.259
+        },
+        {
+          "hour": 23.0,
+          "lightLux": 0.0,
+          "oscillator": 48.22,
+          "processN": 0.2068
+        },
+        {
+          "hour": 23.5,
+          "lightLux": 0.0,
+          "oscillator": 43.29,
+          "processN": 0.1651
+        },
+        {
+          "hour": 24.0,
+          "lightLux": 0.0,
+          "oscillator": 38.55,
+          "processN": 0.1319
+        },
+        {
+          "hour": 24.5,
+          "lightLux": 0.0,
+          "oscillator": 34.04,
+          "processN": 0.1053
+        },
+        {
+          "hour": 25.0,
+          "lightLux": 0.0,
+          "oscillator": 29.83,
+          "processN": 0.0841
+        },
+        {
+          "hour": 25.5,
+          "lightLux": 0.0,
+          "oscillator": 25.96,
+          "processN": 0.0671
+        },
+        {
+          "hour": 26.0,
+          "lightLux": 0.0,
+          "oscillator": 22.47,
+          "processN": 0.0536
+        },
+        {
+          "hour": 26.5,
+          "lightLux": 0.0,
+          "oscillator": 19.41,
+          "processN": 0.0428
+        },
+        {
+          "hour": 27.0,
+          "lightLux": 0.0,
+          "oscillator": 16.81,
+          "processN": 0.0342
+        },
+        {
+          "hour": 27.5,
+          "lightLux": 0.0,
+          "oscillator": 14.72,
+          "processN": 0.0273
+        },
+        {
+          "hour": 28.0,
+          "lightLux": 0.0,
+          "oscillator": 13.17,
+          "processN": 0.0218
+        },
+        {
+          "hour": 28.5,
+          "lightLux": 0.0,
+          "oscillator": 12.19,
+          "processN": 0.0174
+        },
+        {
+          "hour": 29.0,
+          "lightLux": 0.0,
+          "oscillator": 11.83,
+          "processN": 0.0139
+        },
+        {
+          "hour": 29.5,
+          "lightLux": 0.0,
+          "oscillator": 12.09,
+          "processN": 0.0111
+        },
+        {
+          "hour": 30.0,
+          "lightLux": 0.0,
+          "oscillator": 13.0,
+          "processN": 0.0089
+        },
+        {
+          "hour": 30.5,
+          "lightLux": 0.0,
+          "oscillator": 14.56,
+          "processN": 0.0071
+        },
+        {
+          "hour": 31.0,
+          "lightLux": 0.0,
+          "oscillator": 16.75,
+          "processN": 0.0057
+        },
+        {
+          "hour": 31.5,
+          "lightLux": 0.0,
+          "oscillator": 19.53,
+          "processN": 0.0045
+        },
+        {
+          "hour": 32.0,
+          "lightLux": 100.0,
+          "oscillator": 23.56,
+          "processN": 0.1312
+        },
+        {
+          "hour": 32.5,
+          "lightLux": 100.0,
+          "oscillator": 27.95,
+          "processN": 0.2179
+        },
+        {
+          "hour": 33.0,
+          "lightLux": 100.0,
+          "oscillator": 32.63,
+          "processN": 0.2773
+        },
+        {
+          "hour": 33.5,
+          "lightLux": 100.0,
+          "oscillator": 37.51,
+          "processN": 0.3179
+        },
+        {
+          "hour": 34.0,
+          "lightLux": 100.0,
+          "oscillator": 42.52,
+          "processN": 0.3457
+        },
+        {
+          "hour": 34.5,
+          "lightLux": 100.0,
+          "oscillator": 47.57,
+          "processN": 0.3648
+        },
+        {
+          "hour": 35.0,
+          "lightLux": 100.0,
+          "oscillator": 52.58,
+          "processN": 0.3778
+        },
+        {
+          "hour": 35.5,
+          "lightLux": 100.0,
+          "oscillator": 57.47,
+          "processN": 0.3868
+        },
+        {
+          "hour": 36.0,
+          "lightLux": 100.0,
+          "oscillator": 62.17,
+          "processN": 0.3929
+        },
+        {
+          "hour": 36.5,
+          "lightLux": 100.0,
+          "oscillator": 66.63,
+          "processN": 0.3971
+        },
+        {
+          "hour": 37.0,
+          "lightLux": 100.0,
+          "oscillator": 70.79,
+          "processN": 0.3999
+        },
+        {
+          "hour": 37.5,
+          "lightLux": 100.0,
+          "oscillator": 74.61,
+          "processN": 0.4019
+        },
+        {
+          "hour": 38.0,
+          "lightLux": 100.0,
+          "oscillator": 78.02,
+          "processN": 0.4033
+        },
+        {
+          "hour": 38.5,
+          "lightLux": 100.0,
+          "oscillator": 81.0,
+          "processN": 0.4042
+        },
+        {
+          "hour": 39.0,
+          "lightLux": 100.0,
+          "oscillator": 83.49,
+          "processN": 0.4048
+        },
+        {
+          "hour": 39.5,
+          "lightLux": 100.0,
+          "oscillator": 85.45,
+          "processN": 0.4052
+        },
+        {
+          "hour": 40.0,
+          "lightLux": 100.0,
+          "oscillator": 86.85,
+          "processN": 0.4055
+        },
+        {
+          "hour": 40.5,
+          "lightLux": 100.0,
+          "oscillator": 87.65,
+          "processN": 0.4057
+        },
+        {
+          "hour": 41.0,
+          "lightLux": 100.0,
+          "oscillator": 87.83,
+          "processN": 0.4059
+        },
+        {
+          "hour": 41.5,
+          "lightLux": 100.0,
+          "oscillator": 87.35,
+          "processN": 0.406
+        },
+        {
+          "hour": 42.0,
+          "lightLux": 100.0,
+          "oscillator": 86.23,
+          "processN": 0.406
+        },
+        {
+          "hour": 42.5,
+          "lightLux": 100.0,
+          "oscillator": 84.46,
+          "processN": 0.4061
+        },
+        {
+          "hour": 43.0,
+          "lightLux": 100.0,
+          "oscillator": 82.08,
+          "processN": 0.4061
+        },
+        {
+          "hour": 43.5,
+          "lightLux": 100.0,
+          "oscillator": 79.14,
+          "processN": 0.4061
+        },
+        {
+          "hour": 44.0,
+          "lightLux": 100.0,
+          "oscillator": 75.71,
+          "processN": 0.4061
+        },
+        {
+          "hour": 44.5,
+          "lightLux": 100.0,
+          "oscillator": 71.88,
+          "processN": 0.4061
+        },
+        {
+          "hour": 45.0,
+          "lightLux": 100.0,
+          "oscillator": 67.74,
+          "processN": 0.4062
+        },
+        {
+          "hour": 45.5,
+          "lightLux": 100.0,
+          "oscillator": 63.39,
+          "processN": 0.4062
+        },
+        {
+          "hour": 46.0,
+          "lightLux": 0.0,
+          "oscillator": 58.35,
+          "processN": 0.3243
+        },
+        {
+          "hour": 46.5,
+          "lightLux": 0.0,
+          "oscillator": 53.26,
+          "processN": 0.259
+        },
+        {
+          "hour": 47.0,
+          "lightLux": 0.0,
+          "oscillator": 48.22,
+          "processN": 0.2068
+        },
+        {
+          "hour": 47.5,
+          "lightLux": 0.0,
+          "oscillator": 43.29,
+          "processN": 0.1651
+        },
+        {
+          "hour": 48.0,
+          "lightLux": 0.0,
+          "oscillator": 38.55,
+          "processN": 0.1319
+        }
+      ]
+    },
+    {
+      "id": "shiftWork-neutral",
+      "scenarioId": "shiftWork",
+      "chronotypeId": "neutral",
+      "model": {
+        "name": "Forger99",
+        "intrinsicPeriodHours": 24.2,
+        "dtHours": 0.5,
+        "simulationDays": 21,
+        "displayHours": 48
+      },
+      "metrics": {
+        "finalAmplitude": 0.7482,
+        "meanWindowAmplitude": 0.805,
+        "finalPhaseRadians": 0.1997,
+        "latestCbtMinDisplayHour": 35.5,
+        "latestDlmoDisplayHour": 28.5,
+        "latestCbtMinClockHour": 11.5,
+        "latestDlmoClockHour": 4.5,
+        "esri": 0.3216,
+        "lightRegularity": 0.871,
+        "meanLightLux": 189.0,
+        "maxLightLux": 300.0
+      },
+      "display": {
+        "signalScale": 0.62,
+        "chronotypePhaseOffsetHours": 0.0,
+        "modelPhaseOffsetHours": 7.5
+      },
+      "points": [
+        {
+          "hour": 0.0,
+          "lightLux": 1.0,
+          "oscillator": 85.9,
+          "processN": 0.4397
+        },
+        {
+          "hour": 0.5,
+          "lightLux": 1.0,
+          "oscillator": 86.59,
+          "processN": 0.3594
+        },
+        {
+          "hour": 1.0,
+          "lightLux": 1.0,
+          "oscillator": 86.66,
+          "processN": 0.2963
+        },
+        {
+          "hour": 1.5,
+          "lightLux": 1.0,
+          "oscillator": 86.09,
+          "processN": 0.2467
+        },
+        {
+          "hour": 2.0,
+          "lightLux": 1.0,
+          "oscillator": 84.86,
+          "processN": 0.2076
+        },
+        {
+          "hour": 2.5,
+          "lightLux": 1.0,
+          "oscillator": 82.99,
+          "processN": 0.177
+        },
+        {
+          "hour": 3.0,
+          "lightLux": 1.0,
+          "oscillator": 80.5,
+          "processN": 0.1528
+        },
+        {
+          "hour": 3.5,
+          "lightLux": 1.0,
+          "oscillator": 77.44,
+          "processN": 0.1339
+        },
+        {
+          "hour": 4.0,
+          "lightLux": 1.0,
+          "oscillator": 73.87,
+          "processN": 0.1189
+        },
+        {
+          "hour": 4.5,
+          "lightLux": 1.0,
+          "oscillator": 69.86,
+          "processN": 0.1072
+        },
+        {
+          "hour": 5.0,
+          "lightLux": 1.0,
+          "oscillator": 65.52,
+          "processN": 0.098
+        },
+        {
+          "hour": 5.5,
+          "lightLux": 1.0,
+          "oscillator": 60.94,
+          "processN": 0.0907
+        },
+        {
+          "hour": 6.0,
+          "lightLux": 1.0,
+          "oscillator": 56.21,
+          "processN": 0.085
+        },
+        {
+          "hour": 6.5,
+          "lightLux": 1.0,
+          "oscillator": 51.42,
+          "processN": 0.0805
+        },
+        {
+          "hour": 7.0,
+          "lightLux": 1.0,
+          "oscillator": 46.66,
+          "processN": 0.077
+        },
+        {
+          "hour": 7.5,
+          "lightLux": 1.0,
+          "oscillator": 42.01,
+          "processN": 0.0742
+        },
+        {
+          "hour": 8.0,
+          "lightLux": 1.0,
+          "oscillator": 37.52,
+          "processN": 0.072
+        },
+        {
+          "hour": 8.5,
+          "lightLux": 1.0,
+          "oscillator": 33.26,
+          "processN": 0.0703
+        },
+        {
+          "hour": 9.0,
+          "lightLux": 300.0,
+          "oscillator": 31.07,
+          "processN": 0.2535
+        },
+        {
+          "hour": 9.5,
+          "lightLux": 300.0,
+          "oscillator": 28.89,
+          "processN": 0.3656
+        },
+        {
+          "hour": 10.0,
+          "lightLux": 300.0,
+          "oscillator": 26.89,
+          "processN": 0.4341
+        },
+        {
+          "hour": 10.5,
+          "lightLux": 300.0,
+          "oscillator": 25.14,
+          "processN": 0.4761
+        },
+        {
+          "hour": 11.0,
+          "lightLux": 300.0,
+          "oscillator": 23.72,
+          "processN": 0.5018
+        },
+        {
+          "hour": 11.5,
+          "lightLux": 300.0,
+          "oscillator": 22.67,
+          "processN": 0.5175
+        },
+        {
+          "hour": 12.0,
+          "lightLux": 300.0,
+          "oscillator": 22.02,
+          "processN": 0.5271
+        },
+        {
+          "hour": 12.5,
+          "lightLux": 300.0,
+          "oscillator": 21.8,
+          "processN": 0.533
+        },
+        {
+          "hour": 13.0,
+          "lightLux": 300.0,
+          "oscillator": 22.02,
+          "processN": 0.5366
+        },
+        {
+          "hour": 13.5,
+          "lightLux": 300.0,
+          "oscillator": 22.68,
+          "processN": 0.5388
+        },
+        {
+          "hour": 14.0,
+          "lightLux": 300.0,
+          "oscillator": 23.79,
+          "processN": 0.5401
+        },
+        {
+          "hour": 14.5,
+          "lightLux": 300.0,
+          "oscillator": 25.35,
+          "processN": 0.541
+        },
+        {
+          "hour": 15.0,
+          "lightLux": 300.0,
+          "oscillator": 27.32,
+          "processN": 0.5415
+        },
+        {
+          "hour": 15.5,
+          "lightLux": 300.0,
+          "oscillator": 29.68,
+          "processN": 0.5418
+        },
+        {
+          "hour": 16.0,
+          "lightLux": 300.0,
+          "oscillator": 32.4,
+          "processN": 0.542
+        },
+        {
+          "hour": 16.5,
+          "lightLux": 300.0,
+          "oscillator": 35.43,
+          "processN": 0.5421
+        },
+        {
+          "hour": 17.0,
+          "lightLux": 300.0,
+          "oscillator": 38.71,
+          "processN": 0.5422
+        },
+        {
+          "hour": 17.5,
+          "lightLux": 300.0,
+          "oscillator": 42.19,
+          "processN": 0.5422
+        },
+        {
+          "hour": 18.0,
+          "lightLux": 300.0,
+          "oscillator": 45.81,
+          "processN": 0.5422
+        },
+        {
+          "hour": 18.5,
+          "lightLux": 300.0,
+          "oscillator": 49.5,
+          "processN": 0.5422
+        },
+        {
+          "hour": 19.0,
+          "lightLux": 300.0,
+          "oscillator": 53.19,
+          "processN": 0.5423
+        },
+        {
+          "hour": 19.5,
+          "lightLux": 300.0,
+          "oscillator": 56.83,
+          "processN": 0.5423
+        },
+        {
+          "hour": 20.0,
+          "lightLux": 300.0,
+          "oscillator": 60.36,
+          "processN": 0.5423
+        },
+        {
+          "hour": 20.5,
+          "lightLux": 300.0,
+          "oscillator": 63.71,
+          "processN": 0.5423
+        },
+        {
+          "hour": 21.0,
+          "lightLux": 300.0,
+          "oscillator": 66.84,
+          "processN": 0.5423
+        },
+        {
+          "hour": 21.5,
+          "lightLux": 300.0,
+          "oscillator": 69.7,
+          "processN": 0.5423
+        },
+        {
+          "hour": 22.0,
+          "lightLux": 300.0,
+          "oscillator": 72.23,
+          "processN": 0.5423
+        },
+        {
+          "hour": 22.5,
+          "lightLux": 300.0,
+          "oscillator": 74.4,
+          "processN": 0.5423
+        },
+        {
+          "hour": 23.0,
+          "lightLux": 300.0,
+          "oscillator": 76.16,
+          "processN": 0.5423
+        },
+        {
+          "hour": 23.5,
+          "lightLux": 300.0,
+          "oscillator": 77.48,
+          "processN": 0.5423
+        },
+        {
+          "hour": 24.0,
+          "lightLux": 1.0,
+          "oscillator": 77.93,
+          "processN": 0.4401
+        },
+        {
+          "hour": 24.5,
+          "lightLux": 1.0,
+          "oscillator": 77.91,
+          "processN": 0.3597
+        },
+        {
+          "hour": 25.0,
+          "lightLux": 1.0,
+          "oscillator": 77.39,
+          "processN": 0.2965
+        },
+        {
+          "hour": 25.5,
+          "lightLux": 1.0,
+          "oscillator": 76.38,
+          "processN": 0.2469
+        },
+        {
+          "hour": 26.0,
+          "lightLux": 1.0,
+          "oscillator": 74.86,
+          "processN": 0.2078
+        },
+        {
+          "hour": 26.5,
+          "lightLux": 1.0,
+          "oscillator": 72.87,
+          "processN": 0.1771
+        },
+        {
+          "hour": 27.0,
+          "lightLux": 1.0,
+          "oscillator": 70.43,
+          "processN": 0.1529
+        },
+        {
+          "hour": 27.5,
+          "lightLux": 1.0,
+          "oscillator": 67.58,
+          "processN": 0.1339
+        },
+        {
+          "hour": 28.0,
+          "lightLux": 1.0,
+          "oscillator": 64.39,
+          "processN": 0.119
+        },
+        {
+          "hour": 28.5,
+          "lightLux": 1.0,
+          "oscillator": 60.91,
+          "processN": 0.1072
+        },
+        {
+          "hour": 29.0,
+          "lightLux": 1.0,
+          "oscillator": 57.21,
+          "processN": 0.098
+        },
+        {
+          "hour": 29.5,
+          "lightLux": 1.0,
+          "oscillator": 53.36,
+          "processN": 0.0907
+        },
+        {
+          "hour": 30.0,
+          "lightLux": 1.0,
+          "oscillator": 49.44,
+          "processN": 0.085
+        },
+        {
+          "hour": 30.5,
+          "lightLux": 1.0,
+          "oscillator": 45.51,
+          "processN": 0.0805
+        },
+        {
+          "hour": 31.0,
+          "lightLux": 1.0,
+          "oscillator": 41.64,
+          "processN": 0.077
+        },
+        {
+          "hour": 31.5,
+          "lightLux": 1.0,
+          "oscillator": 37.89,
+          "processN": 0.0742
+        },
+        {
+          "hour": 32.0,
+          "lightLux": 1.0,
+          "oscillator": 34.32,
+          "processN": 0.0721
+        },
+        {
+          "hour": 32.5,
+          "lightLux": 1.0,
+          "oscillator": 30.98,
+          "processN": 0.0703
+        },
+        {
+          "hour": 33.0,
+          "lightLux": 300.0,
+          "oscillator": 29.63,
+          "processN": 0.2535
+        },
+        {
+          "hour": 33.5,
+          "lightLux": 300.0,
+          "oscillator": 28.29,
+          "processN": 0.3656
+        },
+        {
+          "hour": 34.0,
+          "lightLux": 300.0,
+          "oscillator": 27.11,
+          "processN": 0.4341
+        },
+        {
+          "hour": 34.5,
+          "lightLux": 300.0,
+          "oscillator": 26.18,
+          "processN": 0.4761
+        },
+        {
+          "hour": 35.0,
+          "lightLux": 300.0,
+          "oscillator": 25.54,
+          "processN": 0.5018
+        },
+        {
+          "hour": 35.5,
+          "lightLux": 300.0,
+          "oscillator": 25.24,
+          "processN": 0.5175
+        },
+        {
+          "hour": 36.0,
+          "lightLux": 300.0,
+          "oscillator": 25.3,
+          "processN": 0.5271
+        },
+        {
+          "hour": 36.5,
+          "lightLux": 300.0,
+          "oscillator": 25.75,
+          "processN": 0.533
+        },
+        {
+          "hour": 37.0,
+          "lightLux": 300.0,
+          "oscillator": 26.58,
+          "processN": 0.5366
+        },
+        {
+          "hour": 37.5,
+          "lightLux": 300.0,
+          "oscillator": 27.79,
+          "processN": 0.5388
+        },
+        {
+          "hour": 38.0,
+          "lightLux": 300.0,
+          "oscillator": 29.36,
+          "processN": 0.5401
+        },
+        {
+          "hour": 38.5,
+          "lightLux": 300.0,
+          "oscillator": 31.29,
+          "processN": 0.541
+        },
+        {
+          "hour": 39.0,
+          "lightLux": 300.0,
+          "oscillator": 33.55,
+          "processN": 0.5415
+        },
+        {
+          "hour": 39.5,
+          "lightLux": 300.0,
+          "oscillator": 36.09,
+          "processN": 0.5418
+        },
+        {
+          "hour": 40.0,
+          "lightLux": 300.0,
+          "oscillator": 38.88,
+          "processN": 0.542
+        },
+        {
+          "hour": 40.5,
+          "lightLux": 300.0,
+          "oscillator": 41.87,
+          "processN": 0.5421
+        },
+        {
+          "hour": 41.0,
+          "lightLux": 300.0,
+          "oscillator": 45.0,
+          "processN": 0.5422
+        },
+        {
+          "hour": 41.5,
+          "lightLux": 300.0,
+          "oscillator": 48.24,
+          "processN": 0.5422
+        },
+        {
+          "hour": 42.0,
+          "lightLux": 300.0,
+          "oscillator": 51.5,
+          "processN": 0.5422
+        },
+        {
+          "hour": 42.5,
+          "lightLux": 300.0,
+          "oscillator": 54.76,
+          "processN": 0.5422
+        },
+        {
+          "hour": 43.0,
+          "lightLux": 300.0,
+          "oscillator": 57.94,
+          "processN": 0.5423
+        },
+        {
+          "hour": 43.5,
+          "lightLux": 300.0,
+          "oscillator": 60.99,
+          "processN": 0.5423
+        },
+        {
+          "hour": 44.0,
+          "lightLux": 300.0,
+          "oscillator": 63.87,
+          "processN": 0.5423
+        },
+        {
+          "hour": 44.5,
+          "lightLux": 300.0,
+          "oscillator": 66.53,
+          "processN": 0.5423
+        },
+        {
+          "hour": 45.0,
+          "lightLux": 300.0,
+          "oscillator": 68.91,
+          "processN": 0.5423
+        },
+        {
+          "hour": 45.5,
+          "lightLux": 300.0,
+          "oscillator": 70.99,
+          "processN": 0.5423
+        },
+        {
+          "hour": 46.0,
+          "lightLux": 300.0,
+          "oscillator": 72.72,
+          "processN": 0.5423
+        },
+        {
+          "hour": 46.5,
+          "lightLux": 300.0,
+          "oscillator": 74.06,
+          "processN": 0.5423
+        },
+        {
+          "hour": 47.0,
+          "lightLux": 300.0,
+          "oscillator": 74.98,
+          "processN": 0.5423
+        },
+        {
+          "hour": 47.5,
+          "lightLux": 300.0,
+          "oscillator": 75.47,
+          "processN": 0.5423
+        },
+        {
+          "hour": 48.0,
+          "lightLux": 300.0,
+          "oscillator": 75.49,
+          "processN": 0.5423
+        }
+      ]
+    },
+    {
+      "id": "shiftWork-morning",
+      "scenarioId": "shiftWork",
+      "chronotypeId": "morning",
+      "model": {
+        "name": "Forger99",
+        "intrinsicPeriodHours": 23.9,
+        "dtHours": 0.5,
+        "simulationDays": 21,
+        "displayHours": 48
+      },
+      "metrics": {
+        "finalAmplitude": 1.1187,
+        "meanWindowAmplitude": 0.9743,
+        "finalPhaseRadians": 1.3069,
+        "latestCbtMinDisplayHour": 32.0,
+        "latestDlmoDisplayHour": 25.0,
+        "latestCbtMinClockHour": 8.0,
+        "latestDlmoClockHour": 1.0,
+        "esri": 0.3216,
+        "lightRegularity": 0.871,
+        "meanLightLux": 189.0,
+        "maxLightLux": 300.0
+      },
+      "display": {
+        "signalScale": 0.62,
+        "chronotypePhaseOffsetHours": -1.25,
+        "modelPhaseOffsetHours": 4.0
+      },
+      "points": [
+        {
+          "hour": 0.0,
+          "lightLux": 1.0,
+          "oscillator": 79.03,
+          "processN": 0.4397
+        },
+        {
+          "hour": 0.5,
+          "lightLux": 1.0,
+          "oscillator": 75.35,
+          "processN": 0.3594
+        },
+        {
+          "hour": 1.0,
+          "lightLux": 1.0,
+          "oscillator": 71.2,
+          "processN": 0.2963
+        },
+        {
+          "hour": 1.5,
+          "lightLux": 1.0,
+          "oscillator": 66.68,
+          "processN": 0.2467
+        },
+        {
+          "hour": 2.0,
+          "lightLux": 1.0,
+          "oscillator": 61.88,
+          "processN": 0.2076
+        },
+        {
+          "hour": 2.5,
+          "lightLux": 1.0,
+          "oscillator": 56.91,
+          "processN": 0.177
+        },
+        {
+          "hour": 3.0,
+          "lightLux": 1.0,
+          "oscillator": 51.87,
+          "processN": 0.1528
+        },
+        {
+          "hour": 3.5,
+          "lightLux": 1.0,
+          "oscillator": 46.84,
+          "processN": 0.1339
+        },
+        {
+          "hour": 4.0,
+          "lightLux": 1.0,
+          "oscillator": 41.92,
+          "processN": 0.1189
+        },
+        {
+          "hour": 4.5,
+          "lightLux": 1.0,
+          "oscillator": 37.16,
+          "processN": 0.1072
+        },
+        {
+          "hour": 5.0,
+          "lightLux": 1.0,
+          "oscillator": 32.65,
+          "processN": 0.098
+        },
+        {
+          "hour": 5.5,
+          "lightLux": 1.0,
+          "oscillator": 28.43,
+          "processN": 0.0907
+        },
+        {
+          "hour": 6.0,
+          "lightLux": 1.0,
+          "oscillator": 24.57,
+          "processN": 0.085
+        },
+        {
+          "hour": 6.5,
+          "lightLux": 1.0,
+          "oscillator": 21.12,
+          "processN": 0.0805
+        },
+        {
+          "hour": 7.0,
+          "lightLux": 1.0,
+          "oscillator": 18.12,
+          "processN": 0.077
+        },
+        {
+          "hour": 7.5,
+          "lightLux": 1.0,
+          "oscillator": 15.61,
+          "processN": 0.0742
+        },
+        {
+          "hour": 8.0,
+          "lightLux": 1.0,
+          "oscillator": 13.64,
+          "processN": 0.072
+        },
+        {
+          "hour": 8.5,
+          "lightLux": 1.0,
+          "oscillator": 12.24,
+          "processN": 0.0703
+        },
+        {
+          "hour": 9.0,
+          "lightLux": 300.0,
+          "oscillator": 13.24,
+          "processN": 0.2535
+        },
+        {
+          "hour": 9.5,
+          "lightLux": 300.0,
+          "oscillator": 14.55,
+          "processN": 0.3656
+        },
+        {
+          "hour": 10.0,
+          "lightLux": 300.0,
+          "oscillator": 16.27,
+          "processN": 0.4341
+        },
+        {
+          "hour": 10.5,
+          "lightLux": 300.0,
+          "oscillator": 18.48,
+          "processN": 0.4761
+        },
+        {
+          "hour": 11.0,
+          "lightLux": 300.0,
+          "oscillator": 21.18,
+          "processN": 0.5018
+        },
+        {
+          "hour": 11.5,
+          "lightLux": 300.0,
+          "oscillator": 24.36,
+          "processN": 0.5175
+        },
+        {
+          "hour": 12.0,
+          "lightLux": 300.0,
+          "oscillator": 27.98,
+          "processN": 0.5271
+        },
+        {
+          "hour": 12.5,
+          "lightLux": 300.0,
+          "oscillator": 31.97,
+          "processN": 0.533
+        },
+        {
+          "hour": 13.0,
+          "lightLux": 300.0,
+          "oscillator": 36.26,
+          "processN": 0.5366
+        },
+        {
+          "hour": 13.5,
+          "lightLux": 300.0,
+          "oscillator": 40.77,
+          "processN": 0.5388
+        },
+        {
+          "hour": 14.0,
+          "lightLux": 300.0,
+          "oscillator": 45.42,
+          "processN": 0.5401
+        },
+        {
+          "hour": 14.5,
+          "lightLux": 300.0,
+          "oscillator": 50.11,
+          "processN": 0.541
+        },
+        {
+          "hour": 15.0,
+          "lightLux": 300.0,
+          "oscillator": 54.78,
+          "processN": 0.5415
+        },
+        {
+          "hour": 15.5,
+          "lightLux": 300.0,
+          "oscillator": 59.33,
+          "processN": 0.5418
+        },
+        {
+          "hour": 16.0,
+          "lightLux": 300.0,
+          "oscillator": 63.7,
+          "processN": 0.542
+        },
+        {
+          "hour": 16.5,
+          "lightLux": 300.0,
+          "oscillator": 67.82,
+          "processN": 0.5421
+        },
+        {
+          "hour": 17.0,
+          "lightLux": 300.0,
+          "oscillator": 71.63,
+          "processN": 0.5422
+        },
+        {
+          "hour": 17.5,
+          "lightLux": 300.0,
+          "oscillator": 75.07,
+          "processN": 0.5422
+        },
+        {
+          "hour": 18.0,
+          "lightLux": 300.0,
+          "oscillator": 78.08,
+          "processN": 0.5422
+        },
+        {
+          "hour": 18.5,
+          "lightLux": 300.0,
+          "oscillator": 80.63,
+          "processN": 0.5422
+        },
+        {
+          "hour": 19.0,
+          "lightLux": 300.0,
+          "oscillator": 82.65,
+          "processN": 0.5423
+        },
+        {
+          "hour": 19.5,
+          "lightLux": 300.0,
+          "oscillator": 84.11,
+          "processN": 0.5423
+        },
+        {
+          "hour": 20.0,
+          "lightLux": 300.0,
+          "oscillator": 84.97,
+          "processN": 0.5423
+        },
+        {
+          "hour": 20.5,
+          "lightLux": 300.0,
+          "oscillator": 85.2,
+          "processN": 0.5423
+        },
+        {
+          "hour": 21.0,
+          "lightLux": 300.0,
+          "oscillator": 84.78,
+          "processN": 0.5423
+        },
+        {
+          "hour": 21.5,
+          "lightLux": 300.0,
+          "oscillator": 83.7,
+          "processN": 0.5423
+        },
+        {
+          "hour": 22.0,
+          "lightLux": 300.0,
+          "oscillator": 81.98,
+          "processN": 0.5423
+        },
+        {
+          "hour": 22.5,
+          "lightLux": 300.0,
+          "oscillator": 79.64,
+          "processN": 0.5423
+        },
+        {
+          "hour": 23.0,
+          "lightLux": 300.0,
+          "oscillator": 76.75,
+          "processN": 0.5423
+        },
+        {
+          "hour": 23.5,
+          "lightLux": 300.0,
+          "oscillator": 73.36,
+          "processN": 0.5423
+        },
+        {
+          "hour": 24.0,
+          "lightLux": 1.0,
+          "oscillator": 68.9,
+          "processN": 0.4401
+        },
+        {
+          "hour": 24.5,
+          "lightLux": 1.0,
+          "oscillator": 64.13,
+          "processN": 0.3597
+        },
+        {
+          "hour": 25.0,
+          "lightLux": 1.0,
+          "oscillator": 59.15,
+          "processN": 0.2965
+        },
+        {
+          "hour": 25.5,
+          "lightLux": 1.0,
+          "oscillator": 54.06,
+          "processN": 0.2469
+        },
+        {
+          "hour": 26.0,
+          "lightLux": 1.0,
+          "oscillator": 48.96,
+          "processN": 0.2078
+        },
+        {
+          "hour": 26.5,
+          "lightLux": 1.0,
+          "oscillator": 43.92,
+          "processN": 0.1771
+        },
+        {
+          "hour": 27.0,
+          "lightLux": 1.0,
+          "oscillator": 39.04,
+          "processN": 0.1529
+        },
+        {
+          "hour": 27.5,
+          "lightLux": 1.0,
+          "oscillator": 34.38,
+          "processN": 0.1339
+        },
+        {
+          "hour": 28.0,
+          "lightLux": 1.0,
+          "oscillator": 30.0,
+          "processN": 0.119
+        },
+        {
+          "hour": 28.5,
+          "lightLux": 1.0,
+          "oscillator": 25.95,
+          "processN": 0.1072
+        },
+        {
+          "hour": 29.0,
+          "lightLux": 1.0,
+          "oscillator": 22.29,
+          "processN": 0.098
+        },
+        {
+          "hour": 29.5,
+          "lightLux": 1.0,
+          "oscillator": 19.08,
+          "processN": 0.0907
+        },
+        {
+          "hour": 30.0,
+          "lightLux": 1.0,
+          "oscillator": 16.34,
+          "processN": 0.085
+        },
+        {
+          "hour": 30.5,
+          "lightLux": 1.0,
+          "oscillator": 14.13,
+          "processN": 0.0805
+        },
+        {
+          "hour": 31.0,
+          "lightLux": 1.0,
+          "oscillator": 12.48,
+          "processN": 0.077
+        },
+        {
+          "hour": 31.5,
+          "lightLux": 1.0,
+          "oscillator": 11.43,
+          "processN": 0.0742
+        },
+        {
+          "hour": 32.0,
+          "lightLux": 1.0,
+          "oscillator": 11.02,
+          "processN": 0.0721
+        },
+        {
+          "hour": 32.5,
+          "lightLux": 1.0,
+          "oscillator": 11.26,
+          "processN": 0.0703
+        },
+        {
+          "hour": 33.0,
+          "lightLux": 300.0,
+          "oscillator": 13.74,
+          "processN": 0.2535
+        },
+        {
+          "hour": 33.5,
+          "lightLux": 300.0,
+          "oscillator": 16.57,
+          "processN": 0.3656
+        },
+        {
+          "hour": 34.0,
+          "lightLux": 300.0,
+          "oscillator": 19.83,
+          "processN": 0.4341
+        },
+        {
+          "hour": 34.5,
+          "lightLux": 300.0,
+          "oscillator": 23.53,
+          "processN": 0.4761
+        },
+        {
+          "hour": 35.0,
+          "lightLux": 300.0,
+          "oscillator": 27.65,
+          "processN": 0.5018
+        },
+        {
+          "hour": 35.5,
+          "lightLux": 300.0,
+          "oscillator": 32.11,
+          "processN": 0.5175
+        },
+        {
+          "hour": 36.0,
+          "lightLux": 300.0,
+          "oscillator": 36.84,
+          "processN": 0.5271
+        },
+        {
+          "hour": 36.5,
+          "lightLux": 300.0,
+          "oscillator": 41.75,
+          "processN": 0.533
+        },
+        {
+          "hour": 37.0,
+          "lightLux": 300.0,
+          "oscillator": 46.76,
+          "processN": 0.5366
+        },
+        {
+          "hour": 37.5,
+          "lightLux": 300.0,
+          "oscillator": 51.77,
+          "processN": 0.5388
+        },
+        {
+          "hour": 38.0,
+          "lightLux": 300.0,
+          "oscillator": 56.69,
+          "processN": 0.5401
+        },
+        {
+          "hour": 38.5,
+          "lightLux": 300.0,
+          "oscillator": 61.46,
+          "processN": 0.541
+        },
+        {
+          "hour": 39.0,
+          "lightLux": 300.0,
+          "oscillator": 66.0,
+          "processN": 0.5415
+        },
+        {
+          "hour": 39.5,
+          "lightLux": 300.0,
+          "oscillator": 70.24,
+          "processN": 0.5418
+        },
+        {
+          "hour": 40.0,
+          "lightLux": 300.0,
+          "oscillator": 74.13,
+          "processN": 0.542
+        },
+        {
+          "hour": 40.5,
+          "lightLux": 300.0,
+          "oscillator": 77.6,
+          "processN": 0.5421
+        },
+        {
+          "hour": 41.0,
+          "lightLux": 300.0,
+          "oscillator": 80.61,
+          "processN": 0.5422
+        },
+        {
+          "hour": 41.5,
+          "lightLux": 300.0,
+          "oscillator": 83.1,
+          "processN": 0.5422
+        },
+        {
+          "hour": 42.0,
+          "lightLux": 300.0,
+          "oscillator": 85.02,
+          "processN": 0.5422
+        },
+        {
+          "hour": 42.5,
+          "lightLux": 300.0,
+          "oscillator": 86.34,
+          "processN": 0.5422
+        },
+        {
+          "hour": 43.0,
+          "lightLux": 300.0,
+          "oscillator": 87.01,
+          "processN": 0.5423
+        },
+        {
+          "hour": 43.5,
+          "lightLux": 300.0,
+          "oscillator": 87.02,
+          "processN": 0.5423
+        },
+        {
+          "hour": 44.0,
+          "lightLux": 300.0,
+          "oscillator": 86.33,
+          "processN": 0.5423
+        },
+        {
+          "hour": 44.5,
+          "lightLux": 300.0,
+          "oscillator": 84.96,
+          "processN": 0.5423
+        },
+        {
+          "hour": 45.0,
+          "lightLux": 300.0,
+          "oscillator": 82.92,
+          "processN": 0.5423
+        },
+        {
+          "hour": 45.5,
+          "lightLux": 300.0,
+          "oscillator": 80.26,
+          "processN": 0.5423
+        },
+        {
+          "hour": 46.0,
+          "lightLux": 300.0,
+          "oscillator": 77.03,
+          "processN": 0.5423
+        },
+        {
+          "hour": 46.5,
+          "lightLux": 300.0,
+          "oscillator": 73.33,
+          "processN": 0.5423
+        },
+        {
+          "hour": 47.0,
+          "lightLux": 300.0,
+          "oscillator": 69.24,
+          "processN": 0.5423
+        },
+        {
+          "hour": 47.5,
+          "lightLux": 300.0,
+          "oscillator": 64.87,
+          "processN": 0.5423
+        },
+        {
+          "hour": 48.0,
+          "lightLux": 300.0,
+          "oscillator": 60.34,
+          "processN": 0.5423
+        }
+      ]
+    },
+    {
+      "id": "shiftWork-nightOwl",
+      "scenarioId": "shiftWork",
+      "chronotypeId": "nightOwl",
+      "model": {
+        "name": "Forger99",
+        "intrinsicPeriodHours": 24.45,
+        "dtHours": 0.5,
+        "simulationDays": 21,
+        "displayHours": 48
+      },
+      "metrics": {
+        "finalAmplitude": 0.6438,
+        "meanWindowAmplitude": 0.7916,
+        "finalPhaseRadians": -0.608,
+        "latestCbtMinDisplayHour": 38.5,
+        "latestDlmoDisplayHour": 31.5,
+        "latestCbtMinClockHour": 14.5,
+        "latestDlmoClockHour": 7.5,
+        "esri": 0.3216,
+        "lightRegularity": 0.871,
+        "meanLightLux": 189.0,
+        "maxLightLux": 300.0
+      },
+      "display": {
+        "signalScale": 0.62,
+        "chronotypePhaseOffsetHours": 1.5,
+        "modelPhaseOffsetHours": 10.5
+      },
+      "points": [
+        {
+          "hour": 0.0,
+          "lightLux": 1.0,
+          "oscillator": 80.48,
+          "processN": 0.4397
+        },
+        {
+          "hour": 0.5,
+          "lightLux": 1.0,
+          "oscillator": 82.61,
+          "processN": 0.3594
+        },
+        {
+          "hour": 1.0,
+          "lightLux": 1.0,
+          "oscillator": 84.23,
+          "processN": 0.2963
+        },
+        {
+          "hour": 1.5,
+          "lightLux": 1.0,
+          "oscillator": 85.3,
+          "processN": 0.2467
+        },
+        {
+          "hour": 2.0,
+          "lightLux": 1.0,
+          "oscillator": 85.79,
+          "processN": 0.2076
+        },
+        {
+          "hour": 2.5,
+          "lightLux": 1.0,
+          "oscillator": 85.68,
+          "processN": 0.177
+        },
+        {
+          "hour": 3.0,
+          "lightLux": 1.0,
+          "oscillator": 84.95,
+          "processN": 0.1528
+        },
+        {
+          "hour": 3.5,
+          "lightLux": 1.0,
+          "oscillator": 83.59,
+          "processN": 0.1339
+        },
+        {
+          "hour": 4.0,
+          "lightLux": 1.0,
+          "oscillator": 81.61,
+          "processN": 0.1189
+        },
+        {
+          "hour": 4.5,
+          "lightLux": 1.0,
+          "oscillator": 79.05,
+          "processN": 0.1072
+        },
+        {
+          "hour": 5.0,
+          "lightLux": 1.0,
+          "oscillator": 75.96,
+          "processN": 0.098
+        },
+        {
+          "hour": 5.5,
+          "lightLux": 1.0,
+          "oscillator": 72.39,
+          "processN": 0.0907
+        },
+        {
+          "hour": 6.0,
+          "lightLux": 1.0,
+          "oscillator": 68.43,
+          "processN": 0.085
+        },
+        {
+          "hour": 6.5,
+          "lightLux": 1.0,
+          "oscillator": 64.16,
+          "processN": 0.0805
+        },
+        {
+          "hour": 7.0,
+          "lightLux": 1.0,
+          "oscillator": 59.67,
+          "processN": 0.077
+        },
+        {
+          "hour": 7.5,
+          "lightLux": 1.0,
+          "oscillator": 55.06,
+          "processN": 0.0742
+        },
+        {
+          "hour": 8.0,
+          "lightLux": 1.0,
+          "oscillator": 50.41,
+          "processN": 0.072
+        },
+        {
+          "hour": 8.5,
+          "lightLux": 1.0,
+          "oscillator": 45.79,
+          "processN": 0.0703
+        },
+        {
+          "hour": 9.0,
+          "lightLux": 300.0,
+          "oscillator": 42.88,
+          "processN": 0.2535
+        },
+        {
+          "hour": 9.5,
+          "lightLux": 300.0,
+          "oscillator": 39.86,
+          "processN": 0.3656
+        },
+        {
+          "hour": 10.0,
+          "lightLux": 300.0,
+          "oscillator": 36.87,
+          "processN": 0.4341
+        },
+        {
+          "hour": 10.5,
+          "lightLux": 300.0,
+          "oscillator": 34.03,
+          "processN": 0.4761
+        },
+        {
+          "hour": 11.0,
+          "lightLux": 300.0,
+          "oscillator": 31.4,
+          "processN": 0.5018
+        },
+        {
+          "hour": 11.5,
+          "lightLux": 300.0,
+          "oscillator": 29.04,
+          "processN": 0.5175
+        },
+        {
+          "hour": 12.0,
+          "lightLux": 300.0,
+          "oscillator": 26.99,
+          "processN": 0.5271
+        },
+        {
+          "hour": 12.5,
+          "lightLux": 300.0,
+          "oscillator": 25.29,
+          "processN": 0.533
+        },
+        {
+          "hour": 13.0,
+          "lightLux": 300.0,
+          "oscillator": 23.95,
+          "processN": 0.5366
+        },
+        {
+          "hour": 13.5,
+          "lightLux": 300.0,
+          "oscillator": 23.01,
+          "processN": 0.5388
+        },
+        {
+          "hour": 14.0,
+          "lightLux": 300.0,
+          "oscillator": 22.48,
+          "processN": 0.5401
+        },
+        {
+          "hour": 14.5,
+          "lightLux": 300.0,
+          "oscillator": 22.38,
+          "processN": 0.541
+        },
+        {
+          "hour": 15.0,
+          "lightLux": 300.0,
+          "oscillator": 22.71,
+          "processN": 0.5415
+        },
+        {
+          "hour": 15.5,
+          "lightLux": 300.0,
+          "oscillator": 23.47,
+          "processN": 0.5418
+        },
+        {
+          "hour": 16.0,
+          "lightLux": 300.0,
+          "oscillator": 24.66,
+          "processN": 0.542
+        },
+        {
+          "hour": 16.5,
+          "lightLux": 300.0,
+          "oscillator": 26.28,
+          "processN": 0.5421
+        },
+        {
+          "hour": 17.0,
+          "lightLux": 300.0,
+          "oscillator": 28.29,
+          "processN": 0.5422
+        },
+        {
+          "hour": 17.5,
+          "lightLux": 300.0,
+          "oscillator": 30.67,
+          "processN": 0.5422
+        },
+        {
+          "hour": 18.0,
+          "lightLux": 300.0,
+          "oscillator": 33.38,
+          "processN": 0.5422
+        },
+        {
+          "hour": 18.5,
+          "lightLux": 300.0,
+          "oscillator": 36.38,
+          "processN": 0.5422
+        },
+        {
+          "hour": 19.0,
+          "lightLux": 300.0,
+          "oscillator": 39.62,
+          "processN": 0.5423
+        },
+        {
+          "hour": 19.5,
+          "lightLux": 300.0,
+          "oscillator": 43.03,
+          "processN": 0.5423
+        },
+        {
+          "hour": 20.0,
+          "lightLux": 300.0,
+          "oscillator": 46.56,
+          "processN": 0.5423
+        },
+        {
+          "hour": 20.5,
+          "lightLux": 300.0,
+          "oscillator": 50.16,
+          "processN": 0.5423
+        },
+        {
+          "hour": 21.0,
+          "lightLux": 300.0,
+          "oscillator": 53.75,
+          "processN": 0.5423
+        },
+        {
+          "hour": 21.5,
+          "lightLux": 300.0,
+          "oscillator": 57.27,
+          "processN": 0.5423
+        },
+        {
+          "hour": 22.0,
+          "lightLux": 300.0,
+          "oscillator": 60.68,
+          "processN": 0.5423
+        },
+        {
+          "hour": 22.5,
+          "lightLux": 300.0,
+          "oscillator": 63.92,
+          "processN": 0.5423
+        },
+        {
+          "hour": 23.0,
+          "lightLux": 300.0,
+          "oscillator": 66.93,
+          "processN": 0.5423
+        },
+        {
+          "hour": 23.5,
+          "lightLux": 300.0,
+          "oscillator": 69.68,
+          "processN": 0.5423
+        },
+        {
+          "hour": 24.0,
+          "lightLux": 1.0,
+          "oscillator": 71.75,
+          "processN": 0.4401
+        },
+        {
+          "hour": 24.5,
+          "lightLux": 1.0,
+          "oscillator": 73.48,
+          "processN": 0.3597
+        },
+        {
+          "hour": 25.0,
+          "lightLux": 1.0,
+          "oscillator": 74.86,
+          "processN": 0.2965
+        },
+        {
+          "hour": 25.5,
+          "lightLux": 1.0,
+          "oscillator": 75.84,
+          "processN": 0.2469
+        },
+        {
+          "hour": 26.0,
+          "lightLux": 1.0,
+          "oscillator": 76.39,
+          "processN": 0.2078
+        },
+        {
+          "hour": 26.5,
+          "lightLux": 1.0,
+          "oscillator": 76.5,
+          "processN": 0.1771
+        },
+        {
+          "hour": 27.0,
+          "lightLux": 1.0,
+          "oscillator": 76.15,
+          "processN": 0.1529
+        },
+        {
+          "hour": 27.5,
+          "lightLux": 1.0,
+          "oscillator": 75.33,
+          "processN": 0.1339
+        },
+        {
+          "hour": 28.0,
+          "lightLux": 1.0,
+          "oscillator": 74.05,
+          "processN": 0.119
+        },
+        {
+          "hour": 28.5,
+          "lightLux": 1.0,
+          "oscillator": 72.31,
+          "processN": 0.1072
+        },
+        {
+          "hour": 29.0,
+          "lightLux": 1.0,
+          "oscillator": 70.14,
+          "processN": 0.098
+        },
+        {
+          "hour": 29.5,
+          "lightLux": 1.0,
+          "oscillator": 67.58,
+          "processN": 0.0907
+        },
+        {
+          "hour": 30.0,
+          "lightLux": 1.0,
+          "oscillator": 64.67,
+          "processN": 0.085
+        },
+        {
+          "hour": 30.5,
+          "lightLux": 1.0,
+          "oscillator": 61.46,
+          "processN": 0.0805
+        },
+        {
+          "hour": 31.0,
+          "lightLux": 1.0,
+          "oscillator": 58.03,
+          "processN": 0.077
+        },
+        {
+          "hour": 31.5,
+          "lightLux": 1.0,
+          "oscillator": 54.42,
+          "processN": 0.0742
+        },
+        {
+          "hour": 32.0,
+          "lightLux": 1.0,
+          "oscillator": 50.72,
+          "processN": 0.0721
+        },
+        {
+          "hour": 32.5,
+          "lightLux": 1.0,
+          "oscillator": 46.98,
+          "processN": 0.0703
+        },
+        {
+          "hour": 33.0,
+          "lightLux": 300.0,
+          "oscillator": 44.76,
+          "processN": 0.2535
+        },
+        {
+          "hour": 33.5,
+          "lightLux": 300.0,
+          "oscillator": 42.35,
+          "processN": 0.3656
+        },
+        {
+          "hour": 34.0,
+          "lightLux": 300.0,
+          "oscillator": 39.91,
+          "processN": 0.4341
+        },
+        {
+          "hour": 34.5,
+          "lightLux": 300.0,
+          "oscillator": 37.52,
+          "processN": 0.4761
+        },
+        {
+          "hour": 35.0,
+          "lightLux": 300.0,
+          "oscillator": 35.26,
+          "processN": 0.5018
+        },
+        {
+          "hour": 35.5,
+          "lightLux": 300.0,
+          "oscillator": 33.19,
+          "processN": 0.5175
+        },
+        {
+          "hour": 36.0,
+          "lightLux": 300.0,
+          "oscillator": 31.35,
+          "processN": 0.5271
+        },
+        {
+          "hour": 36.5,
+          "lightLux": 300.0,
+          "oscillator": 29.77,
+          "processN": 0.533
+        },
+        {
+          "hour": 37.0,
+          "lightLux": 300.0,
+          "oscillator": 28.49,
+          "processN": 0.5366
+        },
+        {
+          "hour": 37.5,
+          "lightLux": 300.0,
+          "oscillator": 27.52,
+          "processN": 0.5388
+        },
+        {
+          "hour": 38.0,
+          "lightLux": 300.0,
+          "oscillator": 26.88,
+          "processN": 0.5401
+        },
+        {
+          "hour": 38.5,
+          "lightLux": 300.0,
+          "oscillator": 26.59,
+          "processN": 0.541
+        },
+        {
+          "hour": 39.0,
+          "lightLux": 300.0,
+          "oscillator": 26.66,
+          "processN": 0.5415
+        },
+        {
+          "hour": 39.5,
+          "lightLux": 300.0,
+          "oscillator": 27.09,
+          "processN": 0.5418
+        },
+        {
+          "hour": 40.0,
+          "lightLux": 300.0,
+          "oscillator": 27.89,
+          "processN": 0.542
+        },
+        {
+          "hour": 40.5,
+          "lightLux": 300.0,
+          "oscillator": 29.04,
+          "processN": 0.5421
+        },
+        {
+          "hour": 41.0,
+          "lightLux": 300.0,
+          "oscillator": 30.53,
+          "processN": 0.5422
+        },
+        {
+          "hour": 41.5,
+          "lightLux": 300.0,
+          "oscillator": 32.35,
+          "processN": 0.5422
+        },
+        {
+          "hour": 42.0,
+          "lightLux": 300.0,
+          "oscillator": 34.47,
+          "processN": 0.5422
+        },
+        {
+          "hour": 42.5,
+          "lightLux": 300.0,
+          "oscillator": 36.85,
+          "processN": 0.5422
+        },
+        {
+          "hour": 43.0,
+          "lightLux": 300.0,
+          "oscillator": 39.47,
+          "processN": 0.5423
+        },
+        {
+          "hour": 43.5,
+          "lightLux": 300.0,
+          "oscillator": 42.27,
+          "processN": 0.5423
+        },
+        {
+          "hour": 44.0,
+          "lightLux": 300.0,
+          "oscillator": 45.21,
+          "processN": 0.5423
+        },
+        {
+          "hour": 44.5,
+          "lightLux": 300.0,
+          "oscillator": 48.25,
+          "processN": 0.5423
+        },
+        {
+          "hour": 45.0,
+          "lightLux": 300.0,
+          "oscillator": 51.32,
+          "processN": 0.5423
+        },
+        {
+          "hour": 45.5,
+          "lightLux": 300.0,
+          "oscillator": 54.38,
+          "processN": 0.5423
+        },
+        {
+          "hour": 46.0,
+          "lightLux": 300.0,
+          "oscillator": 57.38,
+          "processN": 0.5423
+        },
+        {
+          "hour": 46.5,
+          "lightLux": 300.0,
+          "oscillator": 60.26,
+          "processN": 0.5423
+        },
+        {
+          "hour": 47.0,
+          "lightLux": 300.0,
+          "oscillator": 62.99,
+          "processN": 0.5423
+        },
+        {
+          "hour": 47.5,
+          "lightLux": 300.0,
+          "oscillator": 65.51,
+          "processN": 0.5423
+        },
+        {
+          "hour": 48.0,
+          "lightLux": 300.0,
+          "oscillator": 67.78,
+          "processN": 0.5423
+        }
+      ]
+    }
+  ]
+}

@@ -32,6 +32,7 @@ const categoryLabels: Record<ClockGeneCategory, string> = {
 const edgeLabels: Record<ClockEdgeType, string> = {
   activation: "Activation",
   repression: "Repression",
+  sequestration: "Sequestration",
   phosphorylation: "Phosphorylation",
   regulation: "Regulation",
 };

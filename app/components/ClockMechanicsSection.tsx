@@ -76,6 +76,41 @@ function activeCast(timeState: ClockMechanicsState) {
   return "reset";
 }
 
+const balanceCopy: Record<
+  ClockMechanicsState,
+  {
+    activatorLevel: number;
+    repressorLevel: number;
+    label: string;
+    copy: string;
+  }
+> = {
+  morning: {
+    activatorLevel: 82,
+    repressorLevel: 18,
+    label: "Activator surplus",
+    copy: "BMAL1:CLOCK is exposed, so transcription can climb.",
+  },
+  afternoon: {
+    activatorLevel: 56,
+    repressorLevel: 68,
+    label: "Balance point",
+    copy: "PER/CRY has accumulated enough for tight binding to matter.",
+  },
+  night: {
+    activatorLevel: 30,
+    repressorLevel: 88,
+    label: "Repressor-bound",
+    copy: "PER/CRY sequesters the positive arm and quiets E-box output.",
+  },
+  dawn: {
+    activatorLevel: 62,
+    repressorLevel: 12,
+    label: "Resetting",
+    copy: "Repressor degradation restores activator access for the next cycle.",
+  },
+};
+
 function stateFromProgress(progress: number): ClockMechanicsState {
   if (progress < 0.28) return "morning";
   if (progress < 0.55) return "afternoon";
@@ -141,6 +176,33 @@ export function ClockMechanicsSection() {
           <p className="kicker">{activeCopy.eyebrow}</p>
           <h2>{activeCopy.title}</h2>
           <p>{activeCopy.caption}</p>
+          <div
+            className="clock-balance-meter"
+            aria-label="Illustrative activator and repressor balance"
+          >
+            <div>
+              <span>Activator</span>
+              <i>
+                <b
+                  style={{ width: `${balanceCopy[timeState].activatorLevel}%` }}
+                />
+              </i>
+            </div>
+            <div>
+              <span>Repressor</span>
+              <i>
+                <b
+                  style={{ width: `${balanceCopy[timeState].repressorLevel}%` }}
+                />
+              </i>
+            </div>
+            <strong>{balanceCopy[timeState].label}</strong>
+            <p>{balanceCopy[timeState].copy}</p>
+            <small>
+              Inspired by Kim & Forger 2012: robust timing via stoichiometric
+              balance.
+            </small>
+          </div>
         </div>
 
         <div className="clock-molecule-key" aria-label="Molecular loop cast">

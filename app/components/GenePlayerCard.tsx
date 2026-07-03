@@ -382,6 +382,23 @@ export function GenePlayerCard({
                 </span>
                 <ArrowRight size={15} aria-hidden="true" />
               </div>
+              <small
+                style={{
+                  color: "var(--muted)",
+                  fontSize: "0.72rem",
+                  lineHeight: 1.35,
+                }}
+              >
+                {edge.label}: {edge.description}
+              </small>
+              <small
+                style={{
+                  color: "color-mix(in srgb, var(--muted) 82%, transparent)",
+                  fontSize: "0.68rem",
+                }}
+              >
+                Sources: {edge.sources.join(" · ")}
+              </small>
               {edge.pdbId && (
                 <button
                   type="button"

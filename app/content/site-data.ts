@@ -125,6 +125,7 @@ export type ClockGeneCategory =
 export type ClockEdgeType =
   | "activation"
   | "repression"
+  | "sequestration"
   | "phosphorylation"
   | "regulation";
 
@@ -200,6 +201,36 @@ export const citations: Citation[] = [
     source:
       "2026 - Translational Applications of Circadian Research connecting chronobiology to medicine.pdf",
     note: "Perspective used for the future workflow: detecting, targeting, and exploiting biological time.",
+  },
+  {
+    id: "van-cauter-1996",
+    title:
+      "Effects of gender and age on the levels and circadian rhythmicity of plasma cortisol",
+    source: "Journal of Clinical Endocrinology and Metabolism",
+    note: "Primary source for aging-related cortisol nuance: higher mean and nadir with dampened relative amplitude.",
+    url: "https://doi.org/10.1210/jcem.81.7.8675562",
+  },
+  {
+    id: "arcascope-circadian",
+    title: "Arcascope/circadian",
+    source: "Zenodo software release and package documentation",
+    note: "Offline simulation package used to generate static rhythm-lab light schedules, oscillator states, phase markers, amplitude, and regularity metrics.",
+    url: "https://doi.org/10.5281/zenodo.8206871",
+  },
+  {
+    id: "forger-1999",
+    title: "A simpler model of the human circadian pacemaker",
+    source: "Journal of Biological Rhythms",
+    note: "Light-driven oscillator model family used by the static rhythm-lab scenario export.",
+    url: "https://doi.org/10.1177/074873099129000867",
+  },
+  {
+    id: "kim-forger-2012",
+    title:
+      "A mechanism for robust circadian timekeeping via stoichiometric balance",
+    source: "Molecular Systems Biology",
+    note: "Mathematical model source for explaining why activator-repressor abundance, tight binding, and a slow secondary negative loop can support robust molecular clock rhythms.",
+    url: "https://doi.org/10.1038/msb.2012.62",
   },
   {
     id: "circakb",
@@ -400,6 +431,30 @@ export const claimMatrix: Claim[] = [
   },
   {
     claim:
+      "Light-driven circadian oscillator models can simulate illustrative phase, amplitude, and schedule-disruption patterns, but they are not personal medical predictions.",
+    source: "arcascope-circadian; forger-1999",
+    evidenceType: "Open-source software package and published oscillator model",
+    confidence: "Moderate",
+    caveat:
+      "The rhythm lab uses static generated scenarios for education; individual phase requires measurements or validated personal models.",
+    visualUse: "Rhythm lab scenario and chronotype controls",
+    beginnerPhrasing:
+      "The model curves show how light schedules can tug on the clock, not what any one visitor's body is doing.",
+  },
+  {
+    claim:
+      "With aging, cortisol rhythmicity can have lower relative amplitude while mean cortisol, nocturnal nadir, and sometimes peak or absolute swing are higher.",
+    source: "van-cauter-1996",
+    evidenceType: "Reanalysis of human 24-hour plasma cortisol profiles",
+    confidence: "High",
+    caveat:
+      "The rhythm lab uses this as an educational overlay; it does not diagnose HPA-axis function or aging status.",
+    visualUse: "Rhythm lab aging cortisol overlay",
+    beginnerPhrasing:
+      "A weaker-looking cortisol rhythm in aging does not necessarily mean lower cortisol levels.",
+  },
+  {
+    claim:
       "Oxaliplatin is a major chronotherapy example in metastatic colorectal cancer.",
     source: "cederroth-2019",
     evidenceType: "Clinical history and trial review",
@@ -425,14 +480,28 @@ export const claimMatrix: Claim[] = [
   {
     claim:
       "Core mammalian clock genes form interlocked positive, negative, secondary, and accessory regulatory loops.",
-    source: "reactome-clock; ncbi-clock-table; circakb; circadb; cgdb",
-    evidenceType: "Pathway/database references and curated gene annotations",
+    source:
+      "reactome-clock; ncbi-clock-table; circakb; circadb; cgdb; kim-forger-2012",
+    evidenceType:
+      "Pathway/database references, curated gene annotations, and mathematical modeling",
     confidence: "Moderate",
     caveat:
       "V1 is a curated human clock-gene network with database link-outs; live CircaKB/CircaDB dataset imports remain a v2 data pipeline.",
     visualUse: "Interactive clock-gene network",
     beginnerPhrasing:
       "Clock genes talk to each other in loops: some turn rhythms on, some apply brakes, and others tune the timing.",
+  },
+  {
+    claim:
+      "Mathematical modeling suggests that robust mammalian clock rhythms can depend on stoichiometric balance between activators such as BMAL1:CLOCK/NPAS2 and repressors such as PER/CRY, with secondary feedback helping preserve that balance.",
+    source: "kim-forger-2012",
+    evidenceType: "Detailed mammalian circadian-clock mathematical model",
+    confidence: "Emerging",
+    caveat:
+      "This is a mechanistic modeling frame for education; it does not turn the v1 gene map into a quantitative live simulation of protein concentrations.",
+    visualUse: "Molecular clock animation and core gene-network edges",
+    beginnerPhrasing:
+      "The molecular clock is partly a balance problem: activator proteins and repressor proteins have to meet in the right proportions for a steady daily rhythm.",
   },
   {
     claim:
@@ -1173,6 +1242,15 @@ export const circadianDataSources: CircadianDataSource[] = [
     url: "https://reactome.org/content/detail/R-HSA-9931510",
   },
   {
+    id: "kim-forger-2012",
+    name: "Kim & Forger stoichiometric model",
+    purpose:
+      "Mechanistic modeling source for activator-repressor balance, tight protein binding, and secondary feedback in robust clock timing.",
+    status:
+      "Used in v1 to annotate the molecular animation and core PER/CRY sequestration edges.",
+    url: "https://doi.org/10.1038/msb.2012.62",
+  },
+  {
     id: "ncbi-uniprot",
     name: "NCBI Gene + UniProt",
     purpose:
@@ -1199,7 +1277,7 @@ export const clockGeneNodes: ClockGeneNode[] = [
     y: 22,
     title: "Positive arm partner",
     description:
-      "ARNTL/BMAL1 pairs with CLOCK or NPAS2 to bind E-box elements and activate the next wave of clock and clock-controlled genes.",
+      "ARNTL/BMAL1 pairs with CLOCK or NPAS2 to bind E-box elements and activate the next wave of clock and clock-controlled genes; molecular models treat its abundance relative to PER/CRY repressors as a key balance point.",
     expressionPattern:
       "Rhythmic transcript with tissue-specific phase; often interpreted as a central positive-loop component.",
     peakTime: "Morning to midday in many curated examples",
@@ -1224,7 +1302,13 @@ export const clockGeneNodes: ClockGeneNode[] = [
       circaKb: circaSearch("ARNTL"),
       circaDb: circaDbSearch("ARNTL"),
     },
-    sources: ["reactome-clock", "ncbi-clock-table", "circakb", "circadb"],
+    sources: [
+      "reactome-clock",
+      "ncbi-clock-table",
+      "circakb",
+      "circadb",
+      "kim-forger-2012",
+    ],
   },
   {
     id: "CLOCK",
@@ -1236,7 +1320,7 @@ export const clockGeneNodes: ClockGeneNode[] = [
     y: 22,
     title: "Positive arm transcription factor",
     description:
-      "CLOCK forms the canonical heterodimer with BMAL1, activating PER, CRY, REV-ERB/ROR loop genes, DBP, and many output genes.",
+      "CLOCK forms the canonical heterodimer with BMAL1, activating PER, CRY, REV-ERB/ROR loop genes, DBP, and many output genes before negative-loop proteins sequester the complex.",
     expressionPattern:
       "Broadly expressed clock component; activity is rhythmic through partners, feedback, and post-translational state.",
     peakTime: "Day-active transcriptional program",
@@ -1261,7 +1345,12 @@ export const clockGeneNodes: ClockGeneNode[] = [
       circaKb: circaSearch("CLOCK"),
       circaDb: circaDbSearch("CLOCK"),
     },
-    sources: ["reactome-clock", "ncbi-clock-table", "circakb"],
+    sources: [
+      "reactome-clock",
+      "ncbi-clock-table",
+      "circakb",
+      "kim-forger-2012",
+    ],
   },
   {
     id: "NPAS2",
@@ -1304,7 +1393,7 @@ export const clockGeneNodes: ClockGeneNode[] = [
     y: 58,
     title: "Negative feedback period gene",
     description:
-      "PER1 is activated by BMAL1:CLOCK and later contributes to repression of the same positive complex.",
+      "PER1 is activated by BMAL1:CLOCK and later contributes to repression by helping the negative-loop complex bind and inactivate the positive arm.",
     expressionPattern:
       "Strong rhythmic transcript in many clock datasets; phase often follows daytime E-box activation.",
     peakTime: "Afternoon to evening in many mammalian datasets",
@@ -1323,7 +1412,7 @@ export const clockGeneNodes: ClockGeneNode[] = [
       circaKb: circaSearch("PER1"),
       circaDb: circaDbSearch("PER1"),
     },
-    sources: ["reactome-clock", "circakb", "circadb"],
+    sources: ["reactome-clock", "circakb", "circadb", "kim-forger-2012"],
   },
   {
     id: "PER2",
@@ -1335,7 +1424,7 @@ export const clockGeneNodes: ClockGeneNode[] = [
     y: 72,
     title: "Period-length anchor",
     description:
-      "PER2 is a core negative-loop component whose timing and stability are central to circadian period and phase.",
+      "PER2 is a core negative-loop component whose timing, stability, and balance against activator abundance are central to circadian period and phase.",
     expressionPattern:
       "Rhythmic in many tissues; used frequently as a phase marker in experimental systems.",
     peakTime: "Evening to early night in many mammalian datasets",
@@ -1360,7 +1449,13 @@ export const clockGeneNodes: ClockGeneNode[] = [
       circaKb: circaSearch("PER2"),
       circaDb: circaDbSearch("PER2"),
     },
-    sources: ["reactome-clock", "ncbi-clock-table", "cgdb", "circakb"],
+    sources: [
+      "reactome-clock",
+      "ncbi-clock-table",
+      "cgdb",
+      "circakb",
+      "kim-forger-2012",
+    ],
   },
   {
     id: "PER3",
@@ -1403,7 +1498,7 @@ export const clockGeneNodes: ClockGeneNode[] = [
     y: 72,
     title: "Cryptochrome repressor",
     description:
-      "CRY1 joins PER proteins to repress BMAL1:CLOCK-driven transcription and close the primary feedback loop.",
+      "CRY1 joins PER proteins to repress BMAL1:CLOCK-driven transcription; the Kim-Forger model highlights this tight activator-repressor binding as a rhythm-generating motif.",
     expressionPattern:
       "Rhythmic in many datasets; CircaKB highlights CRY1 as a cross-dataset search example.",
     peakTime: "Evening/night in many curated examples",
@@ -1422,7 +1517,7 @@ export const clockGeneNodes: ClockGeneNode[] = [
       circaKb: circaSearch("CRY1"),
       circaDb: circaDbSearch("CRY1"),
     },
-    sources: ["reactome-clock", "circakb", "circadb"],
+    sources: ["reactome-clock", "circakb", "circadb", "kim-forger-2012"],
   },
   {
     id: "CRY2",
@@ -1434,7 +1529,7 @@ export const clockGeneNodes: ClockGeneNode[] = [
     y: 60,
     title: "Cryptochrome partner",
     description:
-      "CRY2 participates in the negative limb and helps tune the timing and strength of transcriptional repression.",
+      "CRY2 participates in the negative limb and helps tune the timing, strength, and duration of transcriptional repression.",
     expressionPattern:
       "Rhythmic evidence is dataset-dependent, with broad expression across peripheral tissues.",
     peakTime: "Tissue dependent",
@@ -1453,7 +1548,7 @@ export const clockGeneNodes: ClockGeneNode[] = [
       circaKb: circaSearch("CRY2"),
       circaDb: circaDbSearch("CRY2"),
     },
-    sources: ["reactome-clock", "cgdb", "circakb"],
+    sources: ["reactome-clock", "cgdb", "circakb", "kim-forger-2012"],
   },
   {
     id: "NR1D1",
@@ -1927,7 +2022,7 @@ export const clockGeneEdges: ClockGeneEdge[] = [
     type: "regulation",
     label: "heterodimer",
     description: "CLOCK and BMAL1 form the positive transcriptional complex.",
-    sources: ["reactome-clock", "ncbi-clock-table"],
+    sources: ["reactome-clock", "ncbi-clock-table", "kim-forger-2012"],
     pdbId: "4F3L",
   },
   {
@@ -1966,11 +2061,11 @@ export const clockGeneEdges: ClockGeneEdge[] = [
       id: `${source}-represses-${target}`,
       source,
       target,
-      type: "repression" as ClockEdgeType,
-      label: "feedback repression",
+      type: "sequestration" as ClockEdgeType,
+      label: "protein sequestration",
       description:
-        "PER/CRY complexes repress the positive transcriptional arm.",
-      sources: ["reactome-clock", "ncbi-clock-table"],
+        "PER/CRY complexes bind and inactivate the positive transcriptional arm; Kim and Forger modeled this activator-repressor stoichiometry as a route to robust rhythms.",
+      sources: ["reactome-clock", "ncbi-clock-table", "kim-forger-2012"],
     })),
   ),
   ...["ARNTL", "NPAS2", "NFIL3"].flatMap((target) =>
