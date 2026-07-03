@@ -22,9 +22,9 @@ const categoryLabels: Record<ClockGeneCategory, string> = {
 const categoryClass = (category: ClockGeneCategory) => {
   switch (category) {
     case "corePositive":
-      return "bg-core-positive text-white";
+      return "bg-[#e24a4a] text-white";
     case "coreNegative":
-      return "bg-core-negative text-white";
+      return "bg-[#3276d2] text-white";
     case "secondaryLoop":
       return "bg-[#8d55d8] text-white";
     case "accessoryRegulator":
@@ -113,9 +113,9 @@ export function GenePlayerCard({
         style={{
           marginTop: "1rem",
           padding: "1rem",
-          background: "rgba(0,0,0,0.2)",
+          background: "color-mix(in srgb, var(--ink) 6%, transparent)",
           borderRadius: "8px",
-          border: "1px solid rgba(255,255,255,0.05)",
+          border: "1px solid var(--surface-line)",
         }}
       >
         <div
@@ -131,7 +131,7 @@ export function GenePlayerCard({
               fontSize: "0.75rem",
               textTransform: "uppercase",
               letterSpacing: "0.05em",
-              color: "#9ca3af",
+              color: "var(--muted)",
               display: "flex",
               alignItems: "center",
               gap: "0.25rem",
@@ -148,8 +148,9 @@ export function GenePlayerCard({
                 fontSize: "0.75rem",
                 padding: "0.25rem 0.5rem",
                 borderRadius: "4px",
-                background: "#3b82f6",
-                color: "white",
+                background: "var(--cyan)",
+                color: "#08211e",
+                fontWeight: 800,
                 border: "none",
                 cursor: isLoadingLive ? "wait" : "pointer",
               }}
@@ -162,10 +163,10 @@ export function GenePlayerCard({
         {liveError && (
           <div
             style={{
-              color: "#ef4444",
+              color: "var(--coral)",
               fontSize: "0.875rem",
               padding: "0.5rem",
-              background: "rgba(239, 68, 68, 0.1)",
+              background: "color-mix(in srgb, var(--coral) 14%, transparent)",
               borderRadius: "4px",
             }}
           >
@@ -176,10 +177,10 @@ export function GenePlayerCard({
         {liveData && (
           <div
             className="live-data-content"
-            style={{ fontSize: "0.875rem", color: "#e5e7eb" }}
+            style={{ fontSize: "0.875rem", color: "var(--ink)" }}
           >
             <div style={{ marginBottom: "0.5rem" }}>
-              <strong style={{ color: "#9ca3af" }}>Protein Name:</strong>{" "}
+              <strong style={{ color: "var(--muted)" }}>Protein Name:</strong>{" "}
               {liveData.proteinName}
             </div>
             {liveData.functionDescription && (
@@ -221,7 +222,7 @@ export function GenePlayerCard({
             )}
             {liveData.aliases && liveData.aliases.length > 0 && (
               <div>
-                <strong style={{ color: "#9ca3af" }}>Aliases:</strong>{" "}
+                <strong style={{ color: "var(--muted)" }}>Aliases:</strong>{" "}
                 {liveData.aliases.join(", ")}
               </div>
             )}
@@ -231,10 +232,10 @@ export function GenePlayerCard({
                   style={{
                     marginTop: "0.75rem",
                     paddingTop: "0.75rem",
-                    borderTop: "1px solid rgba(255,255,255,0.05)",
+                    borderTop: "1px solid var(--surface-line)",
                   }}
                 >
-                  <strong style={{ color: "#9ca3af" }}>
+                  <strong style={{ color: "var(--muted)" }}>
                     Top Disease Associations (OpenTargets):
                   </strong>
                   <ul
@@ -247,10 +248,10 @@ export function GenePlayerCard({
                     {liveData.openTargets.diseases.map((d) => (
                       <li
                         key={d.name}
-                        style={{ color: "#d1d5db", marginBottom: "0.125rem" }}
+                        style={{ color: "var(--ink)", marginBottom: "0.125rem" }}
                       >
                         {d.name}{" "}
-                        <span style={{ color: "#6b7280", fontSize: "0.7rem" }}>
+                        <span style={{ color: "var(--muted)", fontSize: "0.7rem" }}>
                           (Score: {d.score.toFixed(2)})
                         </span>
                       </li>
@@ -262,7 +263,7 @@ export function GenePlayerCard({
                       target="_blank"
                       rel="noreferrer"
                       style={{
-                        color: "#3b82f6",
+                        color: "var(--cyan)",
                         textDecoration: "none",
                         display: "inline-flex",
                         alignItems: "center",
@@ -280,7 +281,7 @@ export function GenePlayerCard({
                 target="_blank"
                 rel="noreferrer"
                 style={{
-                  color: "#3b82f6",
+                  color: "var(--cyan)",
                   textDecoration: "none",
                   display: "inline-flex",
                   alignItems: "center",
@@ -410,9 +411,9 @@ export function GenePlayerCard({
                     fontSize: "0.7rem",
                     padding: "0.125rem 0.375rem",
                     borderRadius: "4px",
-                    background: "rgba(255,255,255,0.1)",
-                    color: "#d1d5db",
-                    border: "1px solid rgba(255,255,255,0.2)",
+                    background: "color-mix(in srgb, var(--ink) 8%, transparent)",
+                    color: "var(--ink)",
+                    border: "1px solid var(--surface-line)",
                     cursor: "pointer",
                   }}
                 >

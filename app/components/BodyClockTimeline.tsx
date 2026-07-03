@@ -82,12 +82,12 @@ export function BodyClockTimeline() {
               left: "50%",
               width: "16px",
               height: "16px",
-              background: "#101820",
+              background: "var(--ink)",
               borderRadius: "50%",
               transform: `translate(-50%, -50%) rotate(${(hour / 24) * 360 - 90}deg) translate(150px)`,
               transition: "transform 0.1s linear",
               zIndex: 10,
-              boxShadow: "0 0 10px rgba(16,24,32,0.2)",
+              boxShadow: "0 0 10px color-mix(in srgb, var(--ink) 20%, transparent)",
             }}
           />
 
@@ -124,8 +124,8 @@ export function BodyClockTimeline() {
               {/* Refined Humanoid Silhouette */}
               <path
                 d="M100 10 C 85 10 75 25 75 45 C 75 55 85 65 90 70 C 80 75 60 80 45 95 C 30 110 25 130 25 170 L 25 240 L 175 240 L 175 170 C 175 130 170 110 155 95 C 140 80 120 75 110 70 C 115 65 125 55 125 45 C 125 25 115 10 100 10 Z"
-                fill="rgba(16,24,32,0.02)"
-                stroke="#d1d5db"
+                fill="color-mix(in srgb, var(--ink) 3%, transparent)"
+                stroke="color-mix(in srgb, var(--ink) 22%, transparent)"
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"

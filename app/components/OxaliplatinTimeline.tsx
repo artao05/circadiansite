@@ -88,7 +88,7 @@ export function OxaliplatinTimeline() {
                   : "1px solid transparent",
                 cursor: "pointer",
                 transition: "all 0.3s ease",
-                opacity: isActive ? 1 : 0.4,
+                opacity: isActive ? 1 : 0.62,
                 boxShadow: isActive ? "0 10px 30px rgba(0,0,0,0.2)" : "none",
               }}
             >
@@ -107,14 +107,14 @@ export function OxaliplatinTimeline() {
                   style={{
                     fontSize: "0.85rem",
                     fontWeight: 700,
-                    color: isActive ? "#06b6d4" : "#4b5563",
+                    color: isActive ? "#06b6d4" : "#8b95a3",
                     textTransform: "uppercase",
                     letterSpacing: 0,
                   }}
                 >
                   {event.year}
                 </span>
-                <h3 style={{ margin: "0.3rem 0", color: isActive ? "#f3f4f6" : "#9ca3af", fontSize: "1.125rem", fontWeight: 600 }}>
+                <h3 style={{ margin: "0.3rem 0", color: isActive ? "#f3f4f6" : "#c2c8d0", fontSize: "1.125rem", fontWeight: 600 }}>
                   {event.title}
                 </h3>
                 {isActive && (

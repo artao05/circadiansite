@@ -662,7 +662,7 @@ export function EntrainmentDemo() {
               width={waveAxis.width}
               height={waveAxis.height}
               rx="16"
-              fill="rgba(255, 252, 246, 0.58)"
+              fill="var(--surface-soft)"
             />
             <rect
               x={timeToX(6)}
@@ -679,7 +679,7 @@ export function EntrainmentDemo() {
                 y={waveAxis.top}
                 width={hourToX(segment.end) - hourToX(segment.start)}
                 height={waveAxis.height}
-                fill="rgba(16, 24, 32, 0.06)"
+                fill="color-mix(in srgb, var(--ink) 8%, transparent)"
               />
             ))}
 
@@ -692,8 +692,8 @@ export function EntrainmentDemo() {
                   y2={waveAxis.coherenceBaseY + 12}
                   stroke={
                     hour === 0 || hour === 24
-                      ? "rgba(16, 24, 32, 0.18)"
-                      : "rgba(16, 24, 32, 0.1)"
+                      ? "color-mix(in srgb, var(--ink) 22%, transparent)"
+                      : "color-mix(in srgb, var(--ink) 12%, transparent)"
                   }
                 />
                 <text
@@ -714,7 +714,7 @@ export function EntrainmentDemo() {
               x2={waveAxis.right}
               y1={waveAxis.midY}
               y2={waveAxis.midY}
-              stroke="rgba(16, 24, 32, 0.18)"
+              stroke="color-mix(in srgb, var(--ink) 22%, transparent)"
               strokeDasharray="4 8"
             />
             <text
@@ -747,7 +747,7 @@ export function EntrainmentDemo() {
               x2={waveAxis.right}
               y1={waveAxis.coherenceBaseY}
               y2={waveAxis.coherenceBaseY}
-              stroke="rgba(16, 24, 32, 0.18)"
+              stroke="color-mix(in srgb, var(--ink) 22%, transparent)"
             />
 
             {model.rhythms.map((rhythm) => (
@@ -814,7 +814,7 @@ export function EntrainmentDemo() {
               x2={timeToX(wallHour)}
               y1={waveAxis.top - 8}
               y2={waveAxis.coherenceBaseY + 60}
-              stroke="rgba(16, 24, 32, 0.52)"
+              stroke="color-mix(in srgb, var(--ink) 55%, transparent)"
               strokeWidth="2"
             />
             <text

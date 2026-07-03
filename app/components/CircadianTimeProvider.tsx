@@ -76,6 +76,12 @@ function getCircadianTheme(hour: number): CircadianTheme {
         "--genes-bg": "#eff6df",
         "--oxal-bg": "#1a2630",
         "--time-glow": "rgba(248, 184, 78, 0.36)",
+        "--surface": "#fff8eb",
+        "--surface-soft": "rgba(255, 248, 235, 0.78)",
+        "--surface-line": "rgba(80, 49, 27, 0.16)",
+        "--surface-strong": "#17202a",
+        "--on-surface": "#17202a",
+        "--on-surface-strong": "#fff8eb",
       },
     };
   }
@@ -115,6 +121,12 @@ function getCircadianTheme(hour: number): CircadianTheme {
         "--genes-bg": "#edf7e9",
         "--oxal-bg": "#111c24",
         "--time-glow": "rgba(84, 214, 194, 0.28)",
+        "--surface": "#fff9ef",
+        "--surface-soft": "rgba(255, 249, 239, 0.78)",
+        "--surface-line": "rgba(16, 24, 32, 0.14)",
+        "--surface-strong": "#101820",
+        "--on-surface": "#101820",
+        "--on-surface-strong": "#fff9ef",
       },
     };
   }
@@ -154,6 +166,12 @@ function getCircadianTheme(hour: number): CircadianTheme {
         "--genes-bg": "#e9f0df",
         "--oxal-bg": "#151722",
         "--time-glow": "rgba(240, 108, 114, 0.34)",
+        "--surface": "#fff4e8",
+        "--surface-soft": "rgba(255, 244, 232, 0.78)",
+        "--surface-line": "rgba(38, 25, 38, 0.16)",
+        "--surface-strong": "#161922",
+        "--on-surface": "#161922",
+        "--on-surface-strong": "#fff4e8",
       },
     };
   }
@@ -191,6 +209,12 @@ function getCircadianTheme(hour: number): CircadianTheme {
       "--genes-bg": "#101f22",
       "--oxal-bg": "#080d13",
       "--time-glow": "rgba(99, 214, 207, 0.3)",
+      "--surface": "#142231",
+      "--surface-soft": "rgba(20, 34, 49, 0.78)",
+      "--surface-line": "rgba(232, 242, 244, 0.14)",
+      "--surface-strong": "#63d6cf",
+      "--on-surface": "#eef6f7",
+      "--on-surface-strong": "#071018",
     },
   };
 }
