@@ -45,6 +45,41 @@ overlap controls or visuals.
   accents.
 - Support `prefers-reduced-motion`.
 
+## Theming and the master clock
+
+The whole site is repainted by a single "master clock". `CircadianTimeProvider`
+(`app/components/CircadianTimeProvider.tsx`) holds an `hour` (0-23), buckets it
+into one of four phases (morning 5-11, midday 11-17, evening 17-21, night 21-5),
+and injects a full set of CSS custom properties as inline styles on the
+`.circadian-shell` wrapper (plus `data-circadian-phase`). `MasterCircadianClock`
+drives `hour` via its clock face and scrubber. `.circadian-shell` transitions
+`background`/`color`, so time changes cross-fade the page.
+
+Critical: night inverts. In day phases `--ink` is dark and `--paper` is light;
+at night `--ink` becomes near-white and `--paper` becomes dark. A component that
+hardcodes a light surface will show light text on a light panel at night (this
+is exactly how the "Late light" button broke).
+
+Rules for every new or edited component:
+
+- Consume phase tokens; never hardcode light/dark hex or literals like
+  `rgba(255, 249, 239, ...)` / `rgba(16, 24, 32, ...)` for surfaces, borders, or
+  text. Use the semantic set: `--surface` (opaque panel), `--surface-soft`
+  (translucent panel), `--surface-line` (hairline border), `--surface-strong`
+  (high-contrast emphasis fill; inverts with phase), `--on-surface` (text on
+  `--surface`, equals `--ink`), `--on-surface-strong` (text on
+  `--surface-strong`). For emphasis pairs you may also use the existing
+  `--selected-bg` / `--selected-fg`.
+- Accent hues (`--amber`, `--cyan`, `--coral`, `--green`, `--violet`) read as
+  accents in all phases and can stay as translucent colored fills/strokes.
+- Inside SVGs, use `var(--...)` tokens for `fill`/`stroke`, or
+  `color-mix(in srgb, var(--ink) N%, transparent)` for adaptive hairlines,
+  instead of fixed rgba.
+- To add a token, define it for all four phases in `getCircadianTheme` and
+  mirror the default in the `:root` block of `app/globals.css`.
+- Before considering a component done, verify text/background contrast in all
+  four phases, especially night, on desktop and mobile.
+
 ## Scientific Safety
 
 - Keep medication content educational and citation-forward.
@@ -72,6 +107,8 @@ overlap controls or visuals.
 - `app/page.tsx`: main report composition.
 - `app/content/site-data.ts`: chapters, citations, claims, drugs, genes, body
   rhythm examples, and roadmap data.
+- `app/components/CircadianTimeProvider.tsx`: the master clock; owns the `hour`
+  state and the per-phase CSS token sets that theme the whole site.
 - `app/components/GeneNetwork.tsx`: Chapter 6 clock-gene network and player
   card.
 - `app/components/*.tsx`: other interactive and editorial components.
