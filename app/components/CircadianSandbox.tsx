@@ -18,17 +18,12 @@ import {
   type SleepDatum,
   type SleepScenario,
 } from "../lib/sleep-model";
-import {
-  sandboxThemes,
-  type SandboxThemeName,
-} from "../lib/sandbox-themes";
+import { sandboxChartColors } from "../lib/sandbox-themes";
 
 const scenarios: Array<{ value: SleepScenario; label: string; icon: typeof SunMedium }> = [
   { value: "normal", label: "Normal Routine", icon: SunMedium },
   { value: "all-nighter", label: "All-Nighter", icon: Moon },
 ];
-
-const themeOrder: SandboxThemeName[] = ["elegant", "clinical", "brutal"];
 
 function nearestDatum(data: SleepDatum[], currentTime: number) {
   return data.reduce((nearest, point) =>
@@ -60,10 +55,8 @@ function formatMetric(value: number) {
 
 export function CircadianSandbox() {
   const [scenario, setScenario] = useState<SleepScenario>("normal");
-  const [themeName, setThemeName] = useState<SandboxThemeName>("elegant");
   const [currentTime, setCurrentTime] = useState(8);
   const [caffeineEvents, setCaffeineEvents] = useState<number[]>([]);
-  const theme = sandboxThemes[themeName];
   const data = useMemo(
     () => generateSleepData({ scenario, caffeineEvents }),
     [scenario, caffeineEvents],
@@ -82,10 +75,7 @@ export function CircadianSandbox() {
   };
 
   return (
-    <section
-      className={`circadian-sandbox interactive-block ${theme.shell}`}
-      id="circadian-sandbox"
-    >
+    <section className="circadian-sandbox interactive-block" id="circadian-sandbox">
       <div className="sandbox-header">
         <div>
           <p className="kicker">Circadian rhythm sandbox</p>
@@ -104,8 +94,9 @@ export function CircadianSandbox() {
               return (
                 <button
                   key={option.value}
-                  className={selected ? theme.buttonActive : theme.button}
+                  className={selected ? "selected" : undefined}
                   type="button"
+                  aria-pressed={selected}
                   onClick={() => {
                     setScenario(option.value);
                     setCurrentTime(option.value === "normal" ? 8 : 18);
@@ -118,24 +109,11 @@ export function CircadianSandbox() {
               );
             })}
           </div>
-
-          <div className="sandbox-toggle compact" aria-label="Visual theme">
-            {themeOrder.map((name) => (
-              <button
-                key={name}
-                className={themeName === name ? theme.buttonActive : theme.button}
-                type="button"
-                onClick={() => setThemeName(name)}
-              >
-                {sandboxThemes[name].name}
-              </button>
-            ))}
-          </div>
         </div>
       </div>
 
-      <div className={`sandbox-stage ${theme.panel}`}>
-        <aside className={`sandbox-story ${theme.mutedPanel}`}>
+      <div className="sandbox-stage">
+        <aside className="sandbox-story">
           <span>{narrative.eyebrow}</span>
           <h4>{narrative.title}</h4>
           <p>{narrative.body}</p>
@@ -151,17 +129,17 @@ export function CircadianSandbox() {
           data={data}
           scenario={scenario}
           currentTime={currentTime}
-          theme={theme}
+          colors={sandboxChartColors}
         />
 
         <div className="sandbox-legend" aria-label="Chart legend">
-          <span style={{ color: theme.chart.feltS }}>Felt Sleep Pressure</span>
-          <span style={{ color: theme.chart.processS }}>True Adenosine</span>
-          <span style={{ color: theme.chart.processC }}>Wake Drive (C)</span>
+          <span style={{ color: sandboxChartColors.feltS }}>Felt Sleep Pressure</span>
+          <span style={{ color: sandboxChartColors.processS }}>True Adenosine</span>
+          <span style={{ color: sandboxChartColors.processC }}>Wake Drive (C)</span>
         </div>
       </div>
 
-      <div className={`sandbox-scrubber ${theme.mutedPanel}`}>
+      <div className="sandbox-scrubber">
         <label>
           <span>
             Time
@@ -183,7 +161,6 @@ export function CircadianSandbox() {
 
         <div className="sandbox-time-buttons" aria-label="Step through time">
           <button
-            className={theme.button}
             type="button"
             onClick={() => stepTime(-1)}
             aria-label="Step backward two hours"
@@ -191,7 +168,6 @@ export function CircadianSandbox() {
             <ChevronLeft size={17} aria-hidden="true" />
           </button>
           <button
-            className={theme.button}
             type="button"
             onClick={() => stepTime(1)}
             aria-label="Step forward two hours"
@@ -202,7 +178,7 @@ export function CircadianSandbox() {
 
         <div className="sandbox-actions">
           <button
-            className={theme.buttonActive}
+            className="emphasis"
             type="button"
             onClick={() =>
               setCaffeineEvents((events) => [...events, Number(currentTime.toFixed(2))])
@@ -212,7 +188,6 @@ export function CircadianSandbox() {
             Drink Coffee
           </button>
           <button
-            className={theme.button}
             type="button"
             onClick={() => setCaffeineEvents([])}
             disabled={caffeineEvents.length === 0}
@@ -224,51 +199,51 @@ export function CircadianSandbox() {
       </div>
 
       <div className="sandbox-metrics">
-        <article className={theme.metric}>
+        <article>
           <span>Process S</span>
           <strong>{formatMetric(currentPoint.feltS)}</strong>
           <p>felt sleep pressure</p>
           <div className="sandbox-meter" aria-hidden="true">
             <i
               style={{
-                background: theme.chart.feltS,
+                background: sandboxChartColors.feltS,
                 width: `${currentPoint.feltS}%`,
               }}
             />
           </div>
         </article>
-        <article className={theme.metric}>
+        <article>
           <span>Process C</span>
           <strong>{formatMetric(currentPoint.processC)}</strong>
           <p>circadian wake drive</p>
           <div className="sandbox-meter" aria-hidden="true">
             <i
               style={{
-                background: theme.chart.processC,
+                background: sandboxChartColors.processC,
                 width: `${currentPoint.processC}%`,
               }}
             />
           </div>
         </article>
-        <article className={theme.metric}>
+        <article>
           <span>Net alertness</span>
           <strong>{formatMetric(currentPoint.netAlertness)}</strong>
           <p>wake drive minus sleep load</p>
           <div className="sandbox-meter" aria-hidden="true">
             <i
               style={{
-                background: theme.chart.caffeine,
+                background: sandboxChartColors.caffeine,
                 width: `${currentPoint.netAlertness}%`,
               }}
             />
           </div>
         </article>
-        <article className={theme.metric}>
+        <article>
           <span>State</span>
           <strong>{currentPoint.state}</strong>
           <p>{currentPoint.dayLabel}</p>
         </article>
-        <article className={theme.metric}>
+        <article>
           <span>
             <Activity size={15} aria-hidden="true" />
             The Adenosine Trap

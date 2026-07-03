@@ -39,3 +39,7 @@ yarn-error.log*
 next-env.d.ts
 /dist/
 /.wrangler/
+
+# Local bibliography PDFs — keep on disk for research; cite via DOI/PubMed in site-data
+/references/
+*.pdf

@@ -91,6 +91,30 @@ Rules for every new or edited component:
   biological time before using them heavily.
 - If a claim is uncertain, label it as a hypothesis, example, or emerging area.
 
+## Citation linking
+
+- Use inline citations **only when a claim needs traceability**. Prefer nearby
+  caveats over citation clutter.
+- Every site bibliography reference must use `CitationLink` or `CitationList`
+  from `app/components/CitationLink.tsx`. Never render raw citation slug text
+  in JSX.
+- Add new sources to `citations` in `app/content/site-data.ts` before
+  referencing them inline.
+- Anchor scheme:
+  - Inline origin: `#cite-{context}` (set via `citeAnchor()` in
+    `app/lib/citations.ts`)
+  - Bibliography target: `#source-{id}` (set via `sourceAnchor()`)
+- Each bibliography card in the sources section must expose
+  `id={sourceAnchor(citation.id)}` and include `CitationReturn`.
+- Gene/database external link-outs (`circadianDataSources`, Reactome/NCBI labels
+  in gene cards) are a separate pattern — do not route them through the bottom
+  bibliography.
+- When touching citation UI, verify click → scroll to source → return to reading
+  in all four circadian phases.
+- **Do not commit PDFs.** Store personal reference PDFs locally (e.g.
+  `references/`) for your own reading; wire the public site to publisher links
+  (`url` on each `Citation` in `site-data.ts`). PDF paths are gitignored.
+
 ## Content Workflow
 
 - Add new claims to `claimMatrix` before using them in prominent copy.
@@ -112,4 +136,6 @@ Rules for every new or edited component:
 - `app/components/GeneNetwork.tsx`: Chapter 6 clock-gene network and player
   card.
 - `app/components/*.tsx`: other interactive and editorial components.
+- `app/components/CitationLink.tsx`: inline citation links and return navigation.
+- `app/lib/citations.ts`: citation anchor helpers and lookup utilities.
 - `app/globals.css`: global visual system and responsive behavior.

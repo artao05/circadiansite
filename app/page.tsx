@@ -15,15 +15,19 @@ import { EntrainmentDemo } from "./components/EntrainmentDemo";
 import { GeneNetwork } from "./components/GeneNetwork";
 import { OxaliplatinTimeline } from "./components/OxaliplatinTimeline";
 import { RhythmLab } from "./components/RhythmLab";
+import { SectionVideoExplainer } from "./components/SectionVideoExplainer";
 import {
   chapters,
   citations,
   claimMatrix,
   timingSignals,
 } from "./content/site-data";
+import type { SectionVideoExplainer as SectionVideoExplainerData } from "./content/site-data";
 import { CircadianTimeProvider } from "./components/CircadianTimeProvider";
 import { MasterCircadianClock } from "./components/MasterCircadianClock";
 import { DayNightCanvas } from "./components/DayNightCanvas";
+import { CitationReturn } from "./components/CitationLink";
+import { sourceAnchor } from "./lib/citations";
 
 function ChapterIntro({
   id,
@@ -31,19 +35,29 @@ function ChapterIntro({
   eyebrow,
   title,
   dek,
+  videoExplainer,
 }: {
   id: string;
   number: string;
   eyebrow: string;
   title: string;
   dek: string;
+  videoExplainer?: SectionVideoExplainerData;
 }) {
   return (
     <div className="chapter-intro" id={id}>
       <span>{number}</span>
       <div>
         <p className="kicker">{eyebrow}</p>
-        <h2>{title}</h2>
+        <div className="chapter-title-row">
+          <h2>{title}</h2>
+          {videoExplainer ? (
+            <SectionVideoExplainer
+              explainer={videoExplainer}
+              sectionTitle={title}
+            />
+          ) : null}
+        </div>
         <p>{dek}</p>
       </div>
     </div>
@@ -250,17 +264,29 @@ export default function Home() {
           </div>
           <div className="source-grid">
             {citations.map((citation) => (
-              <article key={citation.id}>
+              <article
+                key={citation.id}
+                id={sourceAnchor(citation.id)}
+                className="source-card"
+              >
                 <p className="kicker">{citation.id}</p>
                 <h3>{citation.title}</h3>
                 <p>{citation.note}</p>
-                {citation.url ? (
-                  <a href={citation.url} target="_blank" rel="noreferrer">
-                    Open source
-                  </a>
-                ) : (
-                  <span>{citation.source}</span>
-                )}
+                <div className="source-card-meta">
+                  {citation.url ? (
+                    <a
+                      className="source-card-link"
+                      href={citation.url}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Open source
+                    </a>
+                  ) : (
+                    <span className="source-card-file">{citation.source}</span>
+                  )}
+                </div>
+                <CitationReturn citationId={citation.id} />
               </article>
             ))}
           </div>

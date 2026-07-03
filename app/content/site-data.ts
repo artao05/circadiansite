@@ -27,12 +27,23 @@ export type Citation = {
   url?: string;
 };
 
+export type SectionVideoExplainer = {
+  title: string;
+  duration: string;
+  summary: string;
+  youtubeId?: string;
+  transcript?: string;
+  citationIds?: string[];
+  caveat?: string;
+};
+
 export type Chapter = {
   id: string;
   number: string;
   eyebrow: string;
   title: string;
   dek: string;
+  videoExplainer?: SectionVideoExplainer;
 };
 
 export type Claim = {
@@ -194,8 +205,9 @@ export const citations: Citation[] = [
   {
     id: "cederroth-2019",
     title: "Medicine in the fourth dimension",
-    source: "2019 - Medicine in the 4th Dimension.pdf",
+    source: "Cell Metabolism",
     note: "Review article used for the broad chronomedicine framing, oxaliplatin history, and translation caveats.",
+    url: "https://doi.org/10.1016/j.cmet.2019.06.019",
   },
   {
     id: "giacchetti-2006",
@@ -231,16 +243,17 @@ export const citations: Citation[] = [
   {
     id: "smith-2019",
     title: "When Should You Take Your Medicines?",
-    source: "2019 - When should you take your medicines.pdf",
+    source: "Journal of Biological Rhythms",
     note: "Beginner-facing article used for medication timing examples and the wall-clock versus body-clock distinction.",
+    url: "https://doi.org/10.1177/0748730419892099",
   },
   {
     id: "klerman-2026",
     title:
       "Translational applications of circadian research: connecting chronobiology to medicine",
-    source:
-      "2026 - Translational Applications of Circadian Research connecting chronobiology to medicine.pdf",
+    source: "npj Biological Timing and Sleep",
     note: "Perspective used for the future workflow: detecting, targeting, and exploiting biological time.",
+    url: "https://doi.org/10.1038/s44323-026-00084-2",
   },
   {
     id: "van-cauter-1996",
@@ -399,6 +412,15 @@ export const chapters: Chapter[] = [
     eyebrow: "What is a rhythm?",
     title: "A rhythm is a shape in time.",
     dek: "Period, amplitude, phase, baseline, and noise are the simple ingredients behind a surprisingly rich biological language.",
+    videoExplainer: {
+      title: "How to read a biological rhythm",
+      duration: "2 min",
+      summary:
+        "A short narrated figure caption for period, amplitude, phase, baseline, and noise before visitors experiment with the rhythm lab.",
+      transcript:
+        "A rhythm is a repeated shape in time. Period is how long one cycle takes. Amplitude is how large the daily swing is. Phase is where the peak or trough lands relative to a clock or cue. Baseline is the average level, and noise is the ordinary variation around the pattern.",
+      citationIds: ["arcascope-circadian", "forger-1999"],
+    },
   },
   {
     id: "sync",
@@ -441,6 +463,17 @@ export const chapters: Chapter[] = [
     eyebrow: "When should you take medicines?",
     title: "For some drugs, timing is part of the biology.",
     dek: "Labels, side effects, absorption, metabolism, and target activity can all make time-of-day matter.",
+    videoExplainer: {
+      title: "Why drug timing is educational here",
+      duration: "3 min",
+      summary:
+        "A plain-language overview of why timing can affect drug exposure, targets, and side effects without turning the site into personal medication advice.",
+      transcript:
+        "Medication timing can matter for several different reasons. The drug may be absorbed differently with food or sleep, the target may rise and fall across the day, or side effects may depend on when the body is more vulnerable. These examples explain the biology. They are not instructions to change a prescription schedule.",
+      citationIds: ["smith-2019", "cederroth-2019", "klerman-2026"],
+      caveat:
+        "Medication timing should be discussed with a clinician or pharmacist.",
+    },
   },
   {
     id: "oxaliplatin",

@@ -3,6 +3,13 @@
 import Image from "next/image";
 import { useState } from "react";
 import { oxaliplatinEvents } from "../content/site-data";
+import { CitationList } from "./CitationLink";
+
+const oxaliplatinCitationIds = [
+  "giacchetti-2006",
+  "giacchetti-2012",
+  "cederroth-2019",
+];
 
 const plates = [
   "/oxaliplatin_neuropathy_1781491364986.jpg",
@@ -142,8 +149,13 @@ export function OxaliplatinTimeline() {
             lineHeight: 1.55,
           }}
         >
-          Sources: giacchetti-2006, giacchetti-2012, cederroth-2019. This case
-          study is educational and does not recommend chemotherapy timing.
+          Sources:{" "}
+          <CitationList
+            ids={oxaliplatinCitationIds}
+            contextPrefix="oxaliplatin"
+          />
+          . This case study is educational and does not recommend chemotherapy
+          timing.
         </p>
       </div>
     </div>

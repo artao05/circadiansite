@@ -18,13 +18,13 @@ import {
   type SleepDatum,
   type SleepScenario,
 } from "../lib/sleep-model";
-import type { SandboxTheme } from "../lib/sandbox-themes";
+import type { SandboxChartColors } from "../lib/sandbox-themes";
 
 type SleepModelChartProps = {
   data: SleepDatum[];
   scenario: SleepScenario;
   currentTime: number;
-  theme: SandboxTheme;
+  colors: SandboxChartColors;
 };
 
 type TooltipPayload = {
@@ -68,7 +68,7 @@ export function SleepModelChart({
   data,
   scenario,
   currentTime,
-  theme,
+  colors,
 }: SleepModelChartProps) {
   const sleepWindows = getSleepWindows(scenario);
   const frameRef = useRef<HTMLDivElement>(null);
@@ -120,29 +120,29 @@ export function SleepModelChart({
         >
           <defs>
             <linearGradient id="feltSleepGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor={theme.chart.feltS} stopOpacity={0.52} />
-              <stop offset="95%" stopColor={theme.chart.feltS} stopOpacity={0.08} />
+              <stop offset="5%" stopColor={colors.feltS} stopOpacity={0.52} />
+              <stop offset="95%" stopColor={colors.feltS} stopOpacity={0.08} />
             </linearGradient>
             <linearGradient id="wakeDriveGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor={theme.chart.processC} stopOpacity={0.5} />
-              <stop offset="95%" stopColor={theme.chart.processC} stopOpacity={0.08} />
+              <stop offset="5%" stopColor={colors.processC} stopOpacity={0.5} />
+              <stop offset="95%" stopColor={colors.processC} stopOpacity={0.08} />
             </linearGradient>
           </defs>
 
-          <CartesianGrid stroke={theme.chart.grid} vertical={false} />
+          <CartesianGrid stroke={colors.grid} vertical={false} />
           <XAxis
             dataKey="hour"
             type="number"
             domain={[0, 48]}
             ticks={[0, 8, 16, 24, 32, 40, 48]}
             tickFormatter={(value) => `${value}h`}
-            tick={{ fill: theme.chart.text, fontSize: 12, fontWeight: 700 }}
-            axisLine={{ stroke: theme.chart.grid }}
+            tick={{ fill: colors.text, fontSize: 12, fontWeight: 700 }}
+            axisLine={{ stroke: colors.grid }}
             tickLine={false}
           />
           <YAxis
             domain={[0, 100]}
-            tick={{ fill: theme.chart.text, fontSize: 12, fontWeight: 700 }}
+            tick={{ fill: colors.text, fontSize: 12, fontWeight: 700 }}
             axisLine={false}
             tickLine={false}
             width={38}
@@ -156,13 +156,13 @@ export function SleepModelChart({
               x2={window.end}
               y1={0}
               y2={100}
-              fill={theme.chart.sleep}
+              fill={colors.sleep}
               fillOpacity={0.08}
               strokeOpacity={0}
               label={{
                 value: "Rest phase",
                 position: "insideTop",
-                fill: theme.chart.text,
+                fill: colors.text,
                 fontSize: 11,
                 fontWeight: 800,
               }}
@@ -173,7 +173,7 @@ export function SleepModelChart({
             type="monotone"
             dataKey="processC"
             name="Wake Drive (C)"
-            stroke={theme.chart.processC}
+            stroke={colors.processC}
             strokeWidth={2}
             fill="url(#wakeDriveGradient)"
             dot={false}
@@ -183,7 +183,7 @@ export function SleepModelChart({
             type="monotone"
             dataKey="feltS"
             name="Felt Sleep Pressure"
-            stroke={theme.chart.feltS}
+            stroke={colors.feltS}
             strokeWidth={3}
             fill="url(#feltSleepGradient)"
             dot={false}
@@ -193,7 +193,7 @@ export function SleepModelChart({
             type="monotone"
             dataKey="processS"
             name="True Adenosine"
-            stroke={theme.chart.processS}
+            stroke={colors.processS}
             strokeWidth={2}
             strokeDasharray="7 7"
             dot={false}
@@ -201,12 +201,12 @@ export function SleepModelChart({
           />
           <ReferenceLine
             x={currentTime}
-            stroke={theme.chart.cursor}
+            stroke={colors.cursor}
             strokeWidth={2}
             label={{
               value: formatClockTime(currentTime),
               position: "top",
-              fill: theme.chart.cursor,
+              fill: colors.cursor,
               fontSize: 12,
               fontWeight: 900,
             }}

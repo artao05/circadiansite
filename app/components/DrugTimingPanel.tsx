@@ -24,6 +24,7 @@ import {
 } from "../lib/drug-timing-model";
 import type { CurvePoint, DrugExposureProfile } from "../lib/drug-timing-model";
 import { useCircadianTime } from "./CircadianTimeProvider";
+import { CitationList } from "./CitationLink";
 
 const graphWidth = 760;
 const graphHeight = 330;
@@ -1055,7 +1056,12 @@ export function DrugTimingPanel() {
       <div className="medicine-source-strip">
         <HeartPulse size={18} aria-hidden="true" />
         <span>
-          Sources: {example.sources.join(", ")}. {example.labelCue}
+          Sources:{" "}
+          <CitationList
+            ids={example.sources}
+            contextPrefix={example.name.toLowerCase().replace(/\s+/g, "-")}
+          />
+          . {example.labelCue}
         </span>
       </div>
     </div>

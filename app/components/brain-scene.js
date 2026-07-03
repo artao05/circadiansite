@@ -318,6 +318,33 @@ const col = (c, fb) => new T.Color(PAL[c] || fb || '#cccccc');
       if (any) frameBox(b, padScale || 3.2);
     }
 
+    function projectNodeIds(ids) {
+      const b = new T.Box3();
+      let any = false;
+      (ids || []).forEach(id => {
+        const ms = meshById.get(id);
+        if (ms) ms.forEach(m => {
+          if (m.geometry) {
+            b.expandByObject(m);
+            any = true;
+          }
+        });
+      });
+      if (!any || b.isEmpty()) return null;
+
+      const center = b.getCenter(new T.Vector3());
+      const projected = center.clone().project(camera);
+      const rect = dom.getBoundingClientRect();
+
+      return {
+        x: (projected.x * 0.5 + 0.5) * 100,
+        y: (-projected.y * 0.5 + 0.5) * 100,
+        px: (projected.x * 0.5 + 0.5) * rect.width,
+        py: (-projected.y * 0.5 + 0.5) * rect.height,
+        visible: projected.z >= -1 && projected.z <= 1,
+      };
+    }
+
     function reset() {
       tgtGoal.set(0, -0.05, 0);
       sphGoal.set(7.6, Math.PI / 2.25, 0.5);
@@ -493,7 +520,7 @@ const col = (c, fb) => new T.Color(PAL[c] || fb || '#cccccc');
       THREE: T, scene, camera, renderer, cats, meshById,
       setLayer, setLayers, setHemisphere, focusCategory, focusNode,
       selectNode, clearSelect, reset, frameSphere, snap, isolate, setSubset, zoom,
-      setHighlight, clearHighlight, frameNodes,
+      setHighlight, clearHighlight, frameNodes, projectNodeIds,
       setAutoRotate, setExposure, setBackground, setPalette, capturePoster,
       dispose() {
         cancelAnimationFrame(raf);

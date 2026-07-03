@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { organClocks } from "../content/site-data";
 import { Activity, Brain, HeartPulse, Shield } from "lucide-react";
 import { useCircadianTime } from "./CircadianTimeProvider";
+import { CitationList } from "./CitationLink";
 
 function circularDistance(a: number, b: number) {
   const distance = Math.abs(a - b);
@@ -342,9 +343,10 @@ export function BodyClockTimeline() {
         <div className="axis-sources" aria-label="Evidence sources">
           <span>Evidence spine</span>
           <div>
-            {activeOrgan.sources.map((source) => (
-              <code key={source}>{source}</code>
-            ))}
+            <CitationList
+              ids={activeOrgan.sources}
+              contextPrefix={`body-${activeOrgan.id}`}
+            />
           </div>
         </div>
       </div>
