@@ -388,22 +388,37 @@ export function InteractiveBrainMap() {
     }
   }, [getNucleusStructureIds]);
 
+  const highlightNucleusRef = useRef(highlightNucleus);
+  useEffect(() => {
+    highlightNucleusRef.current = highlightNucleus;
+  }, [highlightNucleus]);
+
   /* ---- 3D scene bootstrap ---- */
   useEffect(() => {
-    if (!canvasRef.current) return;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
 
-    let api: BrainSceneApi | null = null;
+    let cancelled = false;
 
     fetch('/models/manifest.json')
-      .then(res => res.json())
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`manifest fetch failed: ${res.status}`);
+        }
+        return res.json();
+      })
       .then((manifestData: BrainManifest) => {
+        if (cancelled || !canvas.isConnected) return;
+
         window.BRAIN = { nodes: manifestData.nodes };
         nodeNameByIdRef.current = new Map(manifestData.nodes.map((node) => [node.id, node]));
 
-        api = BrainScene.create(canvasRef.current, {
+        const api = BrainScene.create(canvas, {
           url: '/models/brain.glb',
           dracoPath: '/vendor/draco/',
           onReady: () => {
+            if (cancelled) return;
+
             setLoading(false);
 
             api.setPalette({
@@ -495,17 +510,19 @@ export function InteractiveBrainMap() {
             }
 
             api.focusCategory('diencephalon');
-            highlightNucleus(NUCLEI[0].id, { frame: true });
+            highlightNucleusRef.current(NUCLEI[0].id, { frame: true });
           },
           onHover: (nodeId: string | null, point?: { x: number; y: number }) => {
+            if (cancelled) return;
+
             if (!nodeId) {
               setHoveredId(null);
               setHoverLabel(null);
               if (activeIdRef.current) {
-                highlightNucleus(activeIdRef.current);
+                highlightNucleusRef.current(activeIdRef.current);
               } else {
-                api?.clearHighlight();
-                api?.clearSelect();
+                api.clearHighlight();
+                api.clearSelect();
               }
               return;
             }
@@ -526,34 +543,47 @@ export function InteractiveBrainMap() {
             }
 
             if (nucleus) {
-              highlightNucleus(nucleus.id);
+              highlightNucleusRef.current(nucleus.id);
             }
           },
           onPick: (nodeId: string | null) => {
-            if (!nodeId) return;
+            if (cancelled || !nodeId) return;
+
             const nucleusId = structureToNucleusRef.current.get(nodeId) ?? nodeId;
             if (NUCLEI.some((nucleus) => nucleus.id === nucleusId)) {
               setActiveId((current) => {
                 const next = current === nucleusId ? null : nucleusId;
                 if (next) {
-                  highlightNucleus(next, { frame: true });
+                  highlightNucleusRef.current(next, { frame: true });
                 } else {
-                  api?.clearHighlight();
-                  api?.clearSelect();
-                  api?.focusCategory?.('diencephalon');
+                  api.clearHighlight();
+                  api.clearSelect();
+                  api.focusCategory?.('diencephalon');
                 }
                 return next;
               });
             }
           },
         }) as BrainSceneApi;
+
+        if (cancelled || !canvas.isConnected) {
+          api.dispose();
+          return;
+        }
+
         apiRef.current = api;
+      })
+      .catch((error) => {
+        console.error('[InteractiveBrainMap] bootstrap failed:', error);
+        if (!cancelled) setLoading(false);
       });
 
     return () => {
-      if (api) api.dispose();
+      cancelled = true;
+      apiRef.current?.dispose();
+      apiRef.current = null;
     };
-  }, [highlightNucleus]);
+  }, []);
 
   /* ---- card interaction handlers ---- */
   const handleCardEnter = useCallback((nucleus: NucleusInfo) => {

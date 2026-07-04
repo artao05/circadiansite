@@ -18,6 +18,7 @@ import type {
   DrugExposureProfile,
   TargetRhythmProfile,
 } from "../lib/drug-timing-model";
+import type { ModelNotationId } from "../components/ModelNotation";
 
 export type Citation = {
   id: string;
@@ -37,12 +38,22 @@ export type SectionVideoExplainer = {
   caveat?: string;
 };
 
+export type NavGroup = "foundations" | "clocks" | "medicine" | "evidence";
+
+export type NavChild = {
+  id: string;
+  label: string;
+  hash: string;
+};
+
 export type Chapter = {
   id: string;
   number: string;
   eyebrow: string;
   title: string;
   dek: string;
+  navGroup: NavGroup;
+  navChildren?: NavChild[];
   videoExplainer?: SectionVideoExplainer;
 };
 
@@ -140,12 +151,13 @@ export type MolecularClockTimeline = {
   caveat: string;
   parameters: {
     label: string;
-    value: string;
+    notationId: ModelNotationId;
   }[];
   variables: {
     id: MolecularClockVariableId;
     label: string;
     shortLabel: string;
+    notationId: ModelNotationId;
     color: string;
     note: string;
   }[];
@@ -445,6 +457,7 @@ export const chapters: Chapter[] = [
     eyebrow: "Medicine in the 4th dimension",
     title: "Your body is not the same body at every hour.",
     dek: "A dose, meal, light pulse, or lab test can land in a different biological world depending on when it arrives.",
+    navGroup: "foundations",
   },
   {
     id: "rhythm-lab",
@@ -452,6 +465,7 @@ export const chapters: Chapter[] = [
     eyebrow: "What is a rhythm?",
     title: "A rhythm is a shape in time.",
     dek: "Period, amplitude, phase, baseline, and noise are the simple ingredients behind a surprisingly rich biological language.",
+    navGroup: "foundations",
     videoExplainer: {
       title: "How to read a biological rhythm",
       duration: "2 min",
@@ -468,6 +482,7 @@ export const chapters: Chapter[] = [
     eyebrow: "How clocks stay in sync",
     title: "Light, sleep, meals, and activity all tug on time.",
     dek: "Circadian time is not just a wall clock. It is a living estimate that updates from repeated signals.",
+    navGroup: "foundations",
   },
   {
     id: "brain",
@@ -475,6 +490,7 @@ export const chapters: Chapter[] = [
     eyebrow: "The central clock",
     title: "The SCN turns light into body time.",
     dek: "A small brain clock receives light signals from the eyes and helps coordinate sleep, hormones, temperature, and downstream tissue clocks.",
+    navGroup: "clocks",
   },
   {
     id: "body-clocks",
@@ -482,6 +498,7 @@ export const chapters: Chapter[] = [
     eyebrow: "The body is many clocks",
     title: "One person, many daily schedules.",
     dek: "The brain clock coordinates the day, while liver, gut, immune, cardiovascular, and metabolic tissues keep local time.",
+    navGroup: "clocks",
   },
   {
     id: "clock-mechanics",
@@ -489,6 +506,7 @@ export const chapters: Chapter[] = [
     eyebrow: "Molecular timekeeping",
     title: "The clock is a feedback loop.",
     dek: "Inside cells, activator and repressor proteins rise and fall in a daily circuit that turns timing into gene regulation.",
+    navGroup: "clocks",
   },
   {
     id: "genes",
@@ -496,6 +514,7 @@ export const chapters: Chapter[] = [
     eyebrow: "Clock-gene network",
     title: "The molecular clock is a web, not a list.",
     dek: "Explore core clock genes, regulatory loops, rhythmic expression evidence, disease links, and source databases in one interactive map.",
+    navGroup: "clocks",
   },
   {
     id: "medicine",
@@ -503,6 +522,7 @@ export const chapters: Chapter[] = [
     eyebrow: "When should you take medicines?",
     title: "For some drugs, timing is part of the biology.",
     dek: "Labels, side effects, absorption, metabolism, and target activity can all make time-of-day matter.",
+    navGroup: "medicine",
     videoExplainer: {
       title: "Why drug timing is educational here",
       duration: "3 min",
@@ -521,6 +541,7 @@ export const chapters: Chapter[] = [
     eyebrow: "Oxaliplatin and chronotherapy",
     title: "A cancer drug story where timing changed the plot.",
     dek: "Oxaliplatin became a landmark example of how chronopharmacology can change toxicity, efficacy, and clinical interpretation.",
+    navGroup: "medicine",
   },
   {
     id: "trial-simulator",
@@ -528,6 +549,7 @@ export const chapters: Chapter[] = [
     eyebrow: "Trial design lab",
     title: "A timed drug can fail an untimed trial.",
     dek: "Run a fictional clinical trial again and again to see how ignoring, standardizing, or personalizing timing can change the approval story.",
+    navGroup: "medicine",
   },
   {
     id: "sources",
@@ -535,6 +557,7 @@ export const chapters: Chapter[] = [
     eyebrow: "Knowledge foundation",
     title: "Claim matrix and sources",
     dek: "The site keeps a public-friendly claim matrix so the visuals stay attached to evidence and caveats.",
+    navGroup: "evidence",
   },
 ];
 
@@ -1383,18 +1406,19 @@ export const molecularClockTimeline: MolecularClockTimeline = {
   caveat:
     "Curves are calibrated for explanation from Wang 2024 model settings, not measured molecule counts.",
   parameters: [
-    { label: "Initial state", value: "M = Pc = P = 0.1" },
-    { label: "Total BMAL1:CLOCK", value: "A_T = 1.5" },
-    { label: "Binding and saturation", value: "K_d = K_a = K_m = 1" },
-    { label: "Rates", value: "alpha, beta, Vmax near 1 h^-1" },
-    { label: "Total delay", value: "tau = 9 h" },
-    { label: "Critical delay", value: "tau0 around 4.54 h" },
+    { label: "Initial state", notationId: "initial-state" },
+    { label: "Total BMAL1:CLOCK", notationId: "total-bmal-clock" },
+    { label: "Binding and saturation", notationId: "binding-saturation" },
+    { label: "Rates", notationId: "rates" },
+    { label: "Total delay", notationId: "total-delay" },
+    { label: "Critical delay", notationId: "critical-delay" },
   ],
   variables: [
     {
       id: "mRNA",
       label: "Per mRNA",
       shortLabel: "M",
+      notationId: "per-mrna-M",
       color: "var(--coral)",
       note: "The message produced after BMAL1:CLOCK activation.",
     },
@@ -1402,6 +1426,7 @@ export const molecularClockTimeline: MolecularClockTimeline = {
       id: "cytoplasmicPER",
       label: "Cytoplasmic PER",
       shortLabel: "Pc",
+      notationId: "per-cytoplasmic-Pc",
       color: "var(--cyan)",
       note: "Protein translated in the cytoplasm before nuclear entry.",
     },
@@ -1409,6 +1434,7 @@ export const molecularClockTimeline: MolecularClockTimeline = {
       id: "nuclearPER",
       label: "Nuclear PER",
       shortLabel: "P",
+      notationId: "per-nuclear-P",
       color: "var(--violet)",
       note: "Delayed repressor signal that accumulates in the nucleus.",
     },

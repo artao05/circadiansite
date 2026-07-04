@@ -35,6 +35,10 @@ const col = (c, fb) => new T.Color(PAL[c] || fb || '#cccccc');
   /* ============================================================ */
   function create(canvas, opts) {
     opts = opts || {};
+    if (!canvas) {
+      throw new Error('[BrainScene] create requires a canvas element');
+    }
+
     const URL = opts.url || './models/brain.glb';
     const DRACO = opts.dracoPath || './vendor/draco/';
 

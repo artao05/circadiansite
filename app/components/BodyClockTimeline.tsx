@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { organClocks } from "../content/site-data";
 import { Activity, Brain, HeartPulse, Shield } from "lucide-react";
 import { useCircadianTime } from "./CircadianTimeProvider";
@@ -15,6 +15,28 @@ export function BodyClockTimeline() {
   const { hour: masterHour } = useCircadianTime();
   const [activeOrganId, setActiveOrganId] = useState(organClocks[0].id);
   const [selectedHour, setSelectedHour] = useState<number | null>(null);
+
+  useEffect(() => {
+    const syncFromHash = () => {
+      const hash = window.location.hash.replace(/^#/, "");
+      if (!hash.startsWith("body-clocks/")) return;
+
+      const organId = hash.split("/")[1];
+      if (organClocks.some((organ) => organ.id === organId)) {
+        setActiveOrganId(organId);
+      }
+    };
+
+    syncFromHash();
+    window.addEventListener("hashchange", syncFromHash);
+    return () => window.removeEventListener("hashchange", syncFromHash);
+  }, []);
+
+  const selectOrgan = (organId: string) => {
+    setActiveOrganId(organId);
+    window.history.replaceState(null, "", `#body-clocks/${organId}`);
+  };
+
   const hour = selectedHour ?? masterHour;
   const handleHourInput = (nextHour: number) => setSelectedHour(nextHour);
 
@@ -59,7 +81,7 @@ export function BodyClockTimeline() {
             return (
               <button
                 key={organ.id}
-                onClick={() => setActiveOrganId(organ.id)}
+                onClick={() => selectOrgan(organ.id)}
                 className={isSelected ? "selected" : ""}
                 type="button"
                 aria-pressed={isSelected}

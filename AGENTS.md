@@ -115,6 +115,21 @@ Rules for every new or edited component:
   `references/`) for your own reading; wire the public site to publisher links
   (`url` on each `Citation` in `site-data.ts`). PDF paths are gitignored.
 
+## Math notation
+
+Use native scientific notation wherever variables, parameters, rates, or units
+appear — not ASCII shorthand. Prefer Unicode and HTML sub/sup (α, β, τ, τ₀, ≈,
+h⁻¹, K<sub>d</sub>, P<sub>c</sub>) via `ModelNotation` and `SvgModelLabel` from
+`app/components/ModelNotation.tsx`.
+
+- Store stable `notationId` keys in `site-data.ts`; never store raw strings like
+  `A_T`, `alpha`, or `h^-1` in content data.
+- HTML copy: `<ModelNotation id="..." />`. SVG labels: `<SvgModelLabel />` (HTML
+  `<sub>` does not work inside SVG).
+- Pair formatted symbols with plain-language labels for beginners.
+- Do not add KaTeX/MathJax unless explicitly requested.
+- Full workflow: `.cursor/skills/site-math-notation/SKILL.md`.
+
 ## Content Workflow
 
 - Add new claims to `claimMatrix` before using them in prominent copy.
@@ -137,5 +152,8 @@ Rules for every new or edited component:
   card.
 - `app/components/*.tsx`: other interactive and editorial components.
 - `app/components/CitationLink.tsx`: inline citation links and return navigation.
+- `app/components/ModelNotation.tsx`: HTML and SVG math notation presets.
 - `app/lib/citations.ts`: citation anchor helpers and lookup utilities.
+- `.cursor/skills/site-citations/SKILL.md`: inline citations and bibliography.
+- `.cursor/skills/site-math-notation/SKILL.md`: math notation workflow.
 - `app/globals.css`: global visual system and responsive behavior.

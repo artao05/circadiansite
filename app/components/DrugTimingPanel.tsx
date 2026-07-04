@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { CSSProperties } from "react";
 import {
   AlertTriangle,
@@ -16,6 +16,7 @@ import {
   Zap,
 } from "lucide-react";
 import { medicineExamples } from "../content/site-data";
+import { medicineSlug } from "../lib/report-nav";
 import {
   buildTimingCurve,
   exposureWindowScore,
@@ -977,6 +978,30 @@ function PlannedVisualScaffold({
 
 export function DrugTimingPanel() {
   const [selected, setSelected] = useState(medicineExamples[0].name);
+
+  useEffect(() => {
+    const syncFromHash = () => {
+      const hash = window.location.hash.replace(/^#/, "");
+      if (!hash.startsWith("medicine/")) return;
+
+      const slug = hash.split("/")[1];
+      const match = medicineExamples.find(
+        (item) => medicineSlug(item.name) === slug,
+      );
+      if (match) setSelected(match.name);
+    };
+
+    syncFromHash();
+    window.addEventListener("hashchange", syncFromHash);
+    return () => window.removeEventListener("hashchange", syncFromHash);
+  }, []);
+
+  const selectExample = (name: string) => {
+    setSelected(name);
+    const slug = medicineSlug(name);
+    window.history.replaceState(null, "", `#medicine/${slug}`);
+  };
+
   const example =
     medicineExamples.find((item) => item.name === selected) ??
     medicineExamples[0];
@@ -999,7 +1024,7 @@ export function DrugTimingPanel() {
               role="tab"
               aria-selected={item.name === selected}
               className={item.name === selected ? "selected" : ""}
-              onClick={() => setSelected(item.name)}
+              onClick={() => selectExample(item.name)}
               title={item.name}
             >
               <ItemIcon size={18} aria-hidden="true" />

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState, type PointerEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type PointerEvent } from "react";
 import {
   Clock3,
   Dna,
@@ -30,6 +30,7 @@ import {
   useCircadianTime,
 } from "./CircadianTimeProvider";
 import { GenePlayerCard } from "./GenePlayerCard";
+import { ModelNotation, SvgModelLabel } from "./ModelNotation";
 
 const categoryLabels: Record<ClockGeneCategory, string> = {
   corePositive: "Core positive",
@@ -279,12 +280,41 @@ function valueForVariable(
   return values[timelineValueKeys[id]];
 }
 
+const timelineMaxValue = 2;
+const timelinePlotTop = 34;
+const timelinePlotBottom = 166;
+const timelinePlotHeight = timelinePlotBottom - timelinePlotTop;
+const timelinePlotLeft = 44;
+const timelinePlotWidth = 412;
+
+function hourToX(hour: number) {
+  return timelinePlotLeft + (hour / 24) * timelinePlotWidth;
+}
+
+function yForValue(value: number) {
+  return timelinePlotBottom - (value / timelineMaxValue) * timelinePlotHeight;
+}
+
+function peakHourForVariable(id: MolecularClockVariableId) {
+  const key = timelineValueKeys[id];
+  let peakHour = 0;
+  let peakValue = -Infinity;
+  for (const point of molecularClockTimeline.points) {
+    const value = point[key];
+    if (value > peakValue) {
+      peakValue = value;
+      peakHour = point.hour;
+    }
+  }
+  return peakHour;
+}
+
 function pathForVariable(id: MolecularClockVariableId) {
   const key = timelineValueKeys[id];
   return molecularClockTimeline.points
     .map((point, index) => {
-      const x = 44 + (point.hour / 24) * 412;
-      const y = 166 - (point[key] / 1.9) * 132;
+      const x = hourToX(point.hour);
+      const y = yForValue(point[key]);
       return `${index === 0 ? "M" : "L"} ${x.toFixed(1)} ${y.toFixed(1)}`;
     })
     .join(" ");
@@ -309,7 +339,16 @@ function TimedLoopView({
   const values = interpolateTimeline(hour);
   const annotation = activeAnnotation(hour);
   const stageText = stageCopy[stage];
-  const currentX = 44 + (normalizeHour(hour) / 24) * 412;
+  const currentX = hourToX(normalizeHour(hour));
+  const [paramsOpen, setParamsOpen] = useState(true);
+
+  useEffect(() => {
+    const media = window.matchMedia("(max-width: 720px)");
+    const syncOpenState = () => setParamsOpen(!media.matches);
+    syncOpenState();
+    media.addEventListener("change", syncOpenState);
+    return () => media.removeEventListener("change", syncOpenState);
+  }, []);
 
   return (
     <div className="network-layout timed-loop-layout">
@@ -488,7 +527,7 @@ function TimedLoopView({
                 transform={`translate(${layout.nuclearPER.x} ${layout.nuclearPER.y})`}
               >
                 <circle r={12 + values.nuclearPER * 5} />
-                <text y="5">P</text>
+                <SvgModelLabel id="per-nuclear-P" x={0} y={5} className="compartment-label" anchor="middle" />
                 <text y="44">nuclear PER</text>
               </g>
 
@@ -519,6 +558,9 @@ function TimedLoopView({
               <div>
                 <p className="kicker">Wang 2024 model layer</p>
                 <h4>Delayed PER feedback in model units</h4>
+                <p className="model-panel-explainer">
+                  Each state peaks later than the last because synthesis and transport delay the brake.
+                </p>
               </div>
               <Waves size={20} aria-hidden="true" />
             </div>
@@ -527,44 +569,64 @@ function TimedLoopView({
               className="model-curve"
               viewBox="0 0 500 220"
               role="img"
-              aria-label="Per mRNA cytoplasmic PER and nuclear PER model concentration curves"
+              aria-label="Per mRNA, cytoplasmic PER, and nuclear PER model concentration curves with delay peak markers"
             >
               <title>Model-state curves for delayed PER feedback</title>
-              {[34, 67, 100, 133, 166].map((y) => (
-                <line
-                  key={y}
-                  className="model-grid-line"
-                  x1="44"
-                  x2="456"
-                  y1={y}
-                  y2={y}
-                />
+              {[0, 0.5, 1, 1.5, 2].map((tick) => (
+                <g key={tick}>
+                  <line
+                    className="model-grid-line"
+                    x1={timelinePlotLeft}
+                    x2={timelinePlotLeft + timelinePlotWidth}
+                    y1={yForValue(tick)}
+                    y2={yForValue(tick)}
+                  />
+                  <text className="model-y-tick" x={timelinePlotLeft - 8} y={yForValue(tick) + 4}>
+                    {tick.toFixed(1)}
+                  </text>
+                </g>
               ))}
               {[0, 6, 12, 18, 24].map((tick) => (
                 <g key={tick}>
                   <line
                     className="model-axis-tick"
-                    x1={44 + (tick / 24) * 412}
-                    x2={44 + (tick / 24) * 412}
-                    y1="30"
-                    y2="174"
+                    x1={hourToX(tick)}
+                    x2={hourToX(tick)}
+                    y1={timelinePlotTop - 4}
+                    y2={timelinePlotBottom}
                   />
-                  <text x={44 + (tick / 24) * 412} y="198">
+                  <text x={hourToX(tick)} y="198">
                     {tick === 24 ? "24" : String(tick).padStart(2, "0")}
                   </text>
                 </g>
               ))}
-              <line className="model-axis" x1="44" x2="456" y1="166" y2="166" />
-              <line className="model-axis" x1="44" x2="44" y1="28" y2="166" />
+              <line className="model-axis" x1={timelinePlotLeft} x2={timelinePlotLeft + timelinePlotWidth} y1={timelinePlotBottom} y2={timelinePlotBottom} />
+              <line className="model-axis" x1={timelinePlotLeft} x2={timelinePlotLeft} y1={timelinePlotTop - 4} y2={timelinePlotBottom} />
               <line
                 className="model-current-hour"
                 x1={currentX}
                 x2={currentX}
-                y1="28"
-                y2="166"
+                y1={timelinePlotTop - 4}
+                y2={timelinePlotBottom}
               />
+              <g className="model-curve-legend">
+                {molecularClockTimeline.variables.map((variable, index) => (
+                  <g key={variable.id} transform={`translate(300 ${timelinePlotTop + index * 18})`}>
+                    <rect x="0" y="-8" width="10" height="10" rx="2" fill={variable.color} />
+                    <SvgModelLabel id={variable.notationId} x="16" y="0" className="model-end-label" />
+                    <text x="36" y="0" className="model-end-label">{variable.label}</text>
+                  </g>
+                ))}
+              </g>
               {molecularClockTimeline.variables.map((variable) => {
                 const currentValue = valueForVariable(values, variable.id);
+                const peakHour = peakHourForVariable(variable.id);
+                const peakValue = valueForVariable(
+                  interpolateTimeline(peakHour),
+                  variable.id,
+                );
+                const endPoint = molecularClockTimeline.points[molecularClockTimeline.points.length - 1];
+                const endValue = endPoint[timelineValueKeys[variable.id]];
                 return (
                   <g key={variable.id}>
                     <path
@@ -575,13 +637,44 @@ function TimedLoopView({
                     <circle
                       className="model-variable-dot"
                       cx={currentX}
-                      cy={166 - (currentValue / 1.9) * 132}
+                      cy={yForValue(currentValue)}
                       r="5.6"
                       style={{ fill: variable.color }}
                     />
+                    <SvgModelLabel
+                      id={variable.notationId}
+                      x={462}
+                      y={yForValue(endValue)}
+                      className="model-end-label"
+                      anchor="end"
+                    />
+                    <g className="model-peak-marker">
+                      <line
+                        x1={hourToX(peakHour)}
+                        x2={hourToX(peakHour)}
+                        y1={yForValue(peakValue)}
+                        y2={timelinePlotBottom}
+                        stroke={variable.color}
+                      />
+                      <circle
+                        cx={hourToX(peakHour)}
+                        cy={yForValue(peakValue)}
+                        r="4"
+                        fill={variable.color}
+                      />
+                    </g>
                   </g>
                 );
               })}
+              <text className="model-peak-marker-label" x={hourToX(12)} y={timelinePlotBottom + 14}>
+                Delay shifts each peak
+              </text>
+              <g className="model-now-badge" transform={`translate(${Math.min(currentX + 6, 390)} ${timelinePlotTop - 2})`}>
+                <rect x="0" y="-14" width="108" height="22" rx="6" />
+                <text x="8" y="0">
+                  {formatMasterHour(hour)} · {annotation.label}
+                </text>
+              </g>
               <text className="model-axis-label" x="54" y="22">
                 {molecularClockTimeline.units}
               </text>
@@ -593,7 +686,8 @@ function TimedLoopView({
                   <span style={{ background: variable.color }} />
                   <div>
                     <strong>
-                      {variable.shortLabel} {valueForVariable(values, variable.id).toFixed(2)}
+                      <ModelNotation id={variable.notationId} />{" "}
+                      {valueForVariable(values, variable.id).toFixed(2)}
                     </strong>
                     <p>{variable.label}</p>
                   </div>
@@ -601,14 +695,23 @@ function TimedLoopView({
               ))}
             </div>
 
-            <div className="model-parameter-grid">
-              {molecularClockTimeline.parameters.map((parameter) => (
-                <article key={parameter.label}>
-                  <span>{parameter.label}</span>
-                  <strong>{parameter.value}</strong>
-                </article>
-              ))}
-            </div>
+            <details
+              className="model-parameters-details"
+              open={paramsOpen}
+              onToggle={(event) => setParamsOpen(event.currentTarget.open)}
+            >
+              <summary>Model parameters (Wang 2024)</summary>
+              <div className="model-parameter-grid">
+                {molecularClockTimeline.parameters.map((parameter) => (
+                  <article key={parameter.label}>
+                    <span>{parameter.label}</span>
+                    <strong>
+                      <ModelNotation id={parameter.notationId} />
+                    </strong>
+                  </article>
+                ))}
+              </div>
+            </details>
             <p className="model-caveat">{molecularClockTimeline.caveat}</p>
           </div>
         </div>

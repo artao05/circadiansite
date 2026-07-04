@@ -27,6 +27,7 @@ import { CircadianTimeProvider } from "./components/CircadianTimeProvider";
 import { MasterCircadianClock } from "./components/MasterCircadianClock";
 import { DayNightCanvas } from "./components/DayNightCanvas";
 import { CitationReturn } from "./components/CitationLink";
+import { ReportNav } from "./components/ReportNav";
 import { sourceAnchor } from "./lib/citations";
 
 function ChapterIntro({
@@ -82,19 +83,7 @@ export default function Home() {
   return (
     <CircadianTimeProvider>
       <main>
-        <nav className="report-nav" aria-label="Report chapters">
-          <a className="brand-mark" href="#top" aria-label="Go to top">
-            <span />
-            Circadian Primer
-          </a>
-          <div>
-            {chapters.map((chapter) => (
-              <a href={`#${chapter.id}`} key={chapter.id}>
-                {chapter.number}
-              </a>
-            ))}
-          </div>
-        </nav>
+        <ReportNav />
 
         <section className="hero-section" id="top" style={{ position: "relative" }}>
           <DayNightCanvas />
