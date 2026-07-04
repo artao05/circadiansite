@@ -125,6 +125,38 @@ export type GeneCard = {
   evidence: string;
 };
 
+export type MolecularClockVariableId = "mRNA" | "cytoplasmicPER" | "nuclearPER";
+
+export type MolecularClockTimelinePoint = {
+  hour: number;
+  mRNA: number;
+  cytoplasmicPER: number;
+  nuclearPER: number;
+};
+
+export type MolecularClockTimeline = {
+  sourceIds: string[];
+  units: string;
+  caveat: string;
+  parameters: {
+    label: string;
+    value: string;
+  }[];
+  variables: {
+    id: MolecularClockVariableId;
+    label: string;
+    shortLabel: string;
+    color: string;
+    note: string;
+  }[];
+  annotations: {
+    hour: number;
+    label: string;
+    copy: string;
+  }[];
+  points: MolecularClockTimelinePoint[];
+};
+
 export type ClockGeneCategory =
   | "corePositive"
   | "coreNegative"
@@ -284,6 +316,14 @@ export const citations: Citation[] = [
     source: "Molecular Systems Biology",
     note: "Mathematical model source for explaining why activator-repressor abundance, tight binding, and a slow secondary negative loop can support robust molecular clock rhythms.",
     url: "https://doi.org/10.1038/msb.2012.62",
+  },
+  {
+    id: "wang-2024-oscillatory",
+    title:
+      "Oscillatory dynamics of the mammalian circadian clock induced by the core delayed negative feedback loop",
+    source: "Nonlinear Dynamics",
+    note: "Delayed-feedback model source for the Chapter 6 educational timeline of Per mRNA, cytoplasmic PER, nuclear PER, and synthesis/transport delay.",
+    url: "https://doi.org/10.1007/s11071-024-09416-y",
   },
   {
     id: "circakb",
@@ -620,6 +660,19 @@ export const claimMatrix: Claim[] = [
     visualUse: "Molecular clock animation and core gene-network edges",
     beginnerPhrasing:
       "The molecular clock is partly a balance problem: activator proteins and repressor proteins have to meet in the right proportions for a steady daily rhythm.",
+  },
+  {
+    claim:
+      "A delayed negative-feedback model can represent Per mRNA, cytoplasmic PER, and nuclear PER as oscillatory model-state variables, with total synthesis and transport delay affecting whether nuclear PER oscillates.",
+    source: "wang-2024-oscillatory; kim-forger-2012",
+    evidenceType:
+      "Mathematical modeling and delayed-feedback bifurcation analysis",
+    confidence: "Emerging",
+    caveat:
+      "The values shown are model-scale concentrations and parameters for education, not measured human-cell molecule counts or a live quantitative simulator.",
+    visualUse: "Timed molecular clock loop and model timeline",
+    beginnerPhrasing:
+      "The brake does not appear instantly: messages and proteins build up, move compartments, and only later shut the signal down.",
   },
   {
     claim:
@@ -1324,6 +1377,81 @@ export const geneCards: GeneCard[] = [
   },
 ];
 
+export const molecularClockTimeline: MolecularClockTimeline = {
+  sourceIds: ["kim-forger-2012", "wang-2024-oscillatory"],
+  units: "Relative model concentration",
+  caveat:
+    "Curves are calibrated for explanation from Wang 2024 model settings, not measured molecule counts.",
+  parameters: [
+    { label: "Initial state", value: "M = Pc = P = 0.1" },
+    { label: "Total BMAL1:CLOCK", value: "A_T = 1.5" },
+    { label: "Binding and saturation", value: "K_d = K_a = K_m = 1" },
+    { label: "Rates", value: "alpha, beta, Vmax near 1 h^-1" },
+    { label: "Total delay", value: "tau = 9 h" },
+    { label: "Critical delay", value: "tau0 around 4.54 h" },
+  ],
+  variables: [
+    {
+      id: "mRNA",
+      label: "Per mRNA",
+      shortLabel: "M",
+      color: "var(--coral)",
+      note: "The message produced after BMAL1:CLOCK activation.",
+    },
+    {
+      id: "cytoplasmicPER",
+      label: "Cytoplasmic PER",
+      shortLabel: "Pc",
+      color: "var(--cyan)",
+      note: "Protein translated in the cytoplasm before nuclear entry.",
+    },
+    {
+      id: "nuclearPER",
+      label: "Nuclear PER",
+      shortLabel: "P",
+      color: "var(--violet)",
+      note: "Delayed repressor signal that accumulates in the nucleus.",
+    },
+  ],
+  annotations: [
+    {
+      hour: 6,
+      label: "Activator exposed",
+      copy: "BMAL1:CLOCK can drive E-box transcription while nuclear PER remains low.",
+    },
+    {
+      hour: 12,
+      label: "Message and protein build",
+      copy: "Per mRNA and cytoplasmic PER rise before repression catches up.",
+    },
+    {
+      hour: 18,
+      label: "Delayed nuclear entry",
+      copy: "Nuclear PER climbs after the synthesis and transport delay.",
+    },
+    {
+      hour: 22,
+      label: "Repressor-bound",
+      copy: "PER/CRY complexes sequester the positive arm and quiet output.",
+    },
+  ],
+  points: [
+    { hour: 0, mRNA: 0.22, cytoplasmicPER: 0.18, nuclearPER: 1.55 },
+    { hour: 2, mRNA: 0.28, cytoplasmicPER: 0.2, nuclearPER: 1.18 },
+    { hour: 4, mRNA: 0.55, cytoplasmicPER: 0.28, nuclearPER: 0.62 },
+    { hour: 6, mRNA: 0.95, cytoplasmicPER: 0.45, nuclearPER: 0.22 },
+    { hour: 8, mRNA: 1.22, cytoplasmicPER: 0.72, nuclearPER: 0.12 },
+    { hour: 10, mRNA: 1.36, cytoplasmicPER: 1.05, nuclearPER: 0.1 },
+    { hour: 12, mRNA: 1.12, cytoplasmicPER: 1.32, nuclearPER: 0.28 },
+    { hour: 14, mRNA: 0.78, cytoplasmicPER: 1.52, nuclearPER: 0.64 },
+    { hour: 16, mRNA: 0.48, cytoplasmicPER: 1.42, nuclearPER: 1.12 },
+    { hour: 18, mRNA: 0.32, cytoplasmicPER: 1.08, nuclearPER: 1.62 },
+    { hour: 20, mRNA: 0.24, cytoplasmicPER: 0.72, nuclearPER: 1.78 },
+    { hour: 22, mRNA: 0.21, cytoplasmicPER: 0.38, nuclearPER: 1.7 },
+    { hour: 24, mRNA: 0.22, cytoplasmicPER: 0.18, nuclearPER: 1.55 },
+  ],
+};
+
 export const circadianDataSources: CircadianDataSource[] = [
   {
     id: "circakb",
@@ -1367,6 +1495,15 @@ export const circadianDataSources: CircadianDataSource[] = [
     status:
       "Used in v1 to annotate the molecular animation and core PER/CRY sequestration edges.",
     url: "https://doi.org/10.1038/msb.2012.62",
+  },
+  {
+    id: "wang-2024-oscillatory",
+    name: "Wang delayed negative-feedback model",
+    purpose:
+      "Modeling source for Per mRNA, cytoplasmic PER, nuclear PER, total delay, and delay-induced oscillatory behavior in the timed loop.",
+    status:
+      "Used in v1 as an educational model-unit timeline, not as a measured molecule-count simulator.",
+    url: "https://doi.org/10.1007/s11071-024-09416-y",
   },
   {
     id: "ncbi-uniprot",

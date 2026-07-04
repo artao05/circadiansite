@@ -297,6 +297,8 @@ const NUCLEI: NucleusInfo[] = [
   },
 ];
 
+const NUCLEI_BY_ID = new Map(NUCLEI.map((nucleus) => [nucleus.id, nucleus]));
+
 const toneClass: Record<ConnectionTone, string> = {
   light: 'light',
   timing: 'timing',
@@ -339,9 +341,8 @@ export function InteractiveBrainMap() {
   const [openEvidenceId, setOpenEvidenceId] = useState<string | null>(null);
   const [anchorPositions, setAnchorPositions] = useState<Record<string, ProjectedPoint>>({});
 
-  const nucleiById = useRef(new Map(NUCLEI.map((nucleus) => [nucleus.id, nucleus])));
   const activeIdRef = useRef<string | null>(null);
-  const visibleNucleus = nucleiById.current.get(hoveredId ?? activeId ?? NUCLEI[0].id) ?? NUCLEI[0];
+  const visibleNucleus = NUCLEI_BY_ID.get(hoveredId ?? activeId ?? NUCLEI[0].id) ?? NUCLEI[0];
 
   useEffect(() => {
     activeIdRef.current = activeId;
@@ -370,7 +371,7 @@ export function InteractiveBrainMap() {
 
   const highlightNucleus = useCallback((nucleus: NucleusInfo | string, options?: { frame?: boolean }) => {
     const nucleusId = typeof nucleus === 'string' ? nucleus : nucleus.id;
-    const nucleusInfo = nucleiById.current.get(nucleusId);
+    const nucleusInfo = NUCLEI_BY_ID.get(nucleusId);
     const structureIds = getNucleusStructureIds(nucleusId);
     const activeIds = [...structureIds, nucleusId];
     const api = apiRef.current;
@@ -509,7 +510,7 @@ export function InteractiveBrainMap() {
               return;
             }
             const nucleusId = structureToNucleusRef.current.get(nodeId) ?? nodeId;
-            const nucleus = nucleiById.current.get(nucleusId);
+            const nucleus = NUCLEI_BY_ID.get(nucleusId);
             const manifestNode = nodeNameByIdRef.current.get(nodeId);
 
             setHoveredId(nucleusId);

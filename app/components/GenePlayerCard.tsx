@@ -3,10 +3,10 @@
 import { useState } from "react";
 import { ArrowRight, Database, ExternalLink } from "lucide-react";
 import type {
-  ClockGeneNode,
-  ClockGeneEdge,
-  ClockGeneCategory,
   ClockEdgeType,
+  ClockGeneCategory,
+  ClockGeneEdge,
+  ClockGeneNode,
 } from "../content/site-data";
 import { StructureViewer } from "./StructureViewer";
 
@@ -19,24 +19,8 @@ const categoryLabels: Record<ClockGeneCategory, string> = {
   downstreamTarget: "Downstream target",
 };
 
-const categoryClass = (category: ClockGeneCategory) => {
-  switch (category) {
-    case "corePositive":
-      return "bg-[#e24a4a] text-white";
-    case "coreNegative":
-      return "bg-[#3276d2] text-white";
-    case "secondaryLoop":
-      return "bg-[#8d55d8] text-white";
-    case "accessoryRegulator":
-      return "bg-[#e8902f] text-white";
-    case "organSystem":
-      return "bg-[#eab308] text-white"; // yellow-500
-    case "downstreamTarget":
-      return "bg-[#10b981] text-white"; // emerald-500
-    default:
-      return "bg-gray-500 text-white";
-  }
-};
+const categoryClass = (category: ClockGeneCategory) =>
+  `gene-category-pill gene-${category}`;
 
 interface GenePlayerCardProps {
   selected: ClockGeneNode;
@@ -58,6 +42,15 @@ interface LiveData {
   };
 }
 
+function availableLinks(selected: ClockGeneNode) {
+  return [
+    ["NCBI Gene", selected.externalLinks.ncbiGene],
+    ["UniProt", selected.externalLinks.uniProt],
+    ["CircaKB", selected.externalLinks.circaKb],
+    ["CIRCA", selected.externalLinks.circaDb],
+  ].filter(([, url]) => Boolean(url));
+}
+
 export function GenePlayerCard({
   selected,
   relatedEdges,
@@ -76,19 +69,17 @@ export function GenePlayerCard({
     setIsLoadingLive(true);
     setLiveError(null);
     try {
-      const res = await fetch(`/api/gene/${selected.symbol}`);
-      if (!res.ok) {
+      const response = await fetch(`/api/gene/${selected.symbol}`);
+      if (!response.ok) {
         throw new Error(`Failed to fetch data for ${selected.symbol}`);
       }
-      const data = await res.json();
+      const data = await response.json();
       if (data.error) throw new Error(data.error);
       setLiveData(data);
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        setLiveError(err.message || "Unknown error occurred");
-      } else {
-        setLiveError("Unknown error occurred");
-      }
+    } catch (error: unknown) {
+      setLiveError(
+        error instanceof Error ? error.message : "Unknown error occurred",
+      );
     } finally {
       setIsLoadingLive(false);
     }
@@ -102,206 +93,16 @@ export function GenePlayerCard({
         </span>
         <strong>{selected.chromosome}</strong>
       </div>
-      <h3>{selected.symbol}</h3>
-      <p className="aliases">{selected.aliases.join(" / ")}</p>
-      <h4>{selected.title}</h4>
-      <p>{selected.description}</p>
 
-      {/* Live Data Section */}
-      <div
-        className="live-data-section"
-        style={{
-          marginTop: "1rem",
-          padding: "1rem",
-          background: "color-mix(in srgb, var(--ink) 6%, transparent)",
-          borderRadius: "8px",
-          border: "1px solid var(--surface-line)",
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginBottom: "0.5rem",
-          }}
-        >
-          <span
-            style={{
-              fontSize: "0.75rem",
-              textTransform: "uppercase",
-              letterSpacing: "0.05em",
-              color: "var(--muted)",
-              display: "flex",
-              alignItems: "center",
-              gap: "0.25rem",
-            }}
-          >
-            <Database size={12} /> Live Database
-          </span>
-          {!liveData && (
-            <button
-              type="button"
-              onClick={fetchLiveData}
-              disabled={isLoadingLive}
-              style={{
-                fontSize: "0.75rem",
-                padding: "0.25rem 0.5rem",
-                borderRadius: "4px",
-                background: "var(--cyan)",
-                color: "#08211e",
-                fontWeight: 800,
-                border: "none",
-                cursor: isLoadingLive ? "wait" : "pointer",
-              }}
-            >
-              {isLoadingLive ? "Fetching..." : "Fetch Data"}
-            </button>
-          )}
-        </div>
-
-        {liveError && (
-          <div
-            style={{
-              color: "var(--coral)",
-              fontSize: "0.875rem",
-              padding: "0.5rem",
-              background: "color-mix(in srgb, var(--coral) 14%, transparent)",
-              borderRadius: "4px",
-            }}
-          >
-            {liveError}
-          </div>
-        )}
-
-        {liveData && (
-          <div
-            className="live-data-content"
-            style={{ fontSize: "0.875rem", color: "var(--ink)" }}
-          >
-            <div style={{ marginBottom: "0.5rem" }}>
-              <strong style={{ color: "var(--muted)" }}>Protein Name:</strong>{" "}
-              {liveData.proteinName}
-            </div>
-            {liveData.functionDescription && (
-              <div style={{ marginBottom: "0.5rem" }}>
-                <strong style={{ color: "var(--muted)" }}>
-                  Function (UniProt):
-                </strong>
-                <p 
-                  style={{ 
-                    marginTop: "0.25rem", 
-                    lineHeight: "1.4",
-                    display: "-webkit-box",
-                    WebkitLineClamp: isFunctionExpanded ? "unset" : 3,
-                    WebkitBoxOrient: "vertical",
-                    overflow: "hidden",
-                  }}
-                >
-                  {liveData.functionDescription}
-                </p>
-                {liveData.functionDescription.length > 150 && (
-                  <button
-                    type="button"
-                    onClick={() => setIsFunctionExpanded(!isFunctionExpanded)}
-                    style={{
-                      background: "none",
-                      border: "none",
-                      color: "var(--cyan)",
-                      cursor: "pointer",
-                      fontSize: "0.75rem",
-                      padding: 0,
-                      marginTop: "0.25rem",
-                      textDecoration: "underline"
-                    }}
-                  >
-                    {isFunctionExpanded ? "Show less" : "Read more..."}
-                  </button>
-                )}
-              </div>
-            )}
-            {liveData.aliases && liveData.aliases.length > 0 && (
-              <div>
-                <strong style={{ color: "var(--muted)" }}>Aliases:</strong>{" "}
-                {liveData.aliases.join(", ")}
-              </div>
-            )}
-            {liveData.openTargets &&
-              liveData.openTargets.diseases?.length > 0 && (
-                <div
-                  style={{
-                    marginTop: "0.75rem",
-                    paddingTop: "0.75rem",
-                    borderTop: "1px solid var(--surface-line)",
-                  }}
-                >
-                  <strong style={{ color: "var(--muted)" }}>
-                    Top Disease Associations (OpenTargets):
-                  </strong>
-                  <ul
-                    style={{
-                      margin: "0.25rem 0 0 1rem",
-                      padding: 0,
-                      fontSize: "0.8rem",
-                    }}
-                  >
-                    {liveData.openTargets.diseases.map((d) => (
-                      <li
-                        key={d.name}
-                        style={{ color: "var(--ink)", marginBottom: "0.125rem" }}
-                      >
-                        {d.name}{" "}
-                        <span style={{ color: "var(--muted)", fontSize: "0.7rem" }}>
-                          (Score: {d.score.toFixed(2)})
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                  <div style={{ marginTop: "0.5rem", fontSize: "0.75rem" }}>
-                    <a
-                      href={`https://platform.opentargets.org/target/${liveData.openTargets.ensemblId}`}
-                      target="_blank"
-                      rel="noreferrer"
-                      style={{
-                        color: "var(--cyan)",
-                        textDecoration: "none",
-                        display: "inline-flex",
-                        alignItems: "center",
-                        gap: "0.25rem",
-                      }}
-                    >
-                      View on OpenTargets <ExternalLink size={10} />
-                    </a>
-                  </div>
-                </div>
-              )}
-            <div style={{ marginTop: "0.75rem", fontSize: "0.75rem" }}>
-              <a
-                href={`https://www.uniprot.org/uniprotkb/${liveData.accession}/entry`}
-                target="_blank"
-                rel="noreferrer"
-                style={{
-                  color: "var(--cyan)",
-                  textDecoration: "none",
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: "0.25rem",
-                }}
-              >
-                View on UniProt <ExternalLink size={10} />
-              </a>
-            </div>
-          </div>
-        )}
+      <div className="gene-card-title">
+        <h3>{selected.symbol}</h3>
+        <p className="aliases">{selected.aliases.join(" / ")}</p>
       </div>
 
-      {/* 3D Structure Viewer */}
-      {(selectedPdbId || liveData?.accession) && (
-        <StructureViewer
-          uniprotId={!selectedPdbId ? liveData?.accession : undefined}
-          pdbId={selectedPdbId || undefined}
-        />
-      )}
+      <div className="gene-card-summary">
+        <h4>{selected.title}</h4>
+        <p>{selected.description}</p>
+      </div>
 
       <div className="expression-panel">
         <div>
@@ -330,131 +131,180 @@ export function GenePlayerCard({
         </div>
       </div>
 
-      <div className="disease-section">
-        <span>Disease associations</span>
-        {selected.diseaseAssociations.map((association) => (
-          <article key={association.disease}>
-            <strong>{association.disease}</strong>
-            <p>{association.mechanism}</p>
-            <small>{association.sources.join(" · ")}</small>
-          </article>
-        ))}
-      </div>
+      <details className="gene-detail-section interaction-section">
+        <summary>
+          <span>Key interactions</span>
+          <small>{relatedEdges.length}</small>
+        </summary>
+        <div className="gene-detail-stack">
+          {relatedEdges.map((edge) => {
+            const neighborId =
+              edge.source === selected.id ? edge.target : edge.source;
+            const neighbor = nodeById(neighborId);
+            if (!neighbor) return null;
+            return (
+              <article
+                key={edge.id}
+                onClick={() => setSelectedId(neighbor.id)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    setSelectedId(neighbor.id);
+                  }
+                }}
+                role="button"
+                tabIndex={0}
+                className={`interaction-card ${edgeClass(edge.type)}`}
+              >
+                <div>
+                  <span>
+                    {edge.source === selected.id ? "Regulates" : "Regulated by"}{" "}
+                    <strong>{neighbor.symbol}</strong>
+                  </span>
+                  <ArrowRight size={15} aria-hidden="true" />
+                </div>
+                <p>
+                  {edge.label}: {edge.description}
+                </p>
+                <small>Sources: {edge.sources.join(" / ")}</small>
+                {edge.pdbId && (
+                  <button
+                    type="button"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      setSelectedPdbId(edge.pdbId ?? null);
+                    }}
+                  >
+                    View complex PDB {edge.pdbId}
+                  </button>
+                )}
+              </article>
+            );
+          })}
+        </div>
+      </details>
 
-      <div className="interaction-section">
-        <span>Key interactions</span>
-        {relatedEdges.map((edge) => {
-          const neighborId =
-            edge.source === selected.id ? edge.target : edge.source;
-          const neighbor = nodeById(neighborId);
-          if (!neighbor) return null;
-          return (
-            <div
-              key={edge.id}
-              onClick={() => setSelectedId(neighbor.id)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  setSelectedId(neighbor.id);
-                }
-              }}
-              role="button"
-              tabIndex={0}
-              className={edgeClass(edge.type)}
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "flex-start",
-                gap: "0.25rem",
-                cursor: "pointer",
-              }}
+      {selectedPdbId || liveData?.accession ? (
+        <StructureViewer
+          uniprotId={!selectedPdbId ? liveData?.accession : undefined}
+          pdbId={selectedPdbId || undefined}
+        />
+      ) : null}
+
+      <details className="gene-detail-section disease-section">
+        <summary>
+          <span>Disease associations</span>
+          <small>{selected.diseaseAssociations.length}</small>
+        </summary>
+        <div className="gene-detail-stack">
+          {selected.diseaseAssociations.map((association) => (
+            <article key={association.disease}>
+              <strong>{association.disease}</strong>
+              <p>{association.mechanism}</p>
+              <small>{association.sources.join(" / ")}</small>
+            </article>
+          ))}
+        </div>
+      </details>
+
+      <details className="gene-detail-section live-data-section">
+        <summary>
+          <span>
+            <Database size={13} aria-hidden="true" />
+            Live database
+          </span>
+          <small>Optional</small>
+        </summary>
+        <div className="live-data-content">
+          {!liveData ? (
+            <button
+              type="button"
+              onClick={fetchLiveData}
+              disabled={isLoadingLive}
+              className="live-data-button"
             >
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  width: "100%",
-                  alignItems: "center",
-                }}
-              >
-                <span>
-                  {edge.source === selected.id ? "Regulates" : "Regulated by"}{" "}
-                  <strong>{neighbor.symbol}</strong>
-                </span>
-                <ArrowRight size={15} aria-hidden="true" />
-              </div>
-              <small
-                style={{
-                  color: "var(--muted)",
-                  fontSize: "0.72rem",
-                  lineHeight: 1.35,
-                }}
-              >
-                {edge.label}: {edge.description}
-              </small>
-              <small
-                style={{
-                  color: "color-mix(in srgb, var(--muted) 82%, transparent)",
-                  fontSize: "0.68rem",
-                }}
-              >
-                Sources: {edge.sources.join(" · ")}
-              </small>
-              {edge.pdbId && (
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setSelectedPdbId(edge.pdbId!);
-                  }}
-                  style={{
-                    fontSize: "0.7rem",
-                    padding: "0.125rem 0.375rem",
-                    borderRadius: "4px",
-                    background: "color-mix(in srgb, var(--ink) 8%, transparent)",
-                    color: "var(--ink)",
-                    border: "1px solid var(--surface-line)",
-                    cursor: "pointer",
-                  }}
-                >
-                  View Complex (PDB: {edge.pdbId})
-                </button>
-              )}
-            </div>
-          );
-        })}
-      </div>
+              {isLoadingLive ? "Fetching..." : "Fetch UniProt data"}
+            </button>
+          ) : null}
 
-      <div className="external-links">
-        <a
-          href={selected.externalLinks.ncbiGene}
-          target="_blank"
-          rel="noreferrer"
-        >
-          NCBI Gene <ExternalLink size={14} aria-hidden="true" />
-        </a>
-        <a
-          href={selected.externalLinks.uniProt}
-          target="_blank"
-          rel="noreferrer"
-        >
-          UniProt <ExternalLink size={14} aria-hidden="true" />
-        </a>
-        <a
-          href={selected.externalLinks.circaKb}
-          target="_blank"
-          rel="noreferrer"
-        >
-          CircaKB <ExternalLink size={14} aria-hidden="true" />
-        </a>
-        <a
-          href={selected.externalLinks.circaDb}
-          target="_blank"
-          rel="noreferrer"
-        >
-          CIRCA <ExternalLink size={14} aria-hidden="true" />
-        </a>
-      </div>
+          {liveError ? <p className="live-data-error">{liveError}</p> : null}
+
+          {liveData ? (
+            <div className="live-data-result">
+              <div>
+                <strong>Protein name</strong>
+                <p>{liveData.proteinName}</p>
+              </div>
+              {liveData.functionDescription ? (
+                <div>
+                  <strong>Function (UniProt)</strong>
+                  <p className={isFunctionExpanded ? "expanded" : ""}>
+                    {liveData.functionDescription}
+                  </p>
+                  {liveData.functionDescription.length > 150 ? (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setIsFunctionExpanded((isExpanded) => !isExpanded)
+                      }
+                    >
+                      {isFunctionExpanded ? "Show less" : "Read more"}
+                    </button>
+                  ) : null}
+                </div>
+              ) : null}
+              {liveData.aliases.length > 0 ? (
+                <div>
+                  <strong>Aliases</strong>
+                  <p>{liveData.aliases.join(", ")}</p>
+                </div>
+              ) : null}
+              {liveData.openTargets?.diseases?.length ? (
+                <div>
+                  <strong>Top disease associations (OpenTargets)</strong>
+                  <ul>
+                    {liveData.openTargets.diseases.map((disease) => (
+                      <li key={disease.name}>
+                        {disease.name}{" "}
+                        <span>{disease.score.toFixed(2)}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <a
+                    href={`https://platform.opentargets.org/target/${liveData.openTargets.ensemblId}`}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    View on OpenTargets
+                    <ExternalLink size={11} aria-hidden="true" />
+                  </a>
+                </div>
+              ) : null}
+              <a
+                href={`https://www.uniprot.org/uniprotkb/${liveData.accession}/entry`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                View on UniProt <ExternalLink size={11} aria-hidden="true" />
+              </a>
+            </div>
+          ) : null}
+        </div>
+      </details>
+
+      <details className="gene-detail-section external-link-section">
+        <summary>
+          <span>External links</span>
+          <small>{availableLinks(selected).length}</small>
+        </summary>
+        <div className="external-links">
+          {availableLinks(selected).map(([label, url]) => (
+            <a key={label} href={url} target="_blank" rel="noreferrer">
+              {label} <ExternalLink size={14} aria-hidden="true" />
+            </a>
+          ))}
+        </div>
+      </details>
     </aside>
   );
 }
