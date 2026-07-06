@@ -5,17 +5,32 @@ import {
   ChevronLeft,
   ChevronRight,
   Coffee,
+  FlaskConical,
   Moon,
   RotateCcw,
   SunMedium,
 } from "lucide-react";
 import { useMemo, useState } from "react";
+import { CitationList } from "./CitationLink";
+import { ModelNotation } from "./ModelNotation";
 import { SleepModelChart } from "./SleepModelChart";
 import {
+  forcedDesynchronyDefaults,
+  forcedDesynchronyProtocolOptions,
+  formatElapsedHours,
   formatClockTime,
   generateSleepData,
+  getForcedDesynchronyProtocol,
+  getForcedDesynchronySchedule,
   getNarrative,
+  getSleepChartTicks,
+  getSleepModelHorizon,
+  getSleepWindows,
+  sleepBudgetOptions,
+  type ForcedDesynchronyOptions,
+  type ForcedDesynchronyProtocol,
   type SleepDatum,
+  type SleepBudgetMode,
   type SleepScenario,
 } from "../lib/sleep-model";
 import { sandboxChartColors } from "../lib/sandbox-themes";
@@ -23,6 +38,14 @@ import { sandboxChartColors } from "../lib/sandbox-themes";
 const scenarios: Array<{ value: SleepScenario; label: string; icon: typeof SunMedium }> = [
   { value: "normal", label: "Normal Routine", icon: SunMedium },
   { value: "all-nighter", label: "All-Nighter", icon: Moon },
+  { value: "forced-desynchrony", label: "Forced Desynchrony", icon: FlaskConical },
+];
+
+const fdSourceIds = [
+  "borbely-1982",
+  "mchill-2019",
+  "cohen-2010",
+  "czeisler-1999",
 ];
 
 function nearestDatum(data: SleepDatum[], currentTime: number) {
@@ -34,6 +57,14 @@ function nearestDatum(data: SleepDatum[], currentTime: number) {
 }
 
 function getTrapLabel(point: SleepDatum, scenario: SleepScenario) {
+  if (scenario === "forced-desynchrony") {
+    if (point.misaligned) {
+      return "The scheduled sleep window has drifted into high biological wake drive.";
+    }
+
+    return "The protocol separates sleep debt from biological time so each can be inspected.";
+  }
+
   if (point.caffeineEffect > 6) {
     return "Caffeine lowers felt pressure while true adenosine remains underneath.";
   }
@@ -57,21 +88,58 @@ export function CircadianSandbox() {
   const [scenario, setScenario] = useState<SleepScenario>("normal");
   const [currentTime, setCurrentTime] = useState(8);
   const [caffeineEvents, setCaffeineEvents] = useState<number[]>([]);
+  const [fdProtocol, setFdProtocol] = useState<ForcedDesynchronyProtocol>(
+    forcedDesynchronyDefaults.protocol,
+  );
+  const [fdBudget, setFdBudget] = useState<SleepBudgetMode>(
+    forcedDesynchronyDefaults.budget,
+  );
+  const forcedDesynchrony = useMemo<ForcedDesynchronyOptions>(
+    () => ({ protocol: fdProtocol, budget: fdBudget }),
+    [fdBudget, fdProtocol],
+  );
+  const horizon = getSleepModelHorizon(scenario, forcedDesynchrony);
+  const boundedTime = Math.min(currentTime, horizon);
+  const sleepWindows = useMemo(
+    () => getSleepWindows(scenario, forcedDesynchrony),
+    [forcedDesynchrony, scenario],
+  );
+  const chartTicks = useMemo(
+    () => getSleepChartTicks(scenario, forcedDesynchrony),
+    [forcedDesynchrony, scenario],
+  );
   const data = useMemo(
-    () => generateSleepData({ scenario, caffeineEvents }),
-    [scenario, caffeineEvents],
+    () => generateSleepData({ scenario, caffeineEvents, forcedDesynchrony }),
+    [caffeineEvents, forcedDesynchrony, scenario],
   );
   const currentPoint = useMemo(
-    () => nearestDatum(data, currentTime),
-    [data, currentTime],
+    () => nearestDatum(data, boundedTime),
+    [boundedTime, data],
   );
-  const narrative = getNarrative(scenario, currentTime);
-  const caffeineIsActive = currentPoint.caffeineEffect > 4;
+  const narrative = getNarrative(scenario, boundedTime, forcedDesynchrony);
+  const isForcedDesynchrony = scenario === "forced-desynchrony";
+  const caffeineIsActive = !isForcedDesynchrony && currentPoint.caffeineEffect > 4;
+  const cursorLabel = isForcedDesynchrony
+    ? `t=${formatElapsedHours(boundedTime)}`
+    : formatClockTime(boundedTime);
+  const selectedProtocol = getForcedDesynchronyProtocol(fdProtocol);
+  const selectedSchedule = getForcedDesynchronySchedule(forcedDesynchrony);
   const handleTimeInput = (value: string) => {
-    setCurrentTime(Number(value));
+    setCurrentTime(Math.min(horizon, Math.max(0, Number(value))));
   };
   const stepTime = (direction: -1 | 1) => {
-    setCurrentTime((time) => Math.min(48, Math.max(0, time + direction * 2)));
+    setCurrentTime((time) => Math.min(horizon, Math.max(0, time + direction * 2)));
+  };
+  const setScenarioAndReset = (nextScenario: SleepScenario) => {
+    setScenario(nextScenario);
+    setCaffeineEvents([]);
+
+    if (nextScenario === "forced-desynchrony") {
+      setCurrentTime(getSleepModelHorizon(nextScenario, forcedDesynchrony) / 2);
+      return;
+    }
+
+    setCurrentTime(nextScenario === "normal" ? 8 : 18);
   };
 
   return (
@@ -81,8 +149,9 @@ export function CircadianSandbox() {
           <p className="kicker">Circadian rhythm sandbox</p>
           <h3>Scrub the two-process model, then perturb it.</h3>
           <p>
-            Watch homeostatic sleep pressure, circadian wake drive, and caffeine
-            masking move across a 48-hour window.
+            Watch homeostatic sleep pressure, circadian wake drive, caffeine
+            masking, and lab desynchrony move across everyday and research
+            schedules.
           </p>
         </div>
 
@@ -98,9 +167,7 @@ export function CircadianSandbox() {
                   type="button"
                   aria-pressed={selected}
                   onClick={() => {
-                    setScenario(option.value);
-                    setCurrentTime(option.value === "normal" ? 8 : 18);
-                    setCaffeineEvents([]);
+                    setScenarioAndReset(option.value);
                   }}
                 >
                   <Icon size={16} aria-hidden="true" />
@@ -109,6 +176,77 @@ export function CircadianSandbox() {
               );
             })}
           </div>
+
+          {isForcedDesynchrony ? (
+            <div className="sandbox-fd-controls" aria-label="Forced desynchrony controls">
+              <div className="sandbox-control-group">
+                <span className="sandbox-control-label">
+                  <ModelNotation id="protocol-length-T" /> protocol length
+                </span>
+                <div className="sandbox-toggle sandbox-toggle-compact" aria-label="Protocol length">
+                  {forcedDesynchronyProtocolOptions.map((option) => {
+                    const selected = fdProtocol === option.value;
+                    return (
+                      <button
+                        key={option.value}
+                        className={selected ? "selected" : undefined}
+                        type="button"
+                        aria-pressed={selected}
+                        onClick={() => {
+                          setFdProtocol(option.value);
+                          setCurrentTime(
+                            getSleepModelHorizon("forced-desynchrony", {
+                              protocol: option.value,
+                              budget: fdBudget,
+                            }) / 2,
+                          );
+                        }}
+                      >
+                        {option.shortLabel}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className="sandbox-control-group">
+                <span className="sandbox-control-label">Sleep budget</span>
+                <div className="sandbox-toggle sandbox-toggle-compact" aria-label="Sleep budget">
+                  {sleepBudgetOptions.map((option) => {
+                    const selected = fdBudget === option.value;
+                    return (
+                      <button
+                        key={option.value}
+                        className={selected ? "selected" : undefined}
+                        type="button"
+                        aria-pressed={selected}
+                        onClick={() => {
+                          setFdBudget(option.value);
+                          setCurrentTime((time) =>
+                            Math.min(
+                              time,
+                              getSleepModelHorizon("forced-desynchrony", {
+                                protocol: fdProtocol,
+                                budget: option.value,
+                              }),
+                            ),
+                          );
+                        }}
+                      >
+                        {option.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <p className="sandbox-fd-summary">
+                <strong>{selectedProtocol.description}</strong> ·{" "}
+                {selectedSchedule.wakeHours} h wake / {selectedSchedule.sleepHours} h
+                sleep · <ModelNotation id="circadian-tau" />
+              </p>
+            </div>
+          ) : null}
         </div>
       </div>
 
@@ -127,8 +265,12 @@ export function CircadianSandbox() {
 
         <SleepModelChart
           data={data}
-          scenario={scenario}
-          currentTime={currentTime}
+          currentTime={boundedTime}
+          cursorLabel={cursorLabel}
+          horizon={horizon}
+          showBiologicalTime={isForcedDesynchrony}
+          sleepWindows={sleepWindows}
+          ticks={chartTicks}
           colors={sandboxChartColors}
         />
 
@@ -139,23 +281,25 @@ export function CircadianSandbox() {
         </div>
       </div>
 
-      <div className="sandbox-scrubber">
+      <div className={isForcedDesynchrony ? "sandbox-scrubber is-fd" : "sandbox-scrubber"}>
         <label>
           <span>
-            Time
+            {isForcedDesynchrony ? "Protocol time" : "Time"}
             <strong>
-              {currentTime.toFixed(1)}h · {formatClockTime(currentTime)}
+              {isForcedDesynchrony
+                ? `${formatElapsedHours(boundedTime)} · biological ${currentPoint.biologicalLabel}`
+                : `${boundedTime.toFixed(1)}h · ${formatClockTime(boundedTime)}`}
             </strong>
           </span>
           <input
-            aria-label="Scrub through 48 hours"
-            max="48"
+            aria-label={`Scrub through ${formatElapsedHours(horizon)}`}
+            max={horizon}
             min="0"
             onChange={(event) => handleTimeInput(event.currentTarget.value)}
             onInput={(event) => handleTimeInput(event.currentTarget.value)}
             step="0.25"
             type="range"
-            value={currentTime}
+            value={boundedTime}
           />
         </label>
 
@@ -176,33 +320,53 @@ export function CircadianSandbox() {
           </button>
         </div>
 
-        <div className="sandbox-actions">
-          <button
-            className="emphasis"
-            type="button"
-            onClick={() =>
-              setCaffeineEvents((events) => [...events, Number(currentTime.toFixed(2))])
-            }
-          >
-            <Coffee size={17} aria-hidden="true" />
-            Drink Coffee
-          </button>
-          <button
-            type="button"
-            onClick={() => setCaffeineEvents([])}
-            disabled={caffeineEvents.length === 0}
-          >
-            <RotateCcw size={16} aria-hidden="true" />
-            Reset coffee
-          </button>
-        </div>
+        {isForcedDesynchrony ? (
+          <div className="sandbox-protocol-note">
+            <strong>Controlled lab protocol</strong>
+            <p>
+              FD and CSR are research tools, not sleep advice. Sources:{" "}
+              <CitationList
+                ids={fdSourceIds}
+                contextPrefix="forced-desynchrony-sandbox"
+              />
+            </p>
+          </div>
+        ) : (
+          <div className="sandbox-actions">
+            <button
+              className="emphasis"
+              type="button"
+              onClick={() =>
+                setCaffeineEvents((events) => [
+                  ...events,
+                  Number(boundedTime.toFixed(2)),
+                ])
+              }
+            >
+              <Coffee size={17} aria-hidden="true" />
+              Drink Coffee
+            </button>
+            <button
+              type="button"
+              onClick={() => setCaffeineEvents([])}
+              disabled={caffeineEvents.length === 0}
+            >
+              <RotateCcw size={16} aria-hidden="true" />
+              Reset coffee
+            </button>
+          </div>
+        )}
       </div>
 
       <div className="sandbox-metrics">
         <article>
           <span>Process S</span>
           <strong>{formatMetric(currentPoint.feltS)}</strong>
-          <p>felt sleep pressure</p>
+          <p>
+            {isForcedDesynchrony
+              ? "tracks scheduled wake and sleep"
+              : "felt sleep pressure"}
+          </p>
           <div className="sandbox-meter" aria-hidden="true">
             <i
               style={{
@@ -215,7 +379,11 @@ export function CircadianSandbox() {
         <article>
           <span>Process C</span>
           <strong>{formatMetric(currentPoint.processC)}</strong>
-          <p>circadian wake drive</p>
+          <p>
+            {isForcedDesynchrony
+              ? `biological ${currentPoint.biologicalLabel}`
+              : "circadian wake drive"}
+          </p>
           <div className="sandbox-meter" aria-hidden="true">
             <i
               style={{
@@ -241,16 +409,33 @@ export function CircadianSandbox() {
         <article>
           <span>State</span>
           <strong>{currentPoint.state}</strong>
-          <p>{currentPoint.dayLabel}</p>
+          <p>
+            {isForcedDesynchrony
+              ? `${currentPoint.dayLabel} · ${selectedProtocol.label}`
+              : currentPoint.dayLabel}
+          </p>
         </article>
-        <article>
-          <span>
-            <Activity size={15} aria-hidden="true" />
-            The Adenosine Trap
-          </span>
-          <strong>{currentPoint.processS > currentPoint.feltS ? "Masked" : "Visible"}</strong>
-          <p>{getTrapLabel(currentPoint, scenario)}</p>
-        </article>
+        {isForcedDesynchrony ? (
+          <article>
+            <span>
+              <Activity size={15} aria-hidden="true" />
+              Alignment
+            </span>
+            <strong>{currentPoint.alignmentLabel}</strong>
+            <p>{getTrapLabel(currentPoint, scenario)}</p>
+          </article>
+        ) : (
+          <article>
+            <span>
+              <Activity size={15} aria-hidden="true" />
+              The Adenosine Trap
+            </span>
+            <strong>
+              {currentPoint.processS > currentPoint.feltS ? "Masked" : "Visible"}
+            </strong>
+            <p>{getTrapLabel(currentPoint, scenario)}</p>
+          </article>
+        )}
       </div>
     </section>
   );

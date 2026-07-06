@@ -9,7 +9,9 @@ export type ModelNotationId =
   | "binding-saturation"
   | "rates"
   | "total-delay"
-  | "critical-delay";
+  | "critical-delay"
+  | "protocol-length-T"
+  | "circadian-tau";
 
 const notationPresets: Record<ModelNotationId, ReactNode> = {
   "per-mrna-M": <>M</>,
@@ -21,6 +23,8 @@ const notationPresets: Record<ModelNotationId, ReactNode> = {
   rates: (<>α, β, V<sub>max</sub> ≈ 1 h<sup>−1</sup></>),
   "total-delay": <>τ = 9 h</>,
   "critical-delay": <>τ₀ ≈ 4.54 h</>,
+  "protocol-length-T": <>T</>,
+  "circadian-tau": <>τ ≈ 24.15 h</>,
 };
 
 type SvgPart = { kind: "text" | "sub" | "sup"; value: string };
@@ -35,6 +39,8 @@ const svgNotationPresets: Record<ModelNotationId, SvgPart[]> = {
   rates: [{ kind: "text", value: "α, β, V" }, { kind: "sub", value: "max" }, { kind: "text", value: " ≈ 1 h" }, { kind: "sup", value: "−1" }],
   "total-delay": [{ kind: "text", value: "τ = 9 h" }],
   "critical-delay": [{ kind: "text", value: "τ₀ ≈ 4.54 h" }],
+  "protocol-length-T": [{ kind: "text", value: "T" }],
+  "circadian-tau": [{ kind: "text", value: "τ ≈ 24.15 h" }],
 };
 
 export function ModelNotation({ id, className }: { id: ModelNotationId; className?: string }) {

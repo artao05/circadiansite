@@ -247,6 +247,35 @@ export type TrialSimulationMode = {
 
 export const citations: Citation[] = [
   {
+    id: "borbely-1982",
+    title: "A two process model of sleep regulation",
+    source: "Human Neurobiology",
+    note: "Foundational source for the educational Process S / Process C framing in the sandbox.",
+    url: "https://pubmed.ncbi.nlm.nih.gov/7185792/",
+  },
+  {
+    id: "mchill-2019",
+    title:
+      "Chronic sleep restriction greatly magnifies performance decrements immediately after awakening",
+    source: "Sleep",
+    note: "Forced-desynchrony and chronic sleep restriction protocol source for the 20-hour control and CSR schedules.",
+    url: "https://pubmed.ncbi.nlm.nih.gov/30722039/",
+  },
+  {
+    id: "cohen-2010",
+    title: "Uncovering residual effects of chronic sleep loss on human performance",
+    source: "Science Translational Medicine",
+    note: "Forced-desynchrony source for the 42.85-hour control and chronic sleep loss protocol comparison.",
+    url: "https://pubmed.ncbi.nlm.nih.gov/20371466/",
+  },
+  {
+    id: "czeisler-1999",
+    title: "Stability, precision, and near-24-hour period of the human circadian pacemaker",
+    source: "Science",
+    note: "Primary source for the near-24-hour intrinsic period used in the forced-desynchrony sandbox model.",
+    url: "https://doi.org/10.1126/science.284.5423.2177",
+  },
+  {
     id: "cederroth-2019",
     title: "Medicine in the fourth dimension",
     source: "Cell Metabolism",
@@ -562,6 +591,19 @@ export const chapters: Chapter[] = [
 ];
 
 export const claimMatrix: Claim[] = [
+  {
+    claim:
+      "Forced-desynchrony protocols separate imposed sleep-wake timing from endogenous circadian phase.",
+    source: "mchill-2019; cohen-2010; czeisler-1999; borbely-1982",
+    evidenceType:
+      "Controlled laboratory protocols and foundational two-process model paper",
+    confidence: "High",
+    caveat:
+      "The sandbox is illustrative and not a quantitative fit to any individual participant.",
+    visualUse: "Circadian sandbox forced-desynchrony scenario",
+    beginnerPhrasing:
+      "Researchers can use a non-24-hour lab schedule to pull sleep debt and biological time apart.",
+  },
   {
     claim:
       "Circadian timing can influence drug efficacy, toxicity, absorption, metabolism, or side effects.",

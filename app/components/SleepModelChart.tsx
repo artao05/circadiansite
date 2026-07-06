@@ -14,16 +14,20 @@ import {
 } from "recharts";
 import {
   formatClockTime,
-  getSleepWindows,
+  formatElapsedHours,
+  type SleepWindow,
   type SleepDatum,
-  type SleepScenario,
 } from "../lib/sleep-model";
 import type { SandboxChartColors } from "../lib/sandbox-themes";
 
 type SleepModelChartProps = {
   data: SleepDatum[];
-  scenario: SleepScenario;
   currentTime: number;
+  cursorLabel: string;
+  horizon: number;
+  showBiologicalTime?: boolean;
+  sleepWindows: SleepWindow[];
+  ticks: number[];
   colors: SandboxChartColors;
 };
 
@@ -31,6 +35,7 @@ type TooltipPayload = {
   name?: string;
   value?: number;
   color?: string;
+  payload?: SleepDatum;
 };
 
 type ChartSize = {
@@ -42,19 +47,33 @@ function ChartTooltip({
   active,
   payload,
   label,
+  showBiologicalTime = false,
 }: {
   active?: boolean;
   payload?: TooltipPayload[];
   label?: number | string;
+  showBiologicalTime?: boolean;
 }) {
   if (!active || !payload?.length || typeof label === "undefined") return null;
 
   const numericLabel = Number(label);
+  const point = payload[0]?.payload;
 
   return (
     <div className="sleep-tooltip">
-      <strong>{Number.isFinite(numericLabel) ? formatClockTime(numericLabel) : label}</strong>
-      <span>{Number.isFinite(numericLabel) ? `${numericLabel.toFixed(1)} hours into the model` : ""}</span>
+      <strong>
+        {point?.clockLabel ??
+          (Number.isFinite(numericLabel) ? formatClockTime(numericLabel) : label)}
+      </strong>
+      <span>
+        {point
+          ? showBiologicalTime
+            ? `${formatElapsedHours(point.hour)} into model · biological ${point.biologicalLabel}`
+            : `${point.hour.toFixed(1)} hours into the model · ${point.clockLabel}`
+          : Number.isFinite(numericLabel)
+            ? `${numericLabel.toFixed(1)} hours into the model`
+            : ""}
+      </span>
       {payload.map((entry) => (
         <p key={entry.name} style={{ color: entry.color }}>
           {entry.name}: {Math.round(entry.value ?? 0)}%
@@ -66,11 +85,14 @@ function ChartTooltip({
 
 export function SleepModelChart({
   data,
-  scenario,
   currentTime,
+  cursorLabel,
+  horizon,
+  showBiologicalTime = false,
+  sleepWindows,
+  ticks,
   colors,
 }: SleepModelChartProps) {
-  const sleepWindows = getSleepWindows(scenario);
   const frameRef = useRef<HTMLDivElement>(null);
   const [chartSize, setChartSize] = useState<ChartSize>({
     width: 0,
@@ -133,9 +155,9 @@ export function SleepModelChart({
           <XAxis
             dataKey="hour"
             type="number"
-            domain={[0, 48]}
-            ticks={[0, 8, 16, 24, 32, 40, 48]}
-            tickFormatter={(value) => `${value}h`}
+            domain={[0, horizon]}
+            ticks={ticks}
+            tickFormatter={(value) => formatElapsedHours(Number(value))}
             tick={{ fill: colors.text, fontSize: 12, fontWeight: 700 }}
             axisLine={{ stroke: colors.grid }}
             tickLine={false}
@@ -159,13 +181,17 @@ export function SleepModelChart({
               fill={colors.sleep}
               fillOpacity={0.08}
               strokeOpacity={0}
-              label={{
-                value: "Rest phase",
-                position: "insideTop",
-                fill: colors.text,
-                fontSize: 11,
-                fontWeight: 800,
-              }}
+              label={
+                chartSize.width < 520 || window.start < horizon * 0.24
+                  ? undefined
+                  : {
+                      value: window.label,
+                      position: "insideTop",
+                      fill: colors.text,
+                      fontSize: 11,
+                      fontWeight: 800,
+                    }
+              }
             />
           ))}
 
@@ -204,14 +230,14 @@ export function SleepModelChart({
             stroke={colors.cursor}
             strokeWidth={2}
             label={{
-              value: formatClockTime(currentTime),
+              value: cursorLabel,
               position: "top",
               fill: colors.cursor,
               fontSize: 12,
               fontWeight: 900,
             }}
           />
-          <Tooltip content={<ChartTooltip />} />
+          <Tooltip content={<ChartTooltip showBiologicalTime={showBiologicalTime} />} />
         </AreaChart>
       ) : (
         <div className="sleep-chart-empty" aria-hidden="true" />
