@@ -281,7 +281,7 @@ export function BodyClockTimeline() {
           </div>
         </div>
 
-        <label className="range-control compact" style={{ marginTop: "2rem" }}>
+        <label className="range-control compact">
           <span>
             Scan the day <strong>{String(hour).padStart(2, "0")}:00</strong>
           </span>

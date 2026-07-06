@@ -340,11 +340,11 @@ function TimedLoopView({
   const annotation = activeAnnotation(hour);
   const stageText = stageCopy[stage];
   const currentX = hourToX(normalizeHour(hour));
-  const [paramsOpen, setParamsOpen] = useState(true);
+  const [paramsOpen, setParamsOpen] = useState(false);
 
   useEffect(() => {
-    const media = window.matchMedia("(max-width: 720px)");
-    const syncOpenState = () => setParamsOpen(!media.matches);
+    const media = window.matchMedia("(min-width: 1280px) and (min-height: 880px)");
+    const syncOpenState = () => setParamsOpen(media.matches);
     syncOpenState();
     media.addEventListener("change", syncOpenState);
     return () => media.removeEventListener("change", syncOpenState);

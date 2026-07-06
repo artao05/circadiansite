@@ -4946,6 +4946,867 @@ meter {
   color: color-mix(in srgb, var(--paper) 72%, transparent);
 }
 
+@media (min-width: 1081px) {
+  .content-band {
+    padding: clamp(2.35rem, 4.8vw, 4.85rem) clamp(1.5rem, 4vw, 4.5rem);
+  }
+
+  .chapter-intro {
+    grid-template-columns: 4rem minmax(0, 820px);
+    gap: clamp(0.9rem, 2.4vw, 2rem);
+    margin-bottom: clamp(1.05rem, 2vw, 1.7rem);
+  }
+
+  .chapter-intro > span {
+    font-size: 2.15rem;
+  }
+
+  .chapter-intro h2 {
+    font-size: clamp(2.15rem, 4.4vw, 4.85rem);
+    line-height: 0.99;
+  }
+
+  .chapter-intro > div > p:not(.kicker) {
+    max-width: 720px;
+    margin-top: 0.65rem;
+    font-size: 1rem;
+    line-height: 1.52;
+  }
+
+  .opening-thesis {
+    margin-bottom: clamp(1rem, 2vw, 1.6rem);
+    padding-block: 0.8rem;
+  }
+
+  .interactive-block {
+    width: min(100%, 1280px);
+    margin-inline: auto;
+  }
+
+  .circadian-sandbox,
+  .signal-alignment-studio,
+  .interactive-block.entrainment {
+    margin-top: clamp(1.25rem, 2.6vw, 2rem);
+  }
+
+  .circadian-sandbox {
+    gap: 0.72rem;
+    padding: 0.9rem;
+  }
+
+  .sandbox-header {
+    grid-template-columns: minmax(0, 1fr) minmax(270px, 0.58fr);
+    gap: 1rem;
+  }
+
+  .sandbox-header h3 {
+    margin: 0.25rem 0 0.45rem;
+    font-size: clamp(1.55rem, 2.6vw, 2.45rem);
+  }
+
+  .sandbox-header p:not(.kicker) {
+    font-size: 0.92rem;
+    line-height: 1.42;
+  }
+
+  .sandbox-toggle button,
+  .sandbox-actions button,
+  .sandbox-time-buttons button,
+  .signal-preset-row button,
+  .sync-band .preset-row button,
+  .signal-control-grid button,
+  .alignment-readout button,
+  .segmented-control button,
+  .network-filters label,
+  .network-filters select,
+  .network-scope button,
+  .reset-button {
+    min-height: 2.2rem;
+    padding: 0.48rem 0.68rem;
+    font-size: 0.76rem;
+  }
+
+  .sandbox-stage {
+    min-height: min(41svh, 315px);
+    padding: 0.72rem;
+  }
+
+  .sleep-chart-frame {
+    height: clamp(260px, 36svh, 304px);
+    padding-top: 0.45rem;
+  }
+
+  .sandbox-story {
+    top: 0.85rem;
+    left: 0.85rem;
+    max-width: 290px;
+    gap: 0.35rem;
+    padding: 0.7rem;
+  }
+
+  .sandbox-story p {
+    font-size: 0.82rem;
+    line-height: 1.34;
+  }
+
+  .sandbox-legend {
+    right: 0.85rem;
+    bottom: 0.75rem;
+    gap: 0.45rem 0.65rem;
+    font-size: 0.72rem;
+  }
+
+  .sandbox-scrubber {
+    grid-template-columns: minmax(0, 1fr) auto minmax(230px, auto);
+    gap: 0.65rem;
+    padding: 0.7rem;
+  }
+
+  .sandbox-scrubber label {
+    gap: 0.42rem;
+  }
+
+  .sandbox-metrics {
+    gap: 0.55rem;
+  }
+
+  .sandbox-metrics article {
+    min-height: 92px;
+    gap: 0.32rem;
+    padding: 0.58rem;
+  }
+
+  .sandbox-metrics strong {
+    font-size: clamp(1.2rem, 2vw, 1.65rem);
+  }
+
+  .sandbox-metrics p {
+    display: none;
+  }
+
+  .rhythm-lab {
+    grid-template-columns: minmax(0, 1.58fr) minmax(250px, 0.5fr);
+    gap: 0.72rem;
+  }
+
+  .rhythm-panel {
+    min-height: 0;
+    padding: 0.75rem;
+  }
+
+  .rhythm-panel svg {
+    max-height: min(48svh, 370px);
+  }
+
+  .control-panel {
+    gap: 0.62rem;
+    padding: 0.82rem;
+  }
+
+  .range-control {
+    gap: 0.4rem;
+  }
+
+  .range-control > span {
+    font-size: 0.78rem;
+  }
+
+  .rhythm-choice button {
+    min-height: 2.05rem;
+    padding: 0.45rem 0.58rem;
+    font-size: 0.72rem;
+  }
+
+  .rhythm-readout {
+    gap: 0.52rem;
+    padding-top: 0.62rem;
+  }
+
+  .rhythm-readout h3 {
+    font-size: 0.92rem;
+  }
+
+  .rhythm-readout p,
+  .microcopy {
+    font-size: 0.82rem;
+    line-height: 1.38;
+  }
+
+  .rhythm-readout dl {
+    gap: 0.45rem 0.65rem;
+  }
+
+  .rhythm-readout dd {
+    font-size: 0.92rem;
+  }
+
+  .signal-alignment-studio,
+  .sync-band .control-panel,
+  .interactive-block.entrainment {
+    gap: 0.75rem;
+    padding: 0.95rem;
+  }
+
+  .signal-studio-header {
+    grid-template-columns: minmax(0, 1fr) minmax(240px, 0.36fr);
+    gap: 1rem;
+  }
+
+  .signal-studio-header h3,
+  .signal-studio-header h4,
+  .sync-band .control-panel h3,
+  .sync-band .entrainment-sandbox h4 {
+    font-size: clamp(1.35rem, 2.5vw, 2.25rem) !important;
+  }
+
+  .signal-studio-header p {
+    margin-top: 0.45rem;
+    font-size: 0.9rem;
+    line-height: 1.42;
+  }
+
+  .overlap-grid {
+    grid-template-columns: minmax(0, 1.48fr) minmax(250px, 0.46fr);
+    gap: 0.75rem;
+  }
+
+  .rhythm-wave-panel {
+    gap: 0.58rem;
+    padding: 0.72rem;
+  }
+
+  .rhythm-wave-svg {
+    height: min(34svh, 282px);
+    min-height: 220px;
+  }
+
+  .rhythm-legend {
+    gap: 0.42rem;
+  }
+
+  .rhythm-legend div {
+    min-height: 35px;
+    gap: 0.38rem;
+    padding: 0.42rem 0.48rem;
+  }
+
+  .rhythm-legend span,
+  .rhythm-legend strong {
+    font-size: 0.72rem;
+  }
+
+  .overlap-control-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 0.42rem;
+  }
+
+  .signal-control-grid label,
+  .sync-band .control-panel .range-control,
+  .sync-band .entrainment-sandbox .range-control {
+    gap: 0.36rem;
+    padding: 0.55rem;
+  }
+
+  .signal-control-grid label > span,
+  .sync-band .control-panel .range-control > span,
+  .sync-band .entrainment-sandbox .range-control > span {
+    min-height: 1.15rem;
+    font-size: 0.7rem;
+  }
+
+  .signal-control-grid .range-description {
+    display: none;
+  }
+
+  .signal-control-grid input[type="range"],
+  .sync-band .control-panel input[type="range"],
+  .sync-band .entrainment-sandbox input[type="range"] {
+    height: 28px !important;
+    min-height: 28px !important;
+    padding-block: 0.45rem;
+  }
+
+  .alignment-readout,
+  .sync-band .explain-panel {
+    gap: 0.5rem;
+    padding: 0.72rem;
+  }
+
+  .alignment-readout h3,
+  .sync-band .explain-panel h3 {
+    font-size: clamp(1.05rem, 1.5vw, 1.35rem);
+  }
+
+  .alignment-readout p,
+  .sync-band .explain-panel p,
+  .readout-note,
+  .readout-caveat {
+    font-size: 0.8rem;
+    line-height: 1.36;
+  }
+
+  .readout-details {
+    gap: 0.5rem;
+    margin-top: 0.1rem;
+    padding-top: 0.58rem;
+  }
+
+  .readout-facts {
+    gap: 0.5rem;
+  }
+
+  .readout-facts dd {
+    font-size: 0.98rem;
+  }
+
+  .readout-caveat {
+    padding-top: 0.58rem;
+  }
+
+  .body-clock {
+    grid-template-columns: minmax(300px, 0.72fr) minmax(0, 1.28fr);
+    gap: 0.72rem;
+  }
+
+  .clock-face {
+    gap: 0.72rem;
+    padding: 0.9rem;
+  }
+
+  .organ-tabs {
+    gap: 0.35rem;
+    margin-bottom: 0.35rem;
+  }
+
+  .organ-tabs button {
+    min-height: 2.05rem;
+    padding: 0.36rem 0.68rem;
+    font-size: 0.78rem;
+  }
+
+  .body-clock-stage {
+    width: min(100%, 260px);
+    margin: 0.6rem auto 0.2rem;
+  }
+
+  .body-clock-figure {
+    width: 170px;
+    height: 204px;
+  }
+
+  .body-clock .range-control.compact {
+    margin-top: 0.55rem;
+  }
+
+  .body-axis-panel {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.55rem;
+  }
+
+  .axis-function-list {
+    grid-column: 1 / -1;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.55rem;
+  }
+
+  .axis-summary,
+  .axis-function,
+  .body-clock-nuance,
+  .daily-schedule,
+  .axis-sources,
+  .rhythm-event {
+    padding: 0.68rem;
+  }
+
+  .axis-summary p,
+  .axis-function p,
+  .axis-function small,
+  .body-clock-nuance p,
+  .rhythm-event p,
+  .daily-schedule li {
+    font-size: 0.8rem;
+    line-height: 1.34;
+  }
+
+  .axis-summary h3,
+  .rhythm-event h3 {
+    font-size: 1rem;
+  }
+
+  .axis-function h4,
+  .body-clock-nuance h4,
+  .daily-schedule h4 {
+    font-size: 0.92rem;
+  }
+
+  .daily-schedule ul {
+    gap: 0.24rem;
+    margin-top: 0.45rem;
+  }
+
+  .axis-sources {
+    gap: 0.4rem;
+  }
+
+  .medicine-tabs {
+    grid-column: 1 / -1;
+    margin-bottom: 0.75rem;
+  }
+
+  .medicine-tabs button {
+    min-height: 2rem;
+    padding: 0.42rem 0.62rem;
+    font-size: 0.78rem;
+  }
+
+  .medicine-panel {
+    display: grid;
+    grid-template-columns: minmax(280px, 0.48fr) minmax(0, 1.52fr);
+    gap: 0.35rem 0.65rem;
+  }
+
+  .medicine-lab-shell {
+    grid-column: 1;
+    grid-row: 2;
+    grid-template-columns: 1fr;
+    gap: 0.35rem;
+    margin-bottom: 0;
+  }
+
+  .medicine-panel > .drug-lab-grid,
+  .medicine-panel > .variant-lab-grid,
+  .medicine-panel > .planned-visual {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  .medicine-source-strip {
+    grid-column: 1 / -1;
+    margin-top: 0;
+  }
+
+  .medicine-main,
+  .safety-note,
+  .body-drug-map,
+  .timing-graph-panel,
+  .lab-controls,
+  .lab-readout,
+  .planned-visual,
+  .runway-panel,
+  .night-window-panel,
+  .acid-pump-panel,
+  .acid-meal-panel,
+  .wake-body-panel,
+  .sleep-body-panel {
+    padding: 0.82rem;
+  }
+
+  .medicine-main p,
+  .safety-note p,
+  .control-caption,
+  .lab-readout,
+  .planned-visual p {
+    font-size: 0.84rem;
+    line-height: 1.4;
+  }
+
+  .medicine-main {
+    gap: 0.68rem;
+  }
+
+  .medicine-title h3 {
+    font-size: 1.28rem;
+  }
+
+  .timing-lenses {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .timing-lenses div {
+    padding: 0.62rem;
+  }
+
+  .safety-note strong,
+  .safety-note > span {
+    margin-top: 0.45rem;
+  }
+
+  .drug-lab-grid {
+    grid-template-columns: minmax(230px, 0.78fr) minmax(0, 1.22fr);
+    gap: 0.72rem;
+  }
+
+  .body-diagram {
+    grid-template-columns: minmax(125px, 0.58fr) minmax(150px, 1fr);
+    gap: 0.62rem;
+  }
+
+  .body-outline {
+    min-height: 172px;
+  }
+
+  .body-torso {
+    width: min(100%, 178px);
+    height: 142px;
+  }
+
+  .route-steps {
+    gap: 0.4rem;
+  }
+
+  .route-steps div {
+    gap: 0.48rem;
+    padding: 0.45rem;
+  }
+
+  .route-steps span {
+    width: 1.72rem;
+    height: 1.72rem;
+    font-size: 0.7rem;
+  }
+
+  .route-steps strong {
+    font-size: 0.82rem;
+  }
+
+  .dose-summary {
+    gap: 0.55rem;
+    padding-top: 0.62rem;
+  }
+
+  .dose-summary span {
+    font-size: 0.74rem;
+  }
+
+  .dose-summary strong {
+    font-size: 0.88rem;
+  }
+
+  .body-drug-map .body-head {
+    width: 3.6rem;
+  }
+
+  .lab-controls {
+    gap: 0.62rem;
+  }
+
+  .lab-panel-heading {
+    gap: 0.62rem;
+  }
+
+  .lab-panel-heading h3 {
+    font-size: 1.05rem;
+    line-height: 1.1;
+  }
+
+  .lab-panel-heading > span {
+    max-width: 150px;
+    font-size: 0.74rem;
+    line-height: 1.25;
+  }
+
+  .preset-row,
+  .profile-toggle {
+    gap: 0.42rem;
+  }
+
+  .preset-row button,
+  .profile-toggle button {
+    padding: 0.44rem 0.58rem;
+    font-size: 0.78rem;
+  }
+
+  .curve-legend {
+    gap: 0.45rem;
+    padding-top: 0.58rem;
+  }
+
+  .curve-legend span {
+    font-size: 0.75rem;
+  }
+
+  .timing-graph-panel svg {
+    height: min(28svh, 214px);
+  }
+
+  .runway-track,
+  .night-window-track,
+  .meal-strip {
+    min-height: 180px;
+  }
+
+  .wake-brain,
+  .sleep-orbit {
+    min-height: 210px;
+  }
+
+  .stomach-map {
+    min-height: 270px;
+  }
+
+  .gene-network {
+    width: min(100%, 1360px);
+  }
+
+  .network-toolbar {
+    margin-bottom: 0.45rem;
+  }
+
+  .network-layout {
+    grid-template-columns: minmax(0, 1.22fr) minmax(310px, 0.58fr);
+    gap: 0.72rem;
+  }
+
+  .timed-loop-layout {
+    grid-template-columns: minmax(0, 1.35fr) minmax(300px, 0.5fr);
+  }
+
+  .timed-loop-panel,
+  .network-canvas,
+  .gene-player-card {
+    padding: 0.72rem;
+  }
+
+  .timed-loop-header h3 {
+    font-size: clamp(1.25rem, 2vw, 1.85rem);
+  }
+
+  .timed-loop-header p:not(.kicker),
+  .model-caveat,
+  .gene-player-card p,
+  .source-browser p,
+  .source-browser span {
+    font-size: 0.82rem;
+    line-height: 1.36;
+  }
+
+  .loop-time-readout {
+    padding: 0.42rem 0.58rem;
+  }
+
+  .loop-scrubber {
+    gap: 0.26rem;
+    margin: 0.55rem 0;
+    padding: 0.55rem;
+  }
+
+  .timed-loop-grid {
+    grid-template-columns: minmax(0, 1.2fr) minmax(260px, 0.65fr);
+    gap: 0.58rem;
+  }
+
+  .timed-loop-panel,
+  .model-timeline-panel,
+  .cell-schematic-wrap,
+  .gene-player-card {
+    gap: 0.55rem;
+  }
+
+  .molecular-cell-svg {
+    height: min(33svh, 288px);
+  }
+
+  .loop-stage-card {
+    gap: 0.26rem;
+    padding: 0.58rem;
+  }
+
+  .loop-stage-card p {
+    font-size: 0.78rem;
+    line-height: 1.32;
+  }
+
+  .model-timeline-panel {
+    padding: 0.62rem;
+  }
+
+  .model-panel-explainer {
+    display: none;
+  }
+
+  .model-curve {
+    max-height: 138px;
+    min-height: 116px;
+  }
+
+  .model-variable-list {
+    gap: 0.35rem;
+  }
+
+  .model-variable-list article {
+    gap: 0.32rem;
+    padding: 0.4rem;
+  }
+
+  .model-variable-list p,
+  .model-caveat {
+    font-size: 0.72rem;
+    line-height: 1.3;
+  }
+
+  .loop-gene-strip {
+    gap: 0.35rem;
+    margin-top: 0.55rem;
+    padding-top: 0.55rem;
+  }
+
+  .loop-gene-strip button,
+  .legend-row span,
+  .edge-legend span,
+  .gene-category-pill {
+    padding: 0.3rem 0.5rem;
+    font-size: 0.72rem;
+  }
+
+  .gene-player-card {
+    max-height: calc(100svh - 9.5rem);
+    overflow: auto;
+  }
+
+  .gene-player-card h3 {
+    font-size: clamp(1.9rem, 4vw, 3.45rem);
+  }
+
+  .expression-panel,
+  .external-links {
+    gap: 0.45rem;
+  }
+
+  .expression-panel div,
+  .gene-detail-section,
+  .interaction-card,
+  .disease-section article {
+    padding: 0.56rem;
+  }
+
+  .trial-simulator {
+    grid-template-columns: minmax(260px, 0.62fr) minmax(0, 1.38fr);
+    gap: 0.72rem;
+  }
+
+  .trial-copy,
+  .trial-scorekeeper,
+  .trial-curve-panel {
+    padding: 0.82rem;
+  }
+
+  .trial-copy {
+    gap: 0.62rem;
+  }
+
+  .trial-copy h3 {
+    font-size: clamp(1.45rem, 2.8vw, 2.3rem);
+  }
+
+  .trial-copy p {
+    font-size: 0.84rem;
+    line-height: 1.4;
+  }
+
+  .trial-actions {
+    gap: 0.42rem;
+  }
+
+  .trial-actions button {
+    min-height: 2.2rem;
+    padding: 0.5rem 0.68rem;
+    font-size: 0.78rem;
+  }
+
+  .trial-scorekeeper {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    gap: 0.62rem;
+  }
+
+  .trial-scorekeeper-header {
+    padding-bottom: 0.55rem;
+  }
+
+  .trial-scorekeeper-header strong {
+    font-size: clamp(1.7rem, 3.6vw, 2.65rem);
+  }
+
+  .trial-mode-grid {
+    gap: 0.55rem;
+  }
+
+  .trial-mode-grid article {
+    gap: 0.42rem;
+    padding: 0.58rem;
+  }
+
+  .trial-mode-grid h4 {
+    font-size: 0.9rem;
+  }
+
+  .trial-mode-grid p {
+    min-height: 4.2rem;
+    font-size: 0.76rem;
+    line-height: 1.32;
+  }
+
+  .trial-stat-row {
+    padding-top: 0.32rem;
+    font-size: 0.75rem;
+  }
+
+  .trial-curve-panel {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .trial-curve-panel svg {
+    max-height: 150px;
+    min-height: 130px;
+  }
+
+  .oxaliplatin-explorer {
+    grid-template-columns: minmax(280px, 0.78fr) minmax(0, 1.22fr) !important;
+    gap: 1.2rem !important;
+  }
+
+  .oxaliplatin-explorer > .visual-panel {
+    max-width: 360px;
+    justify-self: center;
+  }
+
+  .oxaliplatin-explorer .narrative-steps {
+    gap: 0.55rem !important;
+  }
+
+  .oxaliplatin-explorer .narrative-steps button {
+    gap: 0.75rem !important;
+    padding: 0.82rem !important;
+  }
+
+  .oxaliplatin-explorer .narrative-steps button > div:first-child {
+    font-size: 1.15rem !important;
+  }
+
+  .oxaliplatin-explorer .narrative-steps h3 {
+    margin: 0.15rem 0 !important;
+    font-size: 0.98rem !important;
+  }
+
+  .oxaliplatin-explorer .narrative-steps p {
+    margin-top: 0.25rem !important;
+    font-size: 0.82rem !important;
+    line-height: 1.34 !important;
+  }
+
+  .oxaliplatin-explorer .narrative-steps > p {
+    font-size: 0.78rem !important;
+    line-height: 1.35 !important;
+  }
+
+  .claim-row {
+    gap: 0.75rem;
+    padding: 0.72rem;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -7001,6 +7862,104 @@ meter {
 @media (max-width: 520px) {
   .sync-band .signal-strip {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (min-width: 1081px) {
+  .sync-band .signal-alignment-studio,
+  .sync-band .interactive-block.entrainment {
+    gap: 0.75rem;
+    margin-top: clamp(1.25rem, 2.6vw, 2rem);
+    padding: 0.95rem;
+  }
+
+  .sync-band .overlap-grid {
+    grid-template-columns: minmax(0, 1.48fr) minmax(250px, 0.46fr);
+    gap: 0.75rem;
+  }
+
+  .sync-band .rhythm-wave-panel {
+    gap: 0.5rem;
+    padding: 0.72rem;
+  }
+
+  .sync-band .rhythm-wave-svg {
+    height: min(34svh, 282px);
+    min-height: 220px;
+  }
+
+  .sync-band .rhythm-legend {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.42rem;
+  }
+
+  .sync-band .rhythm-legend div {
+    min-height: 35px;
+    gap: 0.38rem;
+    padding: 0.42rem 0.48rem;
+  }
+
+  .sync-band .rhythm-legend span,
+  .sync-band .rhythm-legend strong {
+    font-size: 0.72rem;
+  }
+
+  .sync-band .overlap-control-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 0.42rem;
+  }
+
+  .sync-band .signal-control-grid label,
+  .sync-band .control-panel .range-control,
+  .sync-band .entrainment-sandbox .range-control {
+    gap: 0.36rem;
+    padding: 0.55rem;
+  }
+
+  .sync-band .signal-control-grid label > span,
+  .sync-band .control-panel .range-control > span,
+  .sync-band .entrainment-sandbox .range-control > span {
+    min-height: 1.15rem;
+    align-items: center;
+    flex-direction: row;
+    font-size: 0.7rem;
+  }
+
+  .sync-band .signal-control-grid .range-description {
+    display: none;
+  }
+
+  .sync-band .signal-control-grid input[type="range"],
+  .sync-band .control-panel input[type="range"],
+  .sync-band .entrainment-sandbox input[type="range"] {
+    height: 28px !important;
+    min-height: 28px !important;
+    padding-block: 0.45rem;
+  }
+
+  .sync-band .alignment-readout,
+  .sync-band .explain-panel {
+    gap: 0.5rem;
+    padding: 0.72rem;
+  }
+
+  .sync-band .alignment-readout p,
+  .sync-band .explain-panel p,
+  .sync-band .readout-note,
+  .sync-band .readout-caveat {
+    font-size: 0.8rem;
+    line-height: 1.36;
+  }
+
+  .timing-graph-panel {
+    grid-row: auto;
+    align-self: start;
+  }
+
+  .medicine-source-strip {
+    padding: 0.32rem 0.52rem;
+    font-size: 0.72rem;
+    line-height: 1;
   }
 }
 
