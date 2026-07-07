@@ -6,6 +6,29 @@ import { useMemo, useState } from "react";
 import { trialSimulationModes } from "../content/site-data";
 
 type TrialModeId = (typeof trialSimulationModes)[number]["id"];
+type ChronotypeId = "early" | "typical" | "late";
+
+type ChronotypeProfile = {
+  id: ChronotypeId;
+  label: string;
+  shortLabel: string;
+  phaseShift: number;
+  share: number;
+  color: string;
+};
+
+type TrialParticipant = {
+  id: number;
+  chronotype: ChronotypeId;
+  phaseShift: number;
+  clinicHour: number;
+};
+
+type ParticipantDose = TrialParticipant & {
+  wallHour: number;
+  biologicalHour: number;
+  targetDistance: number;
+};
 
 type TrialArmResult = {
   mode: TrialModeId;
@@ -14,6 +37,8 @@ type TrialArmResult = {
   approvalScore: number;
   approved: boolean;
   bestWindowHits: number;
+  meanTargetDistance: number;
+  doses: ParticipantDose[];
 };
 
 type TrialRun = {
@@ -24,6 +49,36 @@ type TrialRun = {
 const PARTICIPANTS_PER_ARM = 96;
 const APPROVAL_BENEFIT_THRESHOLD = 16;
 const APPROVAL_TOXICITY_LIMIT = 13.6;
+const TARGET_BIOLOGICAL_HOUR = 15;
+
+const chronotypes: ChronotypeProfile[] = [
+  {
+    id: "early",
+    label: "Early clock",
+    shortLabel: "Early",
+    phaseShift: -3.2,
+    share: 0.24,
+    color: "var(--amber)",
+  },
+  {
+    id: "typical",
+    label: "Typical clock",
+    shortLabel: "Typical",
+    phaseShift: 0,
+    share: 0.52,
+    color: "var(--green)",
+  },
+  {
+    id: "late",
+    label: "Late clock",
+    shortLabel: "Late",
+    phaseShift: 3.2,
+    share: 0.24,
+    color: "var(--violet)",
+  },
+];
+
+const chronotypeById = new Map(chronotypes.map((chronotype) => [chronotype.id, chronotype]));
 
 function seededRandom(seed: number) {
   let value = seed;
@@ -56,40 +111,98 @@ function rhythmWindow(hour: number, peakHour: number, width: number) {
   return Math.exp(-(distance * distance) / (2 * width * width));
 }
 
-function biologicalDoseHour(mode: TrialModeId, phaseShift: number, rand: () => number) {
+function selectChronotype(rand: () => number) {
+  const draw = rand();
+  let cumulativeShare = 0;
+
+  for (const chronotype of chronotypes) {
+    cumulativeShare += chronotype.share;
+    if (draw <= cumulativeShare) {
+      return chronotype;
+    }
+  }
+
+  return chronotypes[chronotypes.length - 1];
+}
+
+function createParticipant(id: number, rand: () => number): TrialParticipant {
+  const chronotype = selectChronotype(rand);
+
+  return {
+    id,
+    chronotype: chronotype.id,
+    phaseShift: chronotype.phaseShift + normal(rand) * 0.72,
+    clinicHour: 8 + rand() * 10,
+  };
+}
+
+function doseParticipant(
+  participant: TrialParticipant,
+  mode: TrialModeId,
+  rand: () => number,
+): ParticipantDose {
   if (mode === "untimed") {
-    const clinicHour = 8 + rand() * 10;
-    return wrapHour(clinicHour - phaseShift);
+    const wallHour = participant.clinicHour;
+    const biologicalHour = wrapHour(wallHour - participant.phaseShift);
+
+    return {
+      ...participant,
+      wallHour,
+      biologicalHour,
+      targetDistance: hourDistance(biologicalHour, TARGET_BIOLOGICAL_HOUR),
+    };
   }
 
   if (mode === "population") {
-    return wrapHour(15 - phaseShift);
+    const wallHour = TARGET_BIOLOGICAL_HOUR;
+    const biologicalHour = wrapHour(wallHour - participant.phaseShift);
+
+    return {
+      ...participant,
+      wallHour,
+      biologicalHour,
+      targetDistance: hourDistance(biologicalHour, TARGET_BIOLOGICAL_HOUR),
+    };
   }
 
-  return 15;
+  const biologicalHour = wrapHour(TARGET_BIOLOGICAL_HOUR + normal(rand) * 0.48);
+  const wallHour = wrapHour(biologicalHour + participant.phaseShift);
+
+  return {
+    ...participant,
+    wallHour,
+    biologicalHour,
+    targetDistance: hourDistance(biologicalHour, TARGET_BIOLOGICAL_HOUR),
+  };
 }
 
 function runTrial(runNumber: number): TrialRun {
   const rand = seededRandom(7349 + runNumber * 7919);
+  const participants = Array.from({ length: PARTICIPANTS_PER_ARM }, (_, index) =>
+    createParticipant(index, rand),
+  );
 
   const results = trialSimulationModes.map((mode) => {
     let totalBenefit = 0;
     let totalToxicity = 0;
+    let totalTargetDistance = 0;
     let windowHits = 0;
+    const doses: ParticipantDose[] = [];
 
-    for (let index = 0; index < PARTICIPANTS_PER_ARM; index += 1) {
-      const phaseShift = normal(rand) * 3.2;
-      const doseHour = biologicalDoseHour(mode.id, phaseShift, rand);
-      const efficacyWindow = rhythmWindow(doseHour, 15, 3.5);
-      const toxicityWindow = rhythmWindow(doseHour, 5, 2.8);
+    for (const participant of participants) {
+      const dose = doseParticipant(participant, mode.id, rand);
+      const efficacyWindow = rhythmWindow(dose.biologicalHour, TARGET_BIOLOGICAL_HOUR, 3.5);
+      const toxicityWindow = rhythmWindow(dose.biologicalHour, 5, 2.8);
 
       const benefit = 5.5 + efficacyWindow * 17.5 + normal(rand) * 2.6;
       const toxicity = 6.2 + toxicityWindow * 15 + normal(rand) * 2.2;
 
       totalBenefit += benefit;
       totalToxicity += Math.max(0, toxicity);
+      totalTargetDistance += dose.targetDistance;
+      doses.push(dose);
 
-      if (hourDistance(doseHour, 15) <= 3) {
+      if (dose.targetDistance <= 3) {
         windowHits += 1;
       }
     }
@@ -108,6 +221,8 @@ function runTrial(runNumber: number): TrialRun {
       approvalScore,
       approved,
       bestWindowHits: Math.round((windowHits / PARTICIPANTS_PER_ARM) * 100),
+      meanTargetDistance: totalTargetDistance / PARTICIPANTS_PER_ARM,
+      doses,
     };
   });
 
@@ -116,6 +231,10 @@ function runTrial(runNumber: number): TrialRun {
 
 function formatScore(value: number) {
   return value.toFixed(1);
+}
+
+function formatHourDistance(value: number) {
+  return `${value.toFixed(1)}h`;
 }
 
 export function ClinicalTrialSimulator() {
@@ -140,6 +259,13 @@ export function ClinicalTrialSimulator() {
     };
   });
 
+  const cohortCounts = chronotypes.map((chronotype) => {
+    const count =
+      latestRun.results[0]?.doses.filter((dose) => dose.chronotype === chronotype.id).length ?? 0;
+
+    return { ...chronotype, count };
+  });
+
   return (
     <div className="trial-simulator interactive-block">
       <div className="trial-copy">
@@ -147,8 +273,9 @@ export function ClinicalTrialSimulator() {
         <h3>Same biology, different trial design.</h3>
         <p>
           Chronava is fictional. In this model, therapeutic effect is strongest
-          near one internal-time window, while toxicity rises near another.
-          The simplified approval rule rewards benefit and penalizes toxicity.
+          near one internal-time window, while toxicity rises near another. Each
+          run now gives participants early, typical, or late internal clocks, so
+          the same wall-clock dose can land in different biological times.
         </p>
         <div className="trial-actions" aria-label="Simulation controls">
           <button type="button" onClick={() => setRunCount((count) => count + 1)}>
@@ -157,7 +284,7 @@ export function ClinicalTrialSimulator() {
           </button>
           <button type="button" onClick={() => setRunCount((count) => count + 10)}>
             <ChevronsRight size={18} aria-hidden="true" />
-            Spam 10 trials
+            Run 10 simulations
           </button>
           <button type="button" onClick={() => setRunCount(1)}>
             Reset
@@ -173,6 +300,83 @@ export function ClinicalTrialSimulator() {
         <div className="trial-scorekeeper-header">
           <span>Runs</span>
           <strong>{runs.length}</strong>
+        </div>
+        <div className="trial-chronotype-panel">
+          <div className="trial-chronotype-header">
+            <span>Simulated cohort</span>
+            <strong>{PARTICIPANTS_PER_ARM} people with different internal clocks</strong>
+          </div>
+          <div className="trial-chronotype-legend" aria-label="Chronotype legend">
+            {cohortCounts.map((chronotype) => (
+              <span key={chronotype.id} style={{ "--chronotype": chronotype.color } as CSSProperties}>
+                <i aria-hidden="true" />
+                {chronotype.shortLabel} <strong>{chronotype.count}</strong>
+              </span>
+            ))}
+          </div>
+          <svg
+            className="trial-chronotype-map"
+            viewBox="0 0 720 238"
+            role="img"
+            aria-label="Biological dose times by trial design and chronotype"
+          >
+            <title>Different chronotypes spread or align across the trial designs</title>
+            <rect x="183" y="24" width="70" height="176" className="trial-map-toxicity-window" />
+            <rect x="360" y="24" width="150" height="176" className="trial-map-benefit-window" />
+            {Array.from({ length: 7 }, (_, index) => (
+              <line
+                key={index}
+                x1={60 + index * 100}
+                x2={60 + index * 100}
+                y1="24"
+                y2="200"
+                className="trial-map-grid-line"
+              />
+            ))}
+            {approvalTotals.map((mode, modeIndex) => {
+              const latest = mode.latest;
+              if (!latest) {
+                return null;
+              }
+
+              const rowY = 56 + modeIndex * 58;
+
+              return (
+                <g key={mode.id}>
+                  <text x="18" y={rowY + 4} className="trial-map-row-label">
+                    {mode.shortLabel}
+                  </text>
+                  <line x1="60" x2="660" y1={rowY} y2={rowY} className="trial-map-row-line" />
+                  {latest.doses.map((dose) => {
+                    const chronotype = chronotypeById.get(dose.chronotype);
+                    const x = 60 + (dose.biologicalHour / 24) * 600;
+                    const y = rowY + ((dose.id % 9) - 4) * 1.55;
+
+                    return (
+                      <circle
+                        key={`${mode.id}-${dose.id}`}
+                        cx={x}
+                        cy={y}
+                        r="3.2"
+                        fill={chronotype?.color ?? "var(--cyan)"}
+                        className="trial-map-participant"
+                      />
+                    );
+                  })}
+                </g>
+              );
+            })}
+            <line x1="60" x2="660" y1="212" y2="212" className="trial-map-axis" />
+            <text x="60" y="230">0</text>
+            <text x="330" y="230">Biological time at dose</text>
+            <text x="636" y="230">24h</text>
+            <text x="372" y="18" className="trial-map-benefit-label">
+              target window
+            </text>
+            <text x="172" y="18" className="trial-map-toxicity-label">
+              toxicity window
+            </text>
+          </svg>
         </div>
         <div className="trial-mode-grid">
           {approvalTotals.map((mode) => {
@@ -211,8 +415,12 @@ export function ClinicalTrialSimulator() {
                   <strong>{formatScore(latest.meanToxicity)}</strong>
                 </div>
                 <div className="trial-stat-row">
-                  <span>Window hit</span>
+                  <span>In window</span>
                   <strong>{latest.bestWindowHits}%</strong>
+                </div>
+                <div className="trial-stat-row">
+                  <span>Bio mismatch</span>
+                  <strong>{formatHourDistance(latest.meanTargetDistance)}</strong>
                 </div>
               </article>
             );
@@ -225,14 +433,14 @@ export function ClinicalTrialSimulator() {
           <title>Fictional efficacy and toxicity curves across biological time</title>
           <defs>
             <linearGradient id="benefitGradient" x1="0" x2="1">
-              <stop offset="0%" stopColor="#54d6c2" stopOpacity="0.08" />
-              <stop offset="52%" stopColor="#54d6c2" stopOpacity="0.72" />
-              <stop offset="100%" stopColor="#54d6c2" stopOpacity="0.08" />
+              <stop offset="0%" stopColor="var(--cyan)" stopOpacity="0.08" />
+              <stop offset="52%" stopColor="var(--cyan)" stopOpacity="0.72" />
+              <stop offset="100%" stopColor="var(--cyan)" stopOpacity="0.08" />
             </linearGradient>
             <linearGradient id="toxicityGradient" x1="0" x2="1">
-              <stop offset="0%" stopColor="#ff6b6b" stopOpacity="0.08" />
-              <stop offset="22%" stopColor="#ff6b6b" stopOpacity="0.74" />
-              <stop offset="100%" stopColor="#ff6b6b" stopOpacity="0.08" />
+              <stop offset="0%" stopColor="var(--coral)" stopOpacity="0.08" />
+              <stop offset="22%" stopColor="var(--coral)" stopOpacity="0.74" />
+              <stop offset="100%" stopColor="var(--coral)" stopOpacity="0.08" />
             </linearGradient>
           </defs>
           {Array.from({ length: 7 }, (_, index) => (
