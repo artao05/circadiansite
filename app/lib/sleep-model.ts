@@ -11,6 +11,19 @@ export type ForcedDesynchronyOptions = {
 
 export type AlignmentLabel = "Coupled" | "Decoupling" | "Opposing";
 
+export type CaffeineDose = {
+  hour: number;
+  milligrams: number;
+};
+
+export type CaffeineSleepComparison = {
+  sleepOnsetDelayMinutes: number;
+  sleepDurationChangeMinutes: number;
+  residualCaffeineAtBaselineBedtime: number;
+  baselineSleepWindow: SleepWindow | null;
+  predictedSleepWindow: SleepWindow | null;
+};
+
 export type SleepDatum = {
   hour: number;
   label: string;
@@ -25,6 +38,10 @@ export type SleepDatum = {
   feltS: number;
   processC: number;
   caffeineEffect: number;
+  caffeineConcentration: number;
+  wakeStability: number;
+  fatigueProxy: number;
+  sleepDrive: number;
   netSleepiness: number;
   netAlertness: number;
   isAsleep: boolean;
@@ -45,7 +62,7 @@ export type SleepNarrative = {
 
 type GenerateSleepDataOptions = {
   scenario: SleepScenario;
-  caffeineEvents?: number[];
+  caffeineDoses?: CaffeineDose[];
   forcedDesynchrony?: Partial<ForcedDesynchronyOptions>;
   step?: number;
 };
@@ -68,6 +85,20 @@ type ForcedDesynchronySchedule = {
 
 const startClockHour = 7;
 const standardHorizon = 48;
+
+export const caffeineReferenceProfile = {
+  bodyMassKg: 75,
+  absorptionRatePerHour: 3.6,
+  eliminationRatePerHour: 0.16,
+  homeostaticMaskStrength: 0.005,
+  wakeStabilityStrength: 0.023,
+} as const;
+
+const caffeineSleepSwitch = {
+  circadianWeight: 0.33,
+  sleepOnThreshold: 0.61,
+  wakeOnThreshold: 0.18,
+} as const;
 
 export const forcedDesynchronyTau = 24.15;
 
@@ -284,16 +315,47 @@ function circadianWakeDrive(hour: number) {
   return circadianWakeDriveFromClockHour((startClockHour + hour) % 24);
 }
 
-function caffeineBlockade(hour: number, caffeineEvents: number[]) {
-  return caffeineEvents.reduce((total, eventHour) => {
-    const age = hour - eventHour;
-    if (age < 0 || age > 7) return total;
+export function caffeineConcentration(
+  hour: number,
+  caffeineDoses: CaffeineDose[],
+) {
+  const { absorptionRatePerHour, bodyMassKg, eliminationRatePerHour } =
+    caffeineReferenceProfile;
 
-    const fastOnset = clamp(age / 0.6);
-    const slowFade = Math.exp(-age / 3.2);
-    const tail = clamp(1 - age / 7);
-    return total + 0.34 * fastOnset * slowFade * tail;
+  return caffeineDoses.reduce((total, dose) => {
+    const age = hour - dose.hour;
+    if (age < 0) return total;
+
+    const dosePerKg = dose.milligrams / bodyMassKg;
+    return (
+      total +
+      dosePerKg *
+        (Math.exp(-eliminationRatePerHour * age) -
+          Math.exp(-absorptionRatePerHour * age))
+    );
   }, 0);
+}
+
+function caffeineEffects(processS: number, concentration: number) {
+  const { homeostaticMaskStrength, wakeStabilityStrength } =
+    caffeineReferenceProfile;
+  const maskingFraction = clamp(homeostaticMaskStrength * concentration, 0, 0.3);
+  const wakeStability = clamp(wakeStabilityStrength * concentration, 0, 0.3);
+  const feltS = clamp(processS * (1 - maskingFraction));
+
+  return {
+    caffeineEffect: processS - feltS,
+    feltS,
+    wakeStability,
+  };
+}
+
+function sleepDriveForState(
+  feltS: number,
+  processC: number,
+  wakeStability: number,
+) {
+  return feltS - caffeineSleepSwitch.circadianWeight * processC - wakeStability;
 }
 
 export function getForcedDesynchronyBiologicalHour(hour: number) {
@@ -413,7 +475,7 @@ function stateLabel({
   }
 
   if (isAsleep) return scenario === "all-nighter" ? "Recovery sleep" : "Rest phase";
-  if (caffeineEffect > 0.08) return "Caffeine mask";
+  if (caffeineEffect > 0.004) return "Caffeine mask";
   if (scenario === "all-nighter" && hour >= 24 && hour < 34 && processC > 0.62) {
     return "Second wind";
   }
@@ -424,7 +486,7 @@ function stateLabel({
 
 export function generateSleepData({
   scenario,
-  caffeineEvents = [],
+  caffeineDoses = [],
   forcedDesynchrony,
   step = 0.25,
 }: GenerateSleepDataOptions) {
@@ -434,15 +496,25 @@ export function generateSleepData({
   const horizon = getSleepModelHorizon(scenario, normalizedForcedDesynchrony);
   const data: SleepDatum[] = [];
   let processS = 0.18;
+  let isAsleep = false;
 
   for (let hour = 0; hour <= horizon + 0.001; hour += step) {
     const normalizedHour = round(Math.min(hour, horizon), 2);
     const isForcedDesynchrony = scenario === "forced-desynchrony";
-    const isAsleep = isAsleepAt(normalizedHour, sleepWindows);
+    const scheduledSleep = isForcedDesynchrony
+      ? isAsleepAt(normalizedHour, sleepWindows)
+      : false;
     const isCsr =
       isForcedDesynchrony && normalizedForcedDesynchrony.budget === "csr";
-    const target = isAsleep ? (isCsr ? 0.24 : 0.12) : 1;
-    const tau = isAsleep ? (isCsr ? 5.2 : 4.2) : isCsr ? 11.8 : 14;
+    const sleepStateForHomeostat = isForcedDesynchrony ? scheduledSleep : isAsleep;
+    const target = sleepStateForHomeostat ? (isCsr ? 0.24 : 0.12) : 1;
+    const tau = sleepStateForHomeostat
+      ? isCsr
+        ? 5.2
+        : 4.2
+      : isCsr
+        ? 11.8
+        : 14;
     processS += (target - processS) * (1 - Math.exp(-step / tau));
 
     const chronicOffset = isCsr
@@ -461,12 +533,38 @@ export function generateSleepData({
     const processC = isForcedDesynchrony
       ? circadianWakeDriveFromClockHour(biologicalHour)
       : circadianWakeDrive(normalizedHour);
-    const caffeineEffect = isForcedDesynchrony
+    const concentration = isForcedDesynchrony
       ? 0
-      : caffeineBlockade(normalizedHour, caffeineEvents);
-    const feltS = clamp(effectiveProcessS - caffeineEffect);
-    const netSleepiness = clamp(0.56 * feltS + 0.44 * (1 - processC));
+      : caffeineConcentration(normalizedHour, caffeineDoses);
+    const caffeine = caffeineEffects(effectiveProcessS, concentration);
+    const sleepDrive = sleepDriveForState(
+      caffeine.feltS,
+      processC,
+      caffeine.wakeStability,
+    );
+
+    if (isForcedDesynchrony) {
+      isAsleep = scheduledSleep;
+    } else if (scenario === "all-nighter" && normalizedHour < 39) {
+      isAsleep = false;
+    } else if (!isAsleep && sleepDrive >= caffeineSleepSwitch.sleepOnThreshold) {
+      isAsleep = true;
+    } else if (isAsleep && sleepDrive <= caffeineSleepSwitch.wakeOnThreshold) {
+      isAsleep = false;
+    }
+
+    const netSleepiness = clamp(
+      0.56 * caffeine.feltS +
+        0.44 * (1 - processC) -
+        0.25 * caffeine.wakeStability,
+    );
     const netAlertness = clamp(1 - netSleepiness);
+    const fatigueProxy = isAsleep
+      ? 0
+      : clamp(
+          (sleepDrive - caffeineSleepSwitch.wakeOnThreshold) /
+            (1 - caffeineSleepSwitch.wakeOnThreshold),
+        );
     const currentCycle = isForcedDesynchrony
       ? protocolCycleForHour(normalizedHour, normalizedForcedDesynchrony)
       : Math.floor(normalizedHour / 24) + 1;
@@ -496,9 +594,13 @@ export function generateSleepData({
       misaligned,
       alignmentLabel: currentAlignmentLabel,
       processS: round(effectiveProcessS * 100),
-      feltS: round(feltS * 100),
+      feltS: round(caffeine.feltS * 100),
       processC: round(processC * 100),
-      caffeineEffect: round(caffeineEffect * 100),
+      caffeineEffect: round(caffeine.caffeineEffect * 100),
+      caffeineConcentration: round(concentration, 2),
+      wakeStability: round(caffeine.wakeStability * 100),
+      fatigueProxy: round(fatigueProxy * 100),
+      sleepDrive: round(sleepDrive * 100),
       netSleepiness: round(netSleepiness * 100),
       netAlertness: round(netAlertness * 100),
       isAsleep,
@@ -508,12 +610,71 @@ export function generateSleepData({
         isAsleep,
         processS: effectiveProcessS,
         processC,
-        caffeineEffect,
+        caffeineEffect: caffeine.caffeineEffect,
       }),
     });
   }
 
   return data;
+}
+
+export function getPredictedSleepWindows(data: SleepDatum[]): SleepWindow[] {
+  const windows: SleepWindow[] = [];
+  let start: number | null = null;
+
+  for (let index = 0; index < data.length; index += 1) {
+    const point = data[index];
+    const next = data[index + 1];
+
+    if (point.isAsleep && start === null) start = point.hour;
+    if (start !== null && (!next || !next.isAsleep)) {
+      const end = next?.hour ?? point.hour;
+      windows.push({
+        start,
+        end,
+        label: windows.length === 0 ? "Predicted sleep" : "Predicted sleep",
+      });
+      start = null;
+    }
+  }
+
+  return windows;
+}
+
+export function compareCaffeineSleep(
+  baselineData: SleepDatum[],
+  caffeineData: SleepDatum[],
+): CaffeineSleepComparison {
+  const baselineSleepWindow = getPredictedSleepWindows(baselineData)[0] ?? null;
+  const predictedSleepWindow = getPredictedSleepWindows(caffeineData)[0] ?? null;
+  const sleepOnsetDelayMinutes =
+    baselineSleepWindow && predictedSleepWindow
+      ? Math.max(0, Math.round((predictedSleepWindow.start - baselineSleepWindow.start) * 60))
+      : 0;
+  const sleepDurationChangeMinutes =
+    baselineSleepWindow && predictedSleepWindow
+      ? Math.round(
+          ((predictedSleepWindow.end - predictedSleepWindow.start) -
+            (baselineSleepWindow.end - baselineSleepWindow.start)) *
+            60,
+        )
+      : 0;
+  const residualCaffeineAtBaselineBedtime = baselineSleepWindow
+    ? caffeineData.reduce((nearest, point) =>
+        Math.abs(point.hour - baselineSleepWindow.start) <
+        Math.abs(nearest.hour - baselineSleepWindow.start)
+          ? point
+          : nearest,
+      ).caffeineConcentration
+    : 0;
+
+  return {
+    sleepOnsetDelayMinutes,
+    sleepDurationChangeMinutes,
+    residualCaffeineAtBaselineBedtime,
+    baselineSleepWindow,
+    predictedSleepWindow,
+  };
 }
 
 export function getNarrative(

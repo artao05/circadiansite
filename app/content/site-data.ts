@@ -254,6 +254,13 @@ export const citations: Citation[] = [
     url: "https://pubmed.ncbi.nlm.nih.gov/7185792/",
   },
   {
+    id: "puckeridge-2011",
+    title: "Incorporation of caffeine into a quantitative model of fatigue and sleep",
+    source: "Journal of Theoretical Biology",
+    note: "Physiologically based caffeine model used for the sandbox’s illustrative concentration curve, adenosine masking, wake-stability mechanism, and sleep-disruption framing.",
+    url: "https://doi.org/10.1016/j.jtbi.2010.12.018",
+  },
+  {
     id: "mchill-2019",
     title:
       "Chronic sleep restriction greatly magnifies performance decrements immediately after awakening",
@@ -591,6 +598,19 @@ export const chapters: Chapter[] = [
 ];
 
 export const claimMatrix: Claim[] = [
+  {
+    claim:
+      "In a physiologically based model, caffeine concentration can mask part of an adenosine-linked homeostatic sleep drive and temporarily increase a wake-stability input; later and larger simulated doses produce greater sleep disruption.",
+    source: "puckeridge-2011",
+    evidenceType:
+      "Physiologically based mathematical model constrained against published caffeine-and-sleep studies",
+    confidence: "Moderate",
+    caveat:
+      "The paper found wide variation in caffeine sensitivity and tolerance. The sandbox shows one illustrative parameter profile, not a personal prediction or dosing recommendation.",
+    visualUse: "Caffeine controls in the circadian sandbox",
+    beginnerPhrasing:
+      "In the model, caffeine can hide some sleep pressure and make wakefulness more stable, so a larger or later dose can push predicted sleep later.",
+  },
   {
     claim:
       "Forced-desynchrony protocols separate imposed sleep-wake timing from endogenous circadian phase.",

@@ -15,6 +15,7 @@ import {
 import {
   formatClockTime,
   formatElapsedHours,
+  type CaffeineDose,
   type SleepWindow,
   type SleepDatum,
 } from "../lib/sleep-model";
@@ -29,6 +30,7 @@ type SleepModelChartProps = {
   sleepWindows: SleepWindow[];
   ticks: number[];
   colors: SandboxChartColors;
+  caffeineDoses?: CaffeineDose[];
 };
 
 type TooltipPayload = {
@@ -76,7 +78,9 @@ function ChartTooltip({
       </span>
       {payload.map((entry) => (
         <p key={entry.name} style={{ color: entry.color }}>
-          {entry.name}: {Math.round(entry.value ?? 0)}%
+          {entry.name}: {entry.name === "Caffeine in body (ZC)"
+            ? `${(entry.value ?? 0).toFixed(2)} mg/kg`
+            : `${Math.round(entry.value ?? 0)}%`}
         </p>
       ))}
     </div>
@@ -92,6 +96,7 @@ export function SleepModelChart({
   sleepWindows,
   ticks,
   colors,
+  caffeineDoses = [],
 }: SleepModelChartProps) {
   const frameRef = useRef<HTMLDivElement>(null);
   const [chartSize, setChartSize] = useState<ChartSize>({
@@ -126,6 +131,11 @@ export function SleepModelChart({
   }, []);
 
   const chartIsReady = chartSize.width > 0 && chartSize.height > 0;
+  const showCaffeine = caffeineDoses.length > 0;
+  const caffeineDomain = Math.max(
+    1,
+    Math.ceil(Math.max(...data.map((point) => point.caffeineConcentration))),
+  );
 
   return (
     <div
@@ -137,7 +147,7 @@ export function SleepModelChart({
         <AreaChart
           data={data}
           height={chartSize.height}
-          margin={{ top: 24, right: 18, left: 0, bottom: 22 }}
+          margin={{ top: 24, right: showCaffeine ? 54 : 18, left: 0, bottom: 22 }}
           width={chartSize.width}
         >
           <defs>
@@ -163,6 +173,7 @@ export function SleepModelChart({
             tickLine={false}
           />
           <YAxis
+            yAxisId="sleep"
             domain={[0, 100]}
             tick={{ fill: colors.text, fontSize: 12, fontWeight: 700 }}
             axisLine={false}
@@ -170,6 +181,18 @@ export function SleepModelChart({
             width={38}
             tickFormatter={(value) => `${value}%`}
           />
+          {showCaffeine ? (
+            <YAxis
+              yAxisId="caffeine"
+              orientation="right"
+              domain={[0, caffeineDomain]}
+              tick={{ fill: colors.caffeine, fontSize: 11, fontWeight: 700 }}
+              axisLine={false}
+              tickLine={false}
+              width={38}
+              tickFormatter={(value) => `${value}`}
+            />
+          ) : null}
 
           {sleepWindows.map((window) => (
             <ReferenceArea
@@ -178,6 +201,7 @@ export function SleepModelChart({
               x2={window.end}
               y1={0}
               y2={100}
+              yAxisId="sleep"
               fill={colors.sleep}
               fillOpacity={0.08}
               strokeOpacity={0}
@@ -196,6 +220,7 @@ export function SleepModelChart({
           ))}
 
           <Area
+            yAxisId="sleep"
             type="monotone"
             dataKey="processC"
             name="Wake Drive (C)"
@@ -206,6 +231,7 @@ export function SleepModelChart({
             activeDot={{ r: 4 }}
           />
           <Area
+            yAxisId="sleep"
             type="monotone"
             dataKey="feltS"
             name="Felt Sleep Pressure"
@@ -216,6 +242,7 @@ export function SleepModelChart({
             activeDot={{ r: 4 }}
           />
           <Line
+            yAxisId="sleep"
             type="monotone"
             dataKey="processS"
             name="True Adenosine"
@@ -225,7 +252,30 @@ export function SleepModelChart({
             dot={false}
             activeDot={false}
           />
+          {showCaffeine ? (
+            <Line
+              yAxisId="caffeine"
+              type="monotone"
+              dataKey="caffeineConcentration"
+              name="Caffeine in body (ZC)"
+              stroke={colors.caffeine}
+              strokeWidth={2}
+              dot={false}
+              activeDot={{ r: 4 }}
+            />
+          ) : null}
+          {caffeineDoses.map((dose, index) => (
+            <ReferenceLine
+              key={`${dose.hour}-${dose.milligrams}-${index}`}
+              yAxisId="sleep"
+              x={dose.hour}
+              stroke={colors.caffeine}
+              strokeDasharray="3 4"
+              strokeOpacity={0.68}
+            />
+          ))}
           <ReferenceLine
+            yAxisId="sleep"
             x={currentTime}
             stroke={colors.cursor}
             strokeWidth={2}

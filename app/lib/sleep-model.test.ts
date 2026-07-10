@@ -1,11 +1,14 @@
 import { describe, expect, it } from "vitest";
 import {
+  caffeineConcentration,
+  compareCaffeineSleep,
   forcedDesynchronyProtocolOptions,
   generateSleepData,
   getForcedDesynchronyBiologicalHour,
   getForcedDesynchronyPhaseDrift,
   getForcedDesynchronySchedule,
   getSleepModelHorizon,
+  getPredictedSleepWindows,
   getSleepWindows,
   type SleepBudgetMode,
 } from "./sleep-model";
@@ -63,7 +66,11 @@ describe("forced desynchrony sleep model", () => {
   it("disables caffeine masking during forced desynchrony", () => {
     const data = generateSleepData({
       scenario: "forced-desynchrony",
-      caffeineEvents: [0, 10, 20],
+      caffeineDoses: [
+        { hour: 0, milligrams: 200 },
+        { hour: 10, milligrams: 200 },
+        { hour: 20, milligrams: 200 },
+      ],
       forcedDesynchrony: { protocol: "20", budget: "control" },
       step: 1,
     });
@@ -91,5 +98,76 @@ describe("forced desynchrony sleep model", () => {
 
     expect(data.some((point) => point.misaligned)).toBe(true);
     expect(data.some((point) => point.alignmentLabel === "Opposing")).toBe(true);
+  });
+});
+
+describe("paper-grounded caffeine hybrid", () => {
+  it("keeps the no-caffeine normal routine close to 11 PM to 7 AM", () => {
+    const windows = getPredictedSleepWindows(
+      generateSleepData({ scenario: "normal", step: 0.25 }),
+    );
+
+    expect(windows[0]?.start).toBeCloseTo(16, 1);
+    expect(windows[0]?.end).toBeGreaterThanOrEqual(23.75);
+    expect(windows[0]?.end).toBeLessThanOrEqual(24.25);
+  });
+
+  it("peaks within about an hour and adds overlapping doses", () => {
+    const doses = [{ hour: 8, milligrams: 200 }];
+    const concentrationAtPeak = caffeineConcentration(8.9, doses);
+
+    expect(concentrationAtPeak).toBeGreaterThan(caffeineConcentration(8.1, doses));
+    expect(concentrationAtPeak).toBeGreaterThan(caffeineConcentration(11, doses));
+    expect(caffeineConcentration(9, [...doses, { hour: 8, milligrams: 200 }])).toBeCloseTo(
+      caffeineConcentration(9, doses) * 2,
+      3,
+    );
+  });
+
+  it("keeps masking below true pressure", () => {
+    const data = generateSleepData({
+      scenario: "normal",
+      caffeineDoses: [{ hour: 15, milligrams: 400 }],
+    });
+
+    expect(data.every((point) => point.feltS <= point.processS)).toBe(true);
+  });
+
+  it("predicts more sleep disruption for later and larger doses", () => {
+    const baseline = generateSleepData({ scenario: "normal" });
+    const morning = generateSleepData({
+      scenario: "normal",
+      caffeineDoses: [{ hour: 8, milligrams: 200 }],
+    });
+    const late200 = generateSleepData({
+      scenario: "normal",
+      caffeineDoses: [{ hour: 15, milligrams: 200 }],
+    });
+    const late400 = generateSleepData({
+      scenario: "normal",
+      caffeineDoses: [{ hour: 15, milligrams: 400 }],
+    });
+    const morningComparison = compareCaffeineSleep(baseline, morning);
+    const late200Comparison = compareCaffeineSleep(baseline, late200);
+    const late400Comparison = compareCaffeineSleep(baseline, late400);
+
+    expect(late200Comparison.sleepOnsetDelayMinutes).toBeGreaterThanOrEqual(
+      morningComparison.sleepOnsetDelayMinutes,
+    );
+    expect(late400Comparison.sleepOnsetDelayMinutes).toBeGreaterThanOrEqual(
+      late200Comparison.sleepOnsetDelayMinutes,
+    );
+    expect(late400Comparison.sleepDurationChangeMinutes).toBeLessThanOrEqual(
+      late200Comparison.sleepDurationChangeMinutes,
+    );
+  });
+
+  it("returns deterministic caffeine data", () => {
+    const options = {
+      scenario: "all-nighter" as const,
+      caffeineDoses: [{ hour: 20, milligrams: 200 }],
+    };
+
+    expect(generateSleepData(options)).toEqual(generateSleepData(options));
   });
 });

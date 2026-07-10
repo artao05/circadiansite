@@ -9,12 +9,14 @@ import {
   Moon,
   RotateCcw,
   SunMedium,
+  X,
 } from "lucide-react";
 import { useMemo, useState } from "react";
-import { CitationList } from "./CitationLink";
+import { CitationLink, CitationList } from "./CitationLink";
 import { ModelNotation } from "./ModelNotation";
 import { SleepModelChart } from "./SleepModelChart";
 import {
+  compareCaffeineSleep,
   forcedDesynchronyDefaults,
   forcedDesynchronyProtocolOptions,
   formatElapsedHours,
@@ -25,8 +27,9 @@ import {
   getNarrative,
   getSleepChartTicks,
   getSleepModelHorizon,
-  getSleepWindows,
+  getPredictedSleepWindows,
   sleepBudgetOptions,
+  type CaffeineDose,
   type ForcedDesynchronyOptions,
   type ForcedDesynchronyProtocol,
   type SleepDatum,
@@ -84,10 +87,20 @@ function formatMetric(value: number) {
   return `${Math.round(value)}%`;
 }
 
+function formatSignedMinutes(value: number) {
+  if (value === 0) return "baseline";
+  return `${value > 0 ? "+" : "−"}${Math.abs(value)} min`;
+}
+
+function formatConcentration(value: number) {
+  return `${value.toFixed(value >= 1 ? 1 : 2)} mg/kg`;
+}
+
 export function CircadianSandbox() {
   const [scenario, setScenario] = useState<SleepScenario>("normal");
   const [currentTime, setCurrentTime] = useState(8);
-  const [caffeineEvents, setCaffeineEvents] = useState<number[]>([]);
+  const [selectedCaffeineMg, setSelectedCaffeineMg] = useState(200);
+  const [caffeineDoses, setCaffeineDoses] = useState<CaffeineDose[]>([]);
   const [fdProtocol, setFdProtocol] = useState<ForcedDesynchronyProtocol>(
     forcedDesynchronyDefaults.protocol,
   );
@@ -100,17 +113,22 @@ export function CircadianSandbox() {
   );
   const horizon = getSleepModelHorizon(scenario, forcedDesynchrony);
   const boundedTime = Math.min(currentTime, horizon);
-  const sleepWindows = useMemo(
-    () => getSleepWindows(scenario, forcedDesynchrony),
-    [forcedDesynchrony, scenario],
-  );
   const chartTicks = useMemo(
     () => getSleepChartTicks(scenario, forcedDesynchrony),
     [forcedDesynchrony, scenario],
   );
   const data = useMemo(
-    () => generateSleepData({ scenario, caffeineEvents, forcedDesynchrony }),
-    [caffeineEvents, forcedDesynchrony, scenario],
+    () => generateSleepData({ scenario, caffeineDoses, forcedDesynchrony }),
+    [caffeineDoses, forcedDesynchrony, scenario],
+  );
+  const baselineData = useMemo(
+    () => generateSleepData({ scenario, forcedDesynchrony }),
+    [forcedDesynchrony, scenario],
+  );
+  const sleepWindows = useMemo(() => getPredictedSleepWindows(data), [data]);
+  const caffeineComparison = useMemo(
+    () => compareCaffeineSleep(baselineData, data),
+    [baselineData, data],
   );
   const currentPoint = useMemo(
     () => nearestDatum(data, boundedTime),
@@ -118,7 +136,15 @@ export function CircadianSandbox() {
   );
   const narrative = getNarrative(scenario, boundedTime, forcedDesynchrony);
   const isForcedDesynchrony = scenario === "forced-desynchrony";
-  const caffeineIsActive = !isForcedDesynchrony && currentPoint.caffeineEffect > 4;
+  const caffeineIsActive =
+    !isForcedDesynchrony && currentPoint.caffeineConcentration > 0.05;
+  const activeNarrative = caffeineIsActive
+    ? {
+        eyebrow: "Caffeine active",
+        title: "The model separates masked pressure from wake stability.",
+        body: "Caffeine lowers the effective homeostatic signal while adding a temporary wake-stability term. The true pressure underneath keeps changing with sleep and wake.",
+      }
+    : narrative;
   const cursorLabel = isForcedDesynchrony
     ? `t=${formatElapsedHours(boundedTime)}`
     : formatClockTime(boundedTime);
@@ -132,7 +158,7 @@ export function CircadianSandbox() {
   };
   const setScenarioAndReset = (nextScenario: SleepScenario) => {
     setScenario(nextScenario);
-    setCaffeineEvents([]);
+    setCaffeineDoses([]);
 
     if (nextScenario === "forced-desynchrony") {
       setCurrentTime(getSleepModelHorizon(nextScenario, forcedDesynchrony) / 2);
@@ -252,9 +278,9 @@ export function CircadianSandbox() {
 
       <div className="sandbox-stage">
         <aside className="sandbox-story">
-          <span>{narrative.eyebrow}</span>
-          <h4>{narrative.title}</h4>
-          <p>{narrative.body}</p>
+          <span>{activeNarrative.eyebrow}</span>
+          <h4>{activeNarrative.title}</h4>
+          <p>{activeNarrative.body}</p>
           {caffeineIsActive ? (
             <p className="coffee-note">
               Coffee is active here: felt pressure falls, but true adenosine
@@ -272,12 +298,18 @@ export function CircadianSandbox() {
           sleepWindows={sleepWindows}
           ticks={chartTicks}
           colors={sandboxChartColors}
+          caffeineDoses={caffeineDoses}
         />
 
         <div className="sandbox-legend" aria-label="Chart legend">
           <span style={{ color: sandboxChartColors.feltS }}>Felt Sleep Pressure</span>
           <span style={{ color: sandboxChartColors.processS }}>True Adenosine</span>
           <span style={{ color: sandboxChartColors.processC }}>Wake Drive (C)</span>
+          {!isForcedDesynchrony ? (
+            <span style={{ color: sandboxChartColors.caffeine }}>
+              Caffeine in body (<ModelNotation id="caffeine-concentration-zc" />)
+            </span>
+          ) : null}
         </div>
       </div>
 
@@ -333,108 +365,161 @@ export function CircadianSandbox() {
           </div>
         ) : (
           <div className="sandbox-actions">
+            <div className="caffeine-dose-picker" aria-label="Caffeine dose">
+              {[100, 200, 400].map((dose) => (
+                <button
+                  key={dose}
+                  className={selectedCaffeineMg === dose ? "selected" : undefined}
+                  type="button"
+                  aria-pressed={selectedCaffeineMg === dose}
+                  onClick={() => setSelectedCaffeineMg(dose)}
+                >
+                  {dose} mg
+                </button>
+              ))}
+            </div>
             <button
               className="emphasis"
               type="button"
               onClick={() =>
-                setCaffeineEvents((events) => [
-                  ...events,
-                  Number(boundedTime.toFixed(2)),
+                setCaffeineDoses((doses) => [
+                  ...doses,
+                  {
+                    hour: Number(boundedTime.toFixed(2)),
+                    milligrams: selectedCaffeineMg,
+                  },
                 ])
               }
             >
               <Coffee size={17} aria-hidden="true" />
-              Drink Coffee
+              drink coffee
             </button>
             <button
               type="button"
-              onClick={() => setCaffeineEvents([])}
-              disabled={caffeineEvents.length === 0}
+              onClick={() => setCaffeineDoses([])}
+              disabled={caffeineDoses.length === 0}
             >
               <RotateCcw size={16} aria-hidden="true" />
-              Reset coffee
+              Reset doses
             </button>
+            {caffeineDoses.length ? (
+              <div className="caffeine-event-list" aria-label="Added caffeine doses">
+                {caffeineDoses.map((dose, index) => (
+                  <span key={`${dose.hour}-${dose.milligrams}-${index}`} className="caffeine-event">
+                    {formatClockTime(dose.hour)} · {dose.milligrams} mg
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setCaffeineDoses((doses) =>
+                          doses.filter((_, doseIndex) => doseIndex !== index),
+                        )
+                      }
+                      aria-label={`Remove ${dose.milligrams} milligram caffeine dose at ${formatClockTime(dose.hour)}`}
+                      title="Remove dose"
+                    >
+                      <X size={13} aria-hidden="true" />
+                    </button>
+                  </span>
+                ))}
+              </div>
+            ) : null}
+            <p className="sandbox-caffeine-note">
+              Illustrative 75 kg paper profile: <ModelNotation id="caffeine-absorption-ka" />, {" "}
+              <ModelNotation id="caffeine-elimination-ke" />, {" "}
+              <ModelNotation id="caffeine-mask-zeta-h" />, and {" "}
+              <ModelNotation id="caffeine-arousal-zeta-a" />. This is not a personal
+              prediction. Source: <CitationLink id="puckeridge-2011" context="caffeine-sandbox-profile" />.
+            </p>
           </div>
         )}
       </div>
 
       <div className="sandbox-metrics">
-        <article>
-          <span>Process S</span>
-          <strong>{formatMetric(currentPoint.feltS)}</strong>
-          <p>
-            {isForcedDesynchrony
-              ? "tracks scheduled wake and sleep"
-              : "felt sleep pressure"}
-          </p>
-          <div className="sandbox-meter" aria-hidden="true">
-            <i
-              style={{
-                background: sandboxChartColors.feltS,
-                width: `${currentPoint.feltS}%`,
-              }}
-            />
-          </div>
-        </article>
-        <article>
-          <span>Process C</span>
-          <strong>{formatMetric(currentPoint.processC)}</strong>
-          <p>
-            {isForcedDesynchrony
-              ? `biological ${currentPoint.biologicalLabel}`
-              : "circadian wake drive"}
-          </p>
-          <div className="sandbox-meter" aria-hidden="true">
-            <i
-              style={{
-                background: sandboxChartColors.processC,
-                width: `${currentPoint.processC}%`,
-              }}
-            />
-          </div>
-        </article>
-        <article>
-          <span>Net alertness</span>
-          <strong>{formatMetric(currentPoint.netAlertness)}</strong>
-          <p>wake drive minus sleep load</p>
-          <div className="sandbox-meter" aria-hidden="true">
-            <i
-              style={{
-                background: sandboxChartColors.caffeine,
-                width: `${currentPoint.netAlertness}%`,
-              }}
-            />
-          </div>
-        </article>
-        <article>
-          <span>State</span>
-          <strong>{currentPoint.state}</strong>
-          <p>
-            {isForcedDesynchrony
-              ? `${currentPoint.dayLabel} · ${selectedProtocol.label}`
-              : currentPoint.dayLabel}
-          </p>
-        </article>
         {isForcedDesynchrony ? (
-          <article>
-            <span>
-              <Activity size={15} aria-hidden="true" />
-              Alignment
-            </span>
-            <strong>{currentPoint.alignmentLabel}</strong>
-            <p>{getTrapLabel(currentPoint, scenario)}</p>
-          </article>
+          <>
+            <article>
+              <span>Process S</span>
+              <strong>{formatMetric(currentPoint.feltS)}</strong>
+              <p>tracks scheduled wake and sleep</p>
+            </article>
+            <article>
+              <span>Process C</span>
+              <strong>{formatMetric(currentPoint.processC)}</strong>
+              <p>biological {currentPoint.biologicalLabel}</p>
+            </article>
+            <article>
+              <span>Net alertness</span>
+              <strong>{formatMetric(currentPoint.netAlertness)}</strong>
+              <p>wake drive minus sleep load</p>
+            </article>
+            <article>
+              <span>State</span>
+              <strong>{currentPoint.state}</strong>
+              <p>{currentPoint.dayLabel} · {selectedProtocol.label}</p>
+            </article>
+            <article>
+              <span>
+                <Activity size={15} aria-hidden="true" />
+                Alignment
+              </span>
+              <strong>{currentPoint.alignmentLabel}</strong>
+              <p>{getTrapLabel(currentPoint, scenario)}</p>
+            </article>
+          </>
         ) : (
-          <article>
-            <span>
-              <Activity size={15} aria-hidden="true" />
-              The Adenosine Trap
-            </span>
-            <strong>
-              {currentPoint.processS > currentPoint.feltS ? "Masked" : "Visible"}
-            </strong>
-            <p>{getTrapLabel(currentPoint, scenario)}</p>
-          </article>
+          <>
+            <article>
+              <span>True pressure</span>
+              <strong>{formatMetric(currentPoint.processS)}</strong>
+              <p>homeostatic signal before caffeine masking</p>
+              <div className="sandbox-meter" aria-hidden="true">
+                <i
+                  style={{
+                    background: sandboxChartColors.processS,
+                    width: `${currentPoint.processS}%`,
+                  }}
+                />
+              </div>
+            </article>
+            <article>
+              <span><ModelNotation id="caffeine-concentration-zc" /> in body</span>
+              <strong>{formatConcentration(currentPoint.caffeineConcentration)}</strong>
+              <p>
+                {formatConcentration(caffeineComparison.residualCaffeineAtBaselineBedtime)}
+                {" "}at baseline bedtime
+              </p>
+            </article>
+            <article>
+              <span>Sleep onset</span>
+              <strong>
+                {caffeineDoses.length
+                  ? `+${caffeineComparison.sleepOnsetDelayMinutes} min`
+                  : "baseline"}
+              </strong>
+              <p>predicted shift from the no-caffeine sleep transition</p>
+            </article>
+            <article>
+              <span>Duration change</span>
+              <strong>{formatSignedMinutes(caffeineComparison.sleepDurationChangeMinutes)}</strong>
+              <p>predicted first sleep episode versus baseline</p>
+            </article>
+            <article>
+              <span>
+                <Activity size={15} aria-hidden="true" />
+                Wake-effort proxy
+              </span>
+              <strong>{formatMetric(currentPoint.fatigueProxy)}</strong>
+              <p>educational fatigue indicator · {currentPoint.state}</p>
+              <div className="sandbox-meter" aria-hidden="true">
+                <i
+                  style={{
+                    background: sandboxChartColors.caffeine,
+                    width: `${currentPoint.fatigueProxy}%`,
+                  }}
+                />
+              </div>
+            </article>
+          </>
         )}
       </div>
     </section>

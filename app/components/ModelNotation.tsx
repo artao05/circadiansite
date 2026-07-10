@@ -11,7 +11,12 @@ export type ModelNotationId =
   | "total-delay"
   | "critical-delay"
   | "protocol-length-T"
-  | "circadian-tau";
+  | "circadian-tau"
+  | "caffeine-concentration-zc"
+  | "caffeine-absorption-ka"
+  | "caffeine-elimination-ke"
+  | "caffeine-mask-zeta-h"
+  | "caffeine-arousal-zeta-a";
 
 const notationPresets: Record<ModelNotationId, ReactNode> = {
   "per-mrna-M": <>M</>,
@@ -25,6 +30,11 @@ const notationPresets: Record<ModelNotationId, ReactNode> = {
   "critical-delay": <>τ₀ ≈ 4.54 h</>,
   "protocol-length-T": <>T</>,
   "circadian-tau": <>τ ≈ 24.15 h</>,
+  "caffeine-concentration-zc": <>Z<sub>C</sub></>,
+  "caffeine-absorption-ka": <>k<sub>a</sub> = 3.6 h<sup>−1</sup></>,
+  "caffeine-elimination-ke": <>k<sub>e</sub> = 0.16 h<sup>−1</sup></>,
+  "caffeine-mask-zeta-h": <>ζ<sub>H</sub> = 0.005 (mg/kg)<sup>−1</sup></>,
+  "caffeine-arousal-zeta-a": <>ζ<sub>A</sub> = 0.023 mV (mg/kg)<sup>−1</sup></>,
 };
 
 type SvgPart = { kind: "text" | "sub" | "sup"; value: string };
@@ -41,6 +51,11 @@ const svgNotationPresets: Record<ModelNotationId, SvgPart[]> = {
   "critical-delay": [{ kind: "text", value: "τ₀ ≈ 4.54 h" }],
   "protocol-length-T": [{ kind: "text", value: "T" }],
   "circadian-tau": [{ kind: "text", value: "τ ≈ 24.15 h" }],
+  "caffeine-concentration-zc": [{ kind: "text", value: "Z" }, { kind: "sub", value: "C" }],
+  "caffeine-absorption-ka": [{ kind: "text", value: "k" }, { kind: "sub", value: "a" }, { kind: "text", value: " = 3.6 h" }, { kind: "sup", value: "−1" }],
+  "caffeine-elimination-ke": [{ kind: "text", value: "k" }, { kind: "sub", value: "e" }, { kind: "text", value: " = 0.16 h" }, { kind: "sup", value: "−1" }],
+  "caffeine-mask-zeta-h": [{ kind: "text", value: "ζ" }, { kind: "sub", value: "H" }, { kind: "text", value: " = 0.005 (mg/kg)" }, { kind: "sup", value: "−1" }],
+  "caffeine-arousal-zeta-a": [{ kind: "text", value: "ζ" }, { kind: "sub", value: "A" }, { kind: "text", value: " = 0.023 mV (mg/kg)" }, { kind: "sup", value: "−1" }],
 };
 
 export function ModelNotation({ id, className }: { id: ModelNotationId; className?: string }) {
