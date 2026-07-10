@@ -26,7 +26,7 @@ import type { SectionVideoExplainer as SectionVideoExplainerData } from "./conte
 import { CircadianTimeProvider } from "./components/CircadianTimeProvider";
 import { MasterCircadianClock } from "./components/MasterCircadianClock";
 import { DayNightCanvas } from "./components/DayNightCanvas";
-import { CitationReturn } from "./components/CitationLink";
+import { CitationList, CitationReturn } from "./components/CitationLink";
 import { ReportNav } from "./components/ReportNav";
 import { sourceAnchor } from "./lib/citations";
 
@@ -88,19 +88,17 @@ export default function Home() {
         <section className="hero-section" id="top" style={{ position: "relative" }}>
           <DayNightCanvas />
           <div className="hero-copy" style={{ zIndex: 10 }}>
-            <p className="kicker">Medicine in the 4th dimension</p>
-            <h1>Biology changes with time. Medicine should notice.</h1>
+            <p className="kicker">Your body keeps time</p>
+            <h1>Biology changes by the hour. Medicine should notice.</h1>
             <p>
-              Circadian biology is the study of the body as a moving system.
-              This primer turns the basics into interactive figures, then
-              connects them to drug timing, gene rhythms, and the future of
-              chronomedicine.
+              Explore how body time shapes sleep, genes, organs, and the way
+              medicines meet a changing biological system.
             </p>
             <div className="hero-actions">
               <a href="#rhythm-lab">
-                Start with rhythms <ArrowDown size={18} aria-hidden="true" />
+                Start exploring <ArrowDown size={18} aria-hidden="true" />
               </a>
-              <a href="#medicine">Medication examples</a>
+              <a href="#medicine">See medicine examples</a>
             </div>
           </div>
           <MasterCircadianClock />
@@ -109,9 +107,9 @@ export default function Home() {
         <section className="content-band opening-band">
           <ChapterIntro {...opening} />
           <div className="opening-thesis" aria-label="Opening principles">
-            <span>Biology changes.</span>
+            <span>Biology shifts.</span>
             <span>Evidence stays visible.</span>
-            <span>Medication care stays clinical.</span>
+            <span>Medication decisions stay clinical.</span>
           </div>
           <CircadianSandbox />
         </section>
@@ -137,28 +135,9 @@ export default function Home() {
           <EntrainmentDemo />
         </section>
 
-        <section
-          className="content-band brain-band bg-[#1C2026] text-[#FCF8EE] py-24"
-          id={brain.id}
-          aria-labelledby="brain-title"
-        >
-          <div className="max-w-6xl mx-auto px-6">
-            <p className="kicker">{brain.eyebrow}</p>
-            <h2
-              className="font-serif text-4xl mb-4 text-[#FCF8EE]"
-              id="brain-title"
-            >
-              The Core Circadian Circuitry
-            </h2>
-            <p className="text-lg text-[#FCF8EE]/80 max-w-2xl mb-12">
-              The master clock sits deep inside the brain. The
-              Suprachiasmatic Nucleus (SCN) receives light signals directly
-              from the eyes and coordinates with sleep-promoting centers like
-              the VLPO and arousal centers like the TMN to drive the sleep-wake
-              cycle.
-            </p>
-            <InteractiveBrainMap />
-          </div>
+        <section className="content-band brain-band">
+          <ChapterIntro {...brain} />
+          <InteractiveBrainMap />
         </section>
 
         <section className="content-band body-band">
@@ -180,51 +159,12 @@ export default function Home() {
 
         <section className="content-band oxaliplatin-band">
           <ChapterIntro {...oxaliplatin} />
-          <div
-            className="narrative-block"
-            style={{ maxWidth: "800px", margin: "0 auto 3rem", textAlign: "center" }}
-          >
-            <p
-              className="kicker"
-              style={{
-                color: "#06b6d4",
-                fontWeight: 700,
-                textTransform: "uppercase",
-                letterSpacing: 0,
-                fontSize: "0.85rem",
-                marginBottom: "0.5rem",
-              }}
-            >
-              Case study
-            </p>
-            <h3
-              style={{
-                fontSize: "1.75rem",
-                color: "#f3f4f6",
-                marginBottom: "1rem",
-                fontWeight: 700,
-                letterSpacing: 0,
-              }}
-            >
-              Oxaliplatin shows why timing can change interpretation.
-            </h3>
-            <p
-              style={{
-                color: "#9ca3af",
-                fontSize: "1.125rem",
-                lineHeight: 1.6,
-                marginBottom: "1rem",
-              }}
-            >
-              Oxaliplatin is a useful case because the story did not end with a
-              simple win. Chronomodulated chemotherapy changed the safety and
-              efficacy conversation, but a later randomized trial and
-              meta-analysis raised a difficult sex-specific survival question.
-            </p>
-            <p style={{ color: "#9ca3af", fontSize: "1.125rem", lineHeight: 1.6 }}>
-              If that signal was real, it deserved better follow-up rather than
-              abandonment. If it was post-hoc noise, it shows why chronomedicine
-              needs careful trial design before it can become routine care.
+          <div className="case-study-intro">
+            <p className="kicker">Why this case matters</p>
+            <p>
+              Early studies looked promising. Later trials raised a harder
+              question: did the same schedule affect different groups
+              differently, or was the signal noise?
             </p>
           </div>
           <OxaliplatinTimeline />
@@ -241,13 +181,26 @@ export default function Home() {
             <div className="claim-row header" role="row">
               <span>Claim</span>
               <span>Confidence</span>
-              <span>Visual use</span>
+              <span>Evidence</span>
             </div>
             {claimMatrix.map((claim) => (
               <div className="claim-row" role="row" key={claim.claim}>
                 <span>{claim.beginnerPhrasing}</span>
                 <span>{claim.confidence}</span>
-                <span>{claim.visualUse}</span>
+                <details>
+                  <summary>Why we say this</summary>
+                  <p>{claim.evidenceType}</p>
+                  <p>{claim.caveat}</p>
+                  <p>
+                    Used in: {claim.visualUse}. Sources:{" "}
+                    <CitationList
+                      ids={claim.source.split(";").map((id) => id.trim())}
+                      contextPrefix={`claim-${claim.visualUse
+                        .toLowerCase()
+                        .replace(/[^a-z0-9]+/g, "-")}`}
+                    />
+                  </p>
+                </details>
               </div>
             ))}
           </div>
@@ -258,9 +211,12 @@ export default function Home() {
                 id={sourceAnchor(citation.id)}
                 className="source-card"
               >
-                <p className="kicker">{citation.id}</p>
+                <p className="kicker">{citation.source}</p>
                 <h3>{citation.title}</h3>
-                <p>{citation.note}</p>
+                <details className="source-note">
+                  <summary>Why it’s here</summary>
+                  <p>{citation.note}</p>
+                </details>
                 <div className="source-card-meta">
                   {citation.url ? (
                     <a
@@ -287,8 +243,8 @@ export default function Home() {
             <span>Educational circadian biology primer</span>
           </div>
           <p>
-            Not medical advice. Do not change medication timing without guidance
-            from a clinician or pharmacist.
+            Educational only. Don’t change medication timing without a
+            clinician or pharmacist.
           </p>
           <div>
             <FlaskConical size={18} aria-hidden="true" />

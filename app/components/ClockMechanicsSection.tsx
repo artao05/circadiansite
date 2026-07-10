@@ -11,44 +11,42 @@ const stateCopy: Record<
   { eyebrow: string; title: string; caption: ReactNode }
 > = {
   morning: {
-    eyebrow: "Morning",
-    title: "CLOCK/BMAL1 activates transcription",
+    eyebrow: "Turn on",
+    title: "CLOCK/BMAL1 starts the signal",
     caption:
       <>
         <span className="clock-term activator">CLOCK/BMAL1</span> is the
-        activator pair: two transcription factors that dock on DNA and start
-        the next wave of clock-controlled messages.
+        activator pair. It binds DNA and starts the next wave of clock messages.
       </>,
   },
   afternoon: {
-    eyebrow: "Afternoon",
-    title: "PER/CRY accumulates",
+    eyebrow: "Build up",
+    title: "PER/CRY begins to rise",
     caption:
       <>
         <span className="clock-term repressor">PER/CRY</span> proteins are the
-        delayed products of that signal. They collect in the cell before
-        returning to shut the loop down.
+        delayed brake. The proteins build before returning to shut the loop down.
       </>,
   },
   night: {
-    eyebrow: "Night",
-    title: "PER/CRY represses the complex",
+    eyebrow: "Turn down",
+    title: "PER/CRY quiets the signal",
     caption:
       <>
         The <span className="clock-term repressor">PER/CRY</span> repressor
-        complex moves back to the DNA site and quiets the{" "}
+        pair returns to the DNA site and quiets the{" "}
         <span className="clock-term activator">CLOCK/BMAL1</span> signal that
         created it.
       </>,
   },
   dawn: {
-    eyebrow: "Dawn",
-    title: "Degradation resets the loop",
+    eyebrow: "Reset",
+    title: "The brake clears",
     caption:
       <>
         The <span className="clock-term repressor">PER/CRY</span> repressors
-        are degraded, exposing <span className="clock-term activator">CLOCK/BMAL1</span>{" "}
-        so the molecular day can begin again.
+        break down, exposing <span className="clock-term activator">CLOCK/BMAL1</span>{" "}
+        so the cycle can begin again.
       </>,
   },
 };
@@ -180,33 +178,36 @@ export function ClockMechanicsSection({
           <p className="kicker">{activeCopy.eyebrow}</p>
           <h2>{activeCopy.title}</h2>
           <p>{activeCopy.caption}</p>
-          <div
-            className="clock-balance-meter"
-            aria-label="Illustrative activator and repressor balance"
-          >
-            <div>
-              <span>Activator</span>
-              <i>
-                <b
-                  style={{ width: `${balanceCopy[timeState].activatorLevel}%` }}
-                />
-              </i>
+          <details className="clock-model-details">
+            <summary>How the model works</summary>
+            <div
+              className="clock-balance-meter"
+              aria-label="Illustrative activator and repressor balance"
+            >
+              <div>
+                <span>Activator</span>
+                <i>
+                  <b
+                    style={{ width: `${balanceCopy[timeState].activatorLevel}%` }}
+                  />
+                </i>
+              </div>
+              <div>
+                <span>Repressor</span>
+                <i>
+                  <b
+                    style={{ width: `${balanceCopy[timeState].repressorLevel}%` }}
+                  />
+                </i>
+              </div>
+              <strong>{balanceCopy[timeState].label}</strong>
+              <p>{balanceCopy[timeState].copy}</p>
+              <small>
+                Inspired by Kim & Forger 2012: robust timing through protein
+                balance.
+              </small>
             </div>
-            <div>
-              <span>Repressor</span>
-              <i>
-                <b
-                  style={{ width: `${balanceCopy[timeState].repressorLevel}%` }}
-                />
-              </i>
-            </div>
-            <strong>{balanceCopy[timeState].label}</strong>
-            <p>{balanceCopy[timeState].copy}</p>
-            <small>
-              Inspired by Kim & Forger 2012: robust timing via stoichiometric
-              balance.
-            </small>
-          </div>
+          </details>
         </div>
 
         <div className="clock-molecule-key" aria-label="Molecular loop cast">

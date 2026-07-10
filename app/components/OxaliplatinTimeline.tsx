@@ -23,30 +23,8 @@ export function OxaliplatinTimeline() {
   const [activeStep, setActiveStep] = useState(0);
 
   return (
-    <div
-      className="oxaliplatin-explorer interactive-block"
-      style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
-        gap: "3rem",
-        alignItems: "center",
-        maxWidth: "1000px",
-        margin: "0 auto",
-      }}
-    >
-      <div
-        className="visual-panel"
-        style={{
-          position: "relative",
-          width: "100%",
-          aspectRatio: "1 / 1",
-          background: "#0a0f14",
-          borderRadius: "8px",
-          border: "1px solid rgba(255,255,255,0.08)",
-          boxShadow: "0 20px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1)",
-          overflow: "hidden",
-        }}
-      >
+    <div className="oxaliplatin-explorer interactive-block">
+      <div className="visual-panel oxaliplatin-visual">
         {plates.map((src, index) => (
           <Image
             key={`${src}-${index}`}
@@ -65,96 +43,39 @@ export function OxaliplatinTimeline() {
             }}
           />
         ))}
-        <div style={{
-          position: "absolute",
-          inset: 0,
-          boxShadow: "inset 0 0 40px rgba(0,0,0,0.6)",
-          pointerEvents: "none"
-        }} />
+        <div className="oxaliplatin-image-shade" />
       </div>
 
-      <div
-        className="narrative-steps"
-        style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
-      >
+      <div className="narrative-steps">
         {oxaliplatinEvents.map((event, index) => {
           const isActive = index === activeStep;
           return (
             <button
               key={event.title}
               onClick={() => setActiveStep(index)}
-              style={{
-                display: "flex",
-                gap: "1.25rem",
-                textAlign: "left",
-                padding: "1.5rem",
-                borderRadius: "8px",
-                background: isActive ? "rgba(255, 249, 239, 0.05)" : "transparent",
-                border: isActive
-                  ? "1px solid rgba(255, 255, 255, 0.1)"
-                  : "1px solid transparent",
-                cursor: "pointer",
-                transition: "all 0.3s ease",
-                opacity: isActive ? 1 : 0.62,
-                boxShadow: isActive ? "0 10px 30px rgba(0,0,0,0.2)" : "none",
-              }}
+              className={isActive ? "is-active" : undefined}
+              aria-pressed={isActive}
             >
-              <div
-                style={{
-                  fontWeight: 700,
-                  color: isActive ? "#f59e0b" : "#6b7280",
-                  fontSize: "1.5rem",
-                  fontFamily: "monospace",
-                }}
-              >
+              <div className="oxaliplatin-step-number">
                 {String(index + 1).padStart(2, "0")}
               </div>
               <div>
-                <span
-                  style={{
-                    fontSize: "0.85rem",
-                    fontWeight: 700,
-                    color: isActive ? "#06b6d4" : "#8b95a3",
-                    textTransform: "uppercase",
-                    letterSpacing: 0,
-                  }}
-                >
-                  {event.year}
-                </span>
-                <h3 style={{ margin: "0.3rem 0", color: isActive ? "#f3f4f6" : "#c2c8d0", fontSize: "1.125rem", fontWeight: 600 }}>
-                  {event.title}
-                </h3>
+                <span>{event.year}</span>
+                <h3>{event.title}</h3>
                 {isActive && (
-                  <p
-                    style={{
-                      margin: 0,
-                      color: "#9ca3af",
-                      lineHeight: 1.6,
-                      marginTop: "0.5rem",
-                      fontSize: "0.95rem"
-                    }}
-                  >
-                    {event.copy}
-                  </p>
+                  <p>{event.copy}</p>
                 )}
               </div>
             </button>
           );
         })}
-        <p
-          style={{
-            margin: "0.35rem 0 0",
-            color: "rgba(255, 249, 239, 0.58)",
-            fontSize: "0.88rem",
-            lineHeight: 1.55,
-          }}
-        >
+        <p className="oxaliplatin-sources">
           Sources:{" "}
           <CitationList
             ids={oxaliplatinCitationIds}
             contextPrefix="oxaliplatin"
           />
-          . This case study is educational and does not recommend chemotherapy
+          . This case explains the evidence; it doesn’t recommend chemotherapy
           timing.
         </p>
       </div>

@@ -19,16 +19,16 @@ export const navGroupMeta: Record<
   { label: string; description: string }
 > = {
   foundations: {
-    label: "Foundations",
-    description: "Learn the language of biological time.",
+    label: "Basics",
+    description: "Learn how body time works.",
   },
   clocks: {
-    label: "Clock anatomy",
-    description: "See where time lives in the body and cell.",
+    label: "Body clocks",
+    description: "See how the brain, organs, cells, and genes keep time.",
   },
   medicine: {
-    label: "Chronomedicine",
-    description: "Why timing enters clinical stories.",
+    label: "Medicine",
+    description: "See why timing enters clinical research.",
   },
   evidence: {
     label: "Evidence",
@@ -38,7 +38,6 @@ export const navGroupMeta: Record<
 
 const medicineSlugMap: Record<string, string> = {
   "Short-acting statins": "statins",
-  "Long-acting insulin": "insulin",
   Anticoagulants: "anticoagulants",
   "Acid reflux medicines": "acid-reflux",
   "ADHD medicines": "adhd",

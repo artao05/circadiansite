@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { headers } from "next/headers";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -12,15 +13,52 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "Circadian Biology: Medicine in the 4th Dimension",
-  description:
-    "An interactive primer on circadian biology, biological time, and chronomedicine.",
-  icons: {
-    icon: "/favicon.svg",
-    shortcut: "/favicon.svg",
-  },
-};
+const title = "Circadian Primer: Biology Changes by the Hour";
+const description =
+  "Explore how body time shapes sleep, genes, organs, and the way medicines meet a changing biological system.";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const requestHeaders = await headers();
+  const host =
+    requestHeaders.get("x-forwarded-host") ??
+    requestHeaders.get("host") ??
+    "localhost:3000";
+  const protocol =
+    requestHeaders.get("x-forwarded-proto") ??
+    (host.startsWith("localhost") ? "http" : "https");
+  const origin = new URL(`${protocol}://${host}`);
+  const socialImage = new URL("/og.png", origin).toString();
+
+  return {
+    metadataBase: origin,
+    title,
+    description,
+    icons: {
+      icon: "/favicon.svg",
+      shortcut: "/favicon.svg",
+    },
+    openGraph: {
+      type: "website",
+      url: origin,
+      title,
+      description,
+      images: [
+        {
+          url: socialImage,
+          width: 1200,
+          height: 630,
+          alt: "Circadian Primer — Biology changes by the hour. Medicine should notice.",
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [socialImage],
+    },
+  };
+}
 
 export default function RootLayout({
   children,

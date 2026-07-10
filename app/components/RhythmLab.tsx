@@ -47,33 +47,33 @@ const initialState: RhythmState = {
 const controls: Control[] = [
   {
     key: "period",
-    label: "Intrinsic period",
+    label: "Cycle length (period)",
     min: 23.8,
     max: 24.8,
     step: 0.05,
     unit: "h",
     description:
-      "The free-running cycle length is close to 24 hours, so this control stays in a physiological teaching range.",
+      "How long one cycle takes without outside timing cues.",
   },
   {
     key: "amplitude",
-    label: "Signal strength",
+    label: "Swing size (amplitude)",
     min: 55,
     max: 115,
     step: 1,
     unit: "%",
     description:
-      "A relative educational scale for stronger or weaker rhythmic organization. Cortisol is handled separately when aging is selected.",
+      "How far the signal moves above and below its average.",
   },
   {
     key: "phase",
-    label: "Current time",
+    label: "Clock time",
     min: 0,
     max: 48,
     step: 0.5,
     unit: "h",
     description:
-      "The sampled clock time. Wall-clock time and biological phase can diverge when schedules shift.",
+      "Where the marker sits. Clock time and body time can differ.",
   },
 ];
 
@@ -571,7 +571,7 @@ export function RhythmLab() {
               textAnchor="middle"
               fill="var(--ink)"
             >
-              30ug/dl
+              30 µg/dL
             </text>
             <text
               x={chart.width - 104}
@@ -579,7 +579,7 @@ export function RhythmLab() {
               textAnchor="middle"
               fill="var(--ink)"
             >
-              0ug/dl
+              0 µg/dL
             </text>
 
             <line
@@ -619,7 +619,7 @@ export function RhythmLab() {
               textAnchor="middle"
               fill="var(--cyan)"
             >
-              80pmol/l
+              80 pmol/L
             </text>
             <text
               x={chart.width - 24}
@@ -627,13 +627,22 @@ export function RhythmLab() {
               textAnchor="middle"
               fill="var(--cyan)"
             >
-              0pmol/l
+              0 pmol/L
             </text>
           </g>
         </svg>
       </div>
 
       <div className="control-panel rhythm-controls" aria-label="Rhythm controls">
+        <details className="rhythm-language">
+          <summary>Five words for reading a rhythm</summary>
+          <p>
+            <strong>Period</strong> is cycle length. <strong>Amplitude</strong>
+            is swing size. <strong>Phase</strong> is when a peak lands.{" "}
+            <strong>Baseline</strong> is the average level. <strong>Variation</strong>
+            is the ordinary noise around the pattern.
+          </p>
+        </details>
         <div className="rhythm-control-group">
           <p className="control-eyebrow">Schedule</p>
           <div className="segmented-control rhythm-choice" role="group">
@@ -735,7 +744,9 @@ export function RhythmLab() {
             <h3>{selectedScenario.label}</h3>
             <p>{selectedScenario.summary}</p>
           </div>
-          <dl>
+          <details className="rhythm-model-details">
+            <summary>Model readout</summary>
+            <dl>
             <div>
               <dt>Model amplitude</dt>
               <dd>{selectedCombination.metrics.finalAmplitude.toFixed(2)}</dd>
@@ -764,9 +775,10 @@ export function RhythmLab() {
               <dt>Cortisol swing</dt>
               <dd>{chart.cortisolStats.relativeSwing.toFixed(0)}% max</dd>
             </div>
-          </dl>
-          <p className="microcopy">{selectedCortisolProfile.note}</p>
-          <p className="microcopy">{selectedScenario.caveat}</p>
+            </dl>
+            <p className="microcopy">{selectedCortisolProfile.note}</p>
+            <p className="microcopy">{selectedScenario.caveat}</p>
+          </details>
         </div>
       </div>
     </div>

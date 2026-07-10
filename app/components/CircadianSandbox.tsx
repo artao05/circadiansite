@@ -39,9 +39,9 @@ import {
 import { sandboxChartColors } from "../lib/sandbox-themes";
 
 const scenarios: Array<{ value: SleepScenario; label: string; icon: typeof SunMedium }> = [
-  { value: "normal", label: "Normal Routine", icon: SunMedium },
-  { value: "all-nighter", label: "All-Nighter", icon: Moon },
-  { value: "forced-desynchrony", label: "Forced Desynchrony", icon: FlaskConical },
+  { value: "normal", label: "Normal day", icon: SunMedium },
+  { value: "all-nighter", label: "All-nighter", icon: Moon },
+  { value: "forced-desynchrony", label: "Lab schedule", icon: FlaskConical },
 ];
 
 const fdSourceIds = [
@@ -141,8 +141,8 @@ export function CircadianSandbox() {
   const activeNarrative = caffeineIsActive
     ? {
         eyebrow: "Caffeine active",
-        title: "The model separates masked pressure from wake stability.",
-        body: "Caffeine lowers the effective homeostatic signal while adding a temporary wake-stability term. The true pressure underneath keeps changing with sleep and wake.",
+        title: "Caffeine can hide sleep pressure for a while.",
+        body: "Felt pressure falls, but the underlying sleep drive keeps changing.",
       }
     : narrative;
   const cursorLabel = isForcedDesynchrony
@@ -172,12 +172,11 @@ export function CircadianSandbox() {
     <section className="circadian-sandbox interactive-block" id="circadian-sandbox">
       <div className="sandbox-header">
         <div>
-          <p className="kicker">Circadian rhythm sandbox</p>
-          <h3>Scrub the two-process model, then perturb it.</h3>
+          <p className="kicker">Sleep and alertness</p>
+          <h3>See what drives sleepiness and alertness.</h3>
           <p>
-            Watch homeostatic sleep pressure, circadian wake drive, caffeine
-            masking, and lab desynchrony move across everyday and research
-            schedules.
+            Move through the day, add caffeine, or try a lab schedule to see
+            sleep pressure and wake drive pull in different directions.
           </p>
         </div>
 
@@ -236,7 +235,7 @@ export function CircadianSandbox() {
               </div>
 
               <div className="sandbox-control-group">
-                <span className="sandbox-control-label">Sleep budget</span>
+                <span className="sandbox-control-label">Time allowed for sleep</span>
                 <div className="sandbox-toggle sandbox-toggle-compact" aria-label="Sleep budget">
                   {sleepBudgetOptions.map((option) => {
                     const selected = fdBudget === option.value;
@@ -283,8 +282,8 @@ export function CircadianSandbox() {
           <p>{activeNarrative.body}</p>
           {caffeineIsActive ? (
             <p className="coffee-note">
-              Coffee is active here: felt pressure falls, but true adenosine
-              keeps accumulating.
+              Caffeine is active: felt pressure falls, but sleep pressure keeps
+              building underneath.
             </p>
           ) : null}
         </aside>
@@ -302,9 +301,9 @@ export function CircadianSandbox() {
         />
 
         <div className="sandbox-legend" aria-label="Chart legend">
-          <span style={{ color: sandboxChartColors.feltS }}>Felt Sleep Pressure</span>
-          <span style={{ color: sandboxChartColors.processS }}>True Adenosine</span>
-          <span style={{ color: sandboxChartColors.processC }}>Wake Drive (C)</span>
+          <span style={{ color: sandboxChartColors.feltS }}>Felt sleep pressure</span>
+          <span style={{ color: sandboxChartColors.processS }}>Underlying sleep pressure</span>
+          <span style={{ color: sandboxChartColors.processC }}>Circadian wake drive</span>
           {!isForcedDesynchrony ? (
             <span style={{ color: sandboxChartColors.caffeine }}>
               Caffeine in body (<ModelNotation id="caffeine-concentration-zc" />)
@@ -392,7 +391,7 @@ export function CircadianSandbox() {
               }
             >
               <Coffee size={17} aria-hidden="true" />
-              drink coffee
+              Add caffeine
             </button>
             <button
               type="button"
@@ -424,17 +423,17 @@ export function CircadianSandbox() {
               </div>
             ) : null}
             <p className="sandbox-caffeine-note">
-              Illustrative 75 kg paper profile: <ModelNotation id="caffeine-absorption-ka" />, {" "}
-              <ModelNotation id="caffeine-elimination-ke" />, {" "}
-              <ModelNotation id="caffeine-mask-zeta-h" />, and {" "}
-              <ModelNotation id="caffeine-arousal-zeta-a" />. This is not a personal
-              prediction. Source: <CitationLink id="puckeridge-2011" context="caffeine-sandbox-profile" />.
+              Paper-based teaching profile for a 75 kg example. It isn’t a
+              personal prediction. Source:{" "}
+              <CitationLink id="puckeridge-2011" context="caffeine-sandbox-profile" />.
             </p>
           </div>
         )}
       </div>
 
-      <div className="sandbox-metrics">
+      <details className="sandbox-details">
+        <summary>Model readout</summary>
+        <div className="sandbox-metrics">
         {isForcedDesynchrony ? (
           <>
             <article>
@@ -521,7 +520,8 @@ export function CircadianSandbox() {
             </article>
           </>
         )}
-      </div>
+        </div>
+      </details>
     </section>
   );
 }

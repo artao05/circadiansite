@@ -270,29 +270,28 @@ export function ClinicalTrialSimulator() {
     <div className="trial-simulator interactive-block">
       <div className="trial-copy">
         <p className="kicker">Hypothetical drug: Chronava</p>
-        <h3>Same biology, different trial design.</h3>
+        <h3>Same drug, different trial design.</h3>
         <p>
-          Chronava is fictional. In this model, therapeutic effect is strongest
-          near one internal-time window, while toxicity rises near another. Each
-          run now gives participants early, typical, or late internal clocks, so
-          the same wall-clock dose can land in different biological times.
+          Chronava works best near one body-time window and causes more toxicity
+          near another. Different body clocks make the same appointment land at
+          different biological times.
         </p>
         <div className="trial-actions" aria-label="Simulation controls">
           <button type="button" onClick={() => setRunCount((count) => count + 1)}>
             <RotateCcw size={18} aria-hidden="true" />
-            Rerun trial
+            Run again
           </button>
           <button type="button" onClick={() => setRunCount((count) => count + 10)}>
             <ChevronsRight size={18} aria-hidden="true" />
-            Run 10 simulations
+            Run 10 times
           </button>
           <button type="button" onClick={() => setRunCount(1)}>
             Reset
           </button>
         </div>
         <p className="trial-caveat">
-          Educational simulation only. It is not calibrated to a real drug,
-          cancer therapy, or regulatory pathway.
+          Fictional teaching model. It doesn’t represent a real drug, disease,
+          or approval process.
         </p>
       </div>
 
@@ -390,9 +389,9 @@ export function ClinicalTrialSimulator() {
                 <div className="trial-mode-topline">
                   <span>{mode.shortLabel}</span>
                   {latest.approved ? (
-                    <BadgeCheck size={18} aria-label="Approved in latest run" />
+                    <BadgeCheck size={18} aria-label="Passed the model threshold in the latest run" />
                   ) : (
-                    <XCircle size={18} aria-label="Not approved in latest run" />
+                    <XCircle size={18} aria-label="Did not pass the model threshold in the latest run" />
                   )}
                 </div>
                 <h4>{mode.label}</h4>
@@ -401,7 +400,7 @@ export function ClinicalTrialSimulator() {
                   <span style={{ width: `${mode.rate}%` }} />
                 </div>
                 <div className="trial-stat-row">
-                  <span>Approved</span>
+                  <span>Passes threshold</span>
                   <strong>
                     {mode.approvals}/{runs.length}
                   </strong>
@@ -415,11 +414,11 @@ export function ClinicalTrialSimulator() {
                   <strong>{formatScore(latest.meanToxicity)}</strong>
                 </div>
                 <div className="trial-stat-row">
-                  <span>In window</span>
+                  <span>Target hit</span>
                   <strong>{latest.bestWindowHits}%</strong>
                 </div>
                 <div className="trial-stat-row">
-                  <span>Bio mismatch</span>
+                  <span>Average mismatch</span>
                   <strong>{formatHourDistance(latest.meanTargetDistance)}</strong>
                 </div>
               </article>

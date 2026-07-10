@@ -1,14 +1,12 @@
 "use client";
 
-import { useState } from "react";
-import { ArrowRight, Database, ExternalLink } from "lucide-react";
+import { ArrowRight, ExternalLink } from "lucide-react";
 import type {
   ClockEdgeType,
   ClockGeneCategory,
   ClockGeneEdge,
   ClockGeneNode,
 } from "../content/site-data";
-import { StructureViewer } from "./StructureViewer";
 
 const categoryLabels: Record<ClockGeneCategory, string> = {
   corePositive: "Core positive",
@@ -31,17 +29,6 @@ interface GenePlayerCardProps {
   setQuery: (query: string) => void;
 }
 
-interface LiveData {
-  proteinName: string;
-  functionDescription: string;
-  aliases: string[];
-  accession: string;
-  openTargets?: {
-    ensemblId: string;
-    diseases: { name: string; score: number }[];
-  };
-}
-
 function availableLinks(selected: ClockGeneNode) {
   return [
     ["NCBI Gene", selected.externalLinks.ncbiGene],
@@ -59,32 +46,6 @@ export function GenePlayerCard({
   edgeClass,
   setQuery,
 }: GenePlayerCardProps) {
-  const [liveData, setLiveData] = useState<LiveData | null>(null);
-  const [isLoadingLive, setIsLoadingLive] = useState(false);
-  const [liveError, setLiveError] = useState<string | null>(null);
-  const [selectedPdbId, setSelectedPdbId] = useState<string | null>(null);
-  const [isFunctionExpanded, setIsFunctionExpanded] = useState(false);
-
-  const fetchLiveData = async () => {
-    setIsLoadingLive(true);
-    setLiveError(null);
-    try {
-      const response = await fetch(`/api/gene/${selected.symbol}`);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch data for ${selected.symbol}`);
-      }
-      const data = await response.json();
-      if (data.error) throw new Error(data.error);
-      setLiveData(data);
-    } catch (error: unknown) {
-      setLiveError(
-        error instanceof Error ? error.message : "Unknown error occurred",
-      );
-    } finally {
-      setIsLoadingLive(false);
-    }
-  };
-
   return (
     <aside className="gene-player-card">
       <div className="player-top">
@@ -167,29 +128,11 @@ export function GenePlayerCard({
                   {edge.label}: {edge.description}
                 </p>
                 <small>Sources: {edge.sources.join(" / ")}</small>
-                {edge.pdbId && (
-                  <button
-                    type="button"
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      setSelectedPdbId(edge.pdbId ?? null);
-                    }}
-                  >
-                    View complex PDB {edge.pdbId}
-                  </button>
-                )}
               </article>
             );
           })}
         </div>
       </details>
-
-      {selectedPdbId || liveData?.accession ? (
-        <StructureViewer
-          uniprotId={!selectedPdbId ? liveData?.accession : undefined}
-          pdbId={selectedPdbId || undefined}
-        />
-      ) : null}
 
       <details className="gene-detail-section disease-section">
         <summary>
@@ -204,91 +147,6 @@ export function GenePlayerCard({
               <small>{association.sources.join(" / ")}</small>
             </article>
           ))}
-        </div>
-      </details>
-
-      <details className="gene-detail-section live-data-section">
-        <summary>
-          <span>
-            <Database size={13} aria-hidden="true" />
-            Live database
-          </span>
-          <small>Optional</small>
-        </summary>
-        <div className="live-data-content">
-          {!liveData ? (
-            <button
-              type="button"
-              onClick={fetchLiveData}
-              disabled={isLoadingLive}
-              className="live-data-button"
-            >
-              {isLoadingLive ? "Fetching..." : "Fetch UniProt data"}
-            </button>
-          ) : null}
-
-          {liveError ? <p className="live-data-error">{liveError}</p> : null}
-
-          {liveData ? (
-            <div className="live-data-result">
-              <div>
-                <strong>Protein name</strong>
-                <p>{liveData.proteinName}</p>
-              </div>
-              {liveData.functionDescription ? (
-                <div>
-                  <strong>Function (UniProt)</strong>
-                  <p className={isFunctionExpanded ? "expanded" : ""}>
-                    {liveData.functionDescription}
-                  </p>
-                  {liveData.functionDescription.length > 150 ? (
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setIsFunctionExpanded((isExpanded) => !isExpanded)
-                      }
-                    >
-                      {isFunctionExpanded ? "Show less" : "Read more"}
-                    </button>
-                  ) : null}
-                </div>
-              ) : null}
-              {liveData.aliases.length > 0 ? (
-                <div>
-                  <strong>Aliases</strong>
-                  <p>{liveData.aliases.join(", ")}</p>
-                </div>
-              ) : null}
-              {liveData.openTargets?.diseases?.length ? (
-                <div>
-                  <strong>Top disease associations (OpenTargets)</strong>
-                  <ul>
-                    {liveData.openTargets.diseases.map((disease) => (
-                      <li key={disease.name}>
-                        {disease.name}{" "}
-                        <span>{disease.score.toFixed(2)}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <a
-                    href={`https://platform.opentargets.org/target/${liveData.openTargets.ensemblId}`}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    View on OpenTargets
-                    <ExternalLink size={11} aria-hidden="true" />
-                  </a>
-                </div>
-              ) : null}
-              <a
-                href={`https://www.uniprot.org/uniprotkb/${liveData.accession}/entry`}
-                target="_blank"
-                rel="noreferrer"
-              >
-                View on UniProt <ExternalLink size={11} aria-hidden="true" />
-              </a>
-            </div>
-          ) : null}
         </div>
       </details>
 

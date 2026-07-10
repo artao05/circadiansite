@@ -8,7 +8,6 @@ import {
   Brain,
   Clock3,
   Droplets,
-  FlaskConical,
   HeartPulse,
   Moon,
   Sunrise,
@@ -102,13 +101,9 @@ const visualExampleOrder = [
 ];
 
 function exampleOrdinal(example: (typeof medicineExamples)[number]) {
-  if (example.visualMode !== "interactive") return null;
   const orderedIndex = visualExampleOrder.indexOf(example.name);
   if (orderedIndex >= 0) return orderedIndex + 1;
-  const interactiveIndex = medicineExamples
-    .filter((item) => item.visualMode === "interactive")
-    .findIndex((item) => item.name === example.name);
-  return interactiveIndex >= 0 ? interactiveIndex + 1 : null;
+  return null;
 }
 
 function getInitialProfile(example: (typeof medicineExamples)[number]) {
@@ -330,9 +325,9 @@ function DrugVisualLab({
           </title>
           <defs>
             <linearGradient id="overlapFill" x1="0" x2="1">
-              <stop offset="0%" stopColor="#f7b267" stopOpacity="0.2" />
-              <stop offset="65%" stopColor="#ff6b6b" stopOpacity="0.36" />
-              <stop offset="100%" stopColor="#54d6c2" stopOpacity="0.2" />
+              <stop offset="0%" stopColor="var(--amber)" stopOpacity="0.2" />
+              <stop offset="65%" stopColor="var(--coral)" stopOpacity="0.36" />
+              <stop offset="100%" stopColor="var(--cyan)" stopOpacity="0.2" />
             </linearGradient>
           </defs>
           <rect
@@ -445,7 +440,7 @@ function DrugVisualLab({
 
       <aside className="visual-panel lab-readout">
         <Clock3 size={20} aria-hidden="true" />
-        <strong>In this simplified model</strong>
+        <strong>What the model shows</strong>
         <p>{interpretation}</p>
         <p>{profile.copy}</p>
         {absorption ? <p>{absorption.copy}</p> : null}
@@ -582,7 +577,7 @@ function DayRunwayLab({
 
       <aside className="visual-panel lab-readout">
         <Clock3 size={20} aria-hidden="true" />
-        <strong>In this simplified model</strong>
+        <strong>What the model shows</strong>
         <p>{interpretation}</p>
         <p>{example.targetRhythm.copy}</p>
       </aside>
@@ -718,7 +713,7 @@ function NightWindowLab({
 
       <aside className="visual-panel lab-readout">
         <Clock3 size={20} aria-hidden="true" />
-        <strong>In this simplified model</strong>
+        <strong>What the model shows</strong>
         <p>{interpretation}</p>
         <p>{example.targetRhythm.copy}</p>
       </aside>
@@ -915,7 +910,7 @@ function AcidPumpLab({
 
       <aside className="visual-panel lab-readout">
         <Clock3 size={20} aria-hidden="true" />
-        <strong>In this simplified model</strong>
+        <strong>What the model shows</strong>
         <p>{interpretation}</p>
         <p>{example.targetRhythm.copy}</p>
       </aside>
@@ -938,42 +933,6 @@ function InteractiveMedicineLab({
     return <NightWindowLab key={example.name} example={example} />;
   }
   return <DrugVisualLab key={example.name} example={example} />;
-}
-
-function PlannedVisualScaffold({
-  example,
-}: {
-  example: (typeof medicineExamples)[number];
-}) {
-  return (
-    <section className="visual-panel planned-visual">
-      <div className="lab-panel-heading">
-        <div>
-          <p className="kicker">Visual model scaffold</p>
-          <h3>{example.bodyTarget.organ}</h3>
-        </div>
-        <FlaskConical size={22} aria-hidden="true" />
-      </div>
-      <div className="planned-route">
-        {example.bodyTarget.route.map((step, index) => (
-          <span key={step}>
-            {step}
-            {index < example.bodyTarget.route.length - 1 ? (
-              <ArrowRight size={14} aria-hidden="true" />
-            ) : null}
-          </span>
-        ))}
-      </div>
-      <div className="planned-mini-graph" aria-hidden="true">
-        <i />
-        <b />
-      </div>
-      <p>
-        Next pass: this tab can use the same body, exposure, target-rhythm, and
-        overlap model now built for statins.
-      </p>
-    </section>
-  );
 }
 
 export function DrugTimingPanel() {
@@ -1040,43 +999,30 @@ export function DrugTimingPanel() {
             <Icon size={28} aria-hidden="true" />
             <div>
               <p className="kicker">
-                {ordinal
-                  ? `Example ${ordinal}: full visual model`
-                  : "Reusable visual model coming next"}
+                {ordinal ? `Example ${ordinal}` : "Medicine example"}
               </p>
               <h3>{example.name}</h3>
             </div>
           </div>
           <p>{example.whyTimingAppears}</p>
-          <div className="timing-lenses">
-            <div>
-              <span>Morning lens</span>
-              <p>{example.morningLens}</p>
-            </div>
-            <div>
-              <span>Evening lens</span>
-              <p>{example.eveningLens}</p>
-            </div>
+          <div className="timing-model-summary">
+            <span>What the model shows</span>
+            <p>{example.modelSummary}</p>
           </div>
         </section>
 
         <aside className="safety-note">
           <AlertTriangle size={20} aria-hidden="true" />
-          <strong>Do not change medication timing from this site.</strong>
+          <strong>Don’t change medication timing from this site.</strong>
           <p>
-            Use the label, pharmacist, and clinician guidance. This panel shows
-            timing logic in simplified visuals, not what any individual should
-            do.
+            These are simplified teaching models. Follow the label and guidance
+            from a pharmacist or clinician.
           </p>
           <span>{example.safetyCaveat}</span>
         </aside>
       </div>
 
-      {example.visualMode === "interactive" ? (
-        <InteractiveMedicineLab key={example.name} example={example} />
-      ) : (
-        <PlannedVisualScaffold example={example} />
-      )}
+      <InteractiveMedicineLab key={example.name} example={example} />
 
       <div className="medicine-source-strip">
         <HeartPulse size={18} aria-hidden="true" />

@@ -54,16 +54,16 @@ d3 motion lucide-react clsx zod
   activity pulling internal time into or out of sync.
 - **Chapter 3:** body-clock timeline spanning brain, liver, gut, immune,
   cardiovascular, and sleep systems.
-- **Chapter 4:** reusable drug-timing visual lab with medication tabs, safety
-  caveats, and a first full statin scenario showing body route, exposure curve,
-  target rhythm, and simplified overlap projection.
+- **Chapter 7:** five curated drug-timing teaching models covering target
+  overlap, meal-linked absorption, pump readiness, sleep spillover, and morning
+  residue, with safety caveats and sources kept nearby.
 - **Chapter 5:** oxaliplatin chronotherapy story as an evidence timeline,
   including the 2006 randomized trial complication and the 2012 sex-moderation
   meta-analysis.
 - **Chapter 6:** interactive human clock-gene network with 21 curated nodes,
   63 relationship edges, category coloring, player cards, tissue/disease notes,
   and source link-outs to CircaKB, CIRCA/CircaDB, CGDB, Reactome, NCBI Gene,
-  and UniProt.
+  and UniProt. It is a curated atlas, not a live data ingestion pipeline.
 - **Closing:** a hypothetical clinical-trial simulator showing how no timing,
   population-level timing, and personalized timing can change the chance of
   detecting a fictional time-sensitive treatment effect.
@@ -85,9 +85,8 @@ d3 motion lucide-react clsx zod
    - Implement rhythm sliders as an SVG line chart.
    - Implement entrainment as day-by-day phase offset visualization.
    - Implement a 24-hour body timeline.
-   - Implement the Chapter 4 drug-timing lab with reusable scenario data, curve
-     helpers, dose-time controls, duration toggles, body-route diagrams, and
-     scaffolded future visual models for the remaining medication tabs.
+   - Implement the Chapter 7 drug-timing lab with reusable scenario data, curve
+     helpers, dose-time controls, duration toggles, and body-route diagrams.
    - Implement the final clinical-trial simulator with repeated randomized runs,
      simplified approval scorekeeping, and explicit fictional-drug caveats.
    - Implement the Chapter 6 clock-gene network with node selection, category
@@ -114,3 +113,4 @@ d3 motion lucide-react clsx zod
 - Add a review workflow for Gemini/Google Science Skills if the workspace gains
   access to those tools.
 - Add downloadable claim matrix and citation exports.
+- Add a regimen-specific insulin timing visual after clinical review.

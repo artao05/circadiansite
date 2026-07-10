@@ -161,17 +161,17 @@ export function BodyClockTimeline() {
                   transition: "all 0.5s ease",
                   filter:
                     activeOrganId === "brain"
-                      ? `drop-shadow(0 0 ${proximity * 8}px #f59e0b)`
+                      ? `drop-shadow(0 0 ${proximity * 8}px var(--amber))`
                       : "none",
                 }}
               >
                 <path
                   d="M100 25 C 85 25 78 38 82 48 C 86 58 95 60 100 60 C 105 60 114 58 118 48 C 122 38 115 25 100 25 Z"
-                  fill="#f59e0b"
+                  fill="var(--amber)"
                 />
                 <path
                   d="M100 28 C 88 28 82 38 85 45 C 88 52 95 54 100 54 C 105 54 112 52 115 45 C 118 38 112 28 100 28 Z"
-                  fill="#fff"
+                  fill="var(--on-surface-strong)"
                   opacity="0.3"
                 />
               </g>
@@ -183,19 +183,19 @@ export function BodyClockTimeline() {
                   transition: "all 0.5s ease",
                   filter:
                     activeOrganId === "cardio"
-                      ? `drop-shadow(0 0 ${proximity * 10}px #ef4444)`
+                      ? `drop-shadow(0 0 ${proximity * 10}px var(--coral))`
                       : "none",
                 }}
               >
                 {/* Heart */}
                 <path
                   d="M 105 95 C 105 95 95 85 85 90 C 75 95 75 110 90 120 L 105 135 L 120 120 C 135 110 135 95 125 90 C 115 85 105 95 105 95 Z"
-                  fill="#ef4444"
+                  fill="var(--coral)"
                 />
                 {/* Major Vessels */}
                 <path
                   d="M105 95 L 105 75 M 112 90 L 125 80 M 98 90 L 85 80"
-                  stroke="#ef4444"
+                  stroke="var(--coral)"
                   strokeWidth="3"
                   strokeLinecap="round"
                   opacity="0.7"
@@ -203,7 +203,7 @@ export function BodyClockTimeline() {
                 />
                 <path
                   d="M105 135 L 105 180 M 105 180 L 80 240 M 105 180 L 130 240"
-                  stroke="#ef4444"
+                  stroke="var(--coral)"
                   strokeWidth="2"
                   strokeLinecap="round"
                   opacity="0.5"
@@ -211,7 +211,7 @@ export function BodyClockTimeline() {
                 />
                 <path
                   d="M90 120 L 60 150 M 120 120 L 150 150"
-                  stroke="#ef4444"
+                  stroke="var(--coral)"
                   strokeWidth="2"
                   strokeLinecap="round"
                   opacity="0.5"
@@ -226,20 +226,20 @@ export function BodyClockTimeline() {
                   transition: "all 0.5s ease",
                   filter:
                     activeOrganId === "metabolism"
-                      ? `drop-shadow(0 0 ${proximity * 10}px #f97316)`
+                      ? `drop-shadow(0 0 ${proximity * 10}px var(--amber))`
                       : "none",
                 }}
               >
                 {/* Liver */}
                 <path
                   d="M 100 125 C 70 125 65 140 65 150 C 65 160 80 165 105 145 C 125 135 140 145 140 135 C 140 125 120 125 100 125 Z"
-                  fill="#f97316"
+                  fill="var(--amber)"
                 />
                 {/* Gut */}
                 <path
                   d="M 70 155 C 60 170 60 185 85 185 C 95 185 105 170 120 170 C 135 170 145 185 130 200 C 115 215 90 215 70 200"
                   fill="none"
-                  stroke="#f97316"
+                  stroke="var(--amber)"
                   strokeWidth="10"
                   strokeLinecap="round"
                   opacity="0.9"
@@ -253,29 +253,29 @@ export function BodyClockTimeline() {
                   transition: "all 0.5s ease",
                   filter:
                     activeOrganId === "immune"
-                      ? `drop-shadow(0 0 ${proximity * 8}px #10b981)`
+                      ? `drop-shadow(0 0 ${proximity * 8}px var(--green))`
                       : "none",
                 }}
               >
                 {/* Lymph network lines */}
                 <path
                   d="M 85 75 L 60 100 L 55 160 M 115 75 L 140 100 L 145 160 M 100 145 L 80 220 M 100 145 L 120 220 M 85 75 L 100 145 L 115 75"
-                  stroke="#10b981"
+                  stroke="var(--green)"
                   strokeWidth="2"
                   strokeDasharray="3 3"
                   fill="none"
                   opacity="0.8"
                 />
                 {/* Lymph nodes */}
-                <circle cx="85" cy="75" r="3.5" fill="#10b981" />
-                <circle cx="115" cy="75" r="3.5" fill="#10b981" />
-                <circle cx="60" cy="100" r="3.5" fill="#10b981" />
-                <circle cx="140" cy="100" r="3.5" fill="#10b981" />
-                <circle cx="55" cy="160" r="3.5" fill="#10b981" />
-                <circle cx="145" cy="160" r="3.5" fill="#10b981" />
-                <circle cx="100" cy="145" r="4.5" fill="#10b981" />
-                <circle cx="80" cy="220" r="3.5" fill="#10b981" />
-                <circle cx="120" cy="220" r="3.5" fill="#10b981" />
+                <circle cx="85" cy="75" r="3.5" fill="var(--green)" />
+                <circle cx="115" cy="75" r="3.5" fill="var(--green)" />
+                <circle cx="60" cy="100" r="3.5" fill="var(--green)" />
+                <circle cx="140" cy="100" r="3.5" fill="var(--green)" />
+                <circle cx="55" cy="160" r="3.5" fill="var(--green)" />
+                <circle cx="145" cy="160" r="3.5" fill="var(--green)" />
+                <circle cx="100" cy="145" r="4.5" fill="var(--green)" />
+                <circle cx="80" cy="220" r="3.5" fill="var(--green)" />
+                <circle cx="120" cy="220" r="3.5" fill="var(--green)" />
               </g>
             </svg>
           </div>
@@ -322,55 +322,57 @@ export function BodyClockTimeline() {
           <p>{activeEvent.copy}</p>
         </article>
 
-        <div className="axis-function-list" aria-label={`${activeOrgan.name} timed functions`}>
-          {activeOrgan.functions.map((item) => (
-            <article key={item.label} className="axis-function">
-              <div>
-                <h4>{item.label}</h4>
-                <span>{item.evidence}</span>
-              </div>
-              <p>{item.pattern}</p>
-              <small>{item.caveat}</small>
-            </article>
-          ))}
-        </div>
-
-        <div className="body-clock-nuance">
-          <h4>Nuance worth keeping</h4>
-          <p>
-            A daily pattern is not always a pure circadian rhythm. Meals, sleep,
-            posture, activity, light, stress, and species differences can all
-            shape the observed timing.
-          </p>
-        </div>
-
-        <div className="daily-schedule">
-          <h4>Daily markers</h4>
-          <ul>
-            {activeOrgan.events
-              .slice()
-              .sort((a, b) => a.hour - b.hour)
-              .map((ev) => (
-                <li
-                  key={ev.label}
-                  className={ev.label === activeEvent.label ? "active" : ""}
-                >
-                  <span>{String(ev.hour).padStart(2, "0")}:00</span>
-                  <span>{ev.label}</span>
-                </li>
-              ))}
-          </ul>
-        </div>
-
-        <div className="axis-sources" aria-label="Evidence sources">
-          <span>Evidence spine</span>
-          <div>
-            <CitationList
-              ids={activeOrgan.sources}
-              contextPrefix={`body-${activeOrgan.id}`}
-            />
+        <details className="body-clock-details">
+          <summary>Explore this clock</summary>
+          <div className="axis-function-list" aria-label={`${activeOrgan.name} timed functions`}>
+            {activeOrgan.functions.map((item) => (
+              <article key={item.label} className="axis-function">
+                <div>
+                  <h4>{item.label}</h4>
+                  <span>{item.evidence}</span>
+                </div>
+                <p>{item.pattern}</p>
+                <small>{item.caveat}</small>
+              </article>
+            ))}
           </div>
-        </div>
+
+          <div className="body-clock-nuance">
+            <h4>What can shift this?</h4>
+            <p>
+              Meals, sleep, posture, activity, light, stress, and species can
+              all shape a daily pattern.
+            </p>
+          </div>
+
+          <div className="daily-schedule">
+            <h4>Daily markers</h4>
+            <ul>
+              {activeOrgan.events
+                .slice()
+                .sort((a, b) => a.hour - b.hour)
+                .map((ev) => (
+                  <li
+                    key={ev.label}
+                    className={ev.label === activeEvent.label ? "active" : ""}
+                  >
+                    <span>{String(ev.hour).padStart(2, "0")}:00</span>
+                    <span>{ev.label}</span>
+                  </li>
+                ))}
+            </ul>
+          </div>
+
+          <div className="axis-sources" aria-label="Evidence sources">
+            <span>Sources</span>
+            <div>
+              <CitationList
+                ids={activeOrgan.sources}
+                contextPrefix={`body-${activeOrgan.id}`}
+              />
+            </div>
+          </div>
+        </details>
       </div>
     </div>
   );

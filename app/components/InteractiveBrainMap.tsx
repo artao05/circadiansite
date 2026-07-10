@@ -4,6 +4,8 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import type * as THREE from 'three';
 import { ChevronDown, LocateFixed, Minus, Plus, RotateCcw } from 'lucide-react';
 import { BrainScene } from './brain-scene';
+import { CitationList } from './CitationLink';
+import { useCircadianTime } from './CircadianTimeProvider';
 
 /* ------------------------------------------------------------------ */
 /*  Region data — educational, citation-forward, never prescriptive   */
@@ -29,7 +31,7 @@ type ConnectionInfo = {
 
 type EvidenceRow = {
   claim: string;
-  source: string;
+  sourceId: string;
 };
 
 interface NucleusInfo {
@@ -162,15 +164,15 @@ const NUCLEI: NucleusInfo[] = [
     evidence: [
       {
         claim: 'Light information reaches the master clock from the eyes.',
-        source: 'Morin and Allen, Brain Research Reviews, 2006.',
+        sourceId: 'morin-allen-2006',
       },
       {
         claim: 'The master clock shapes sleep timing mostly through relay regions.',
-        source: 'Saper and colleagues, Nature, 2005.',
+        sourceId: 'saper-2005',
       },
       {
         claim: 'The melatonin signal is controlled through a multi-step nerve pathway to the pineal gland.',
-        source: 'Hastings and colleagues, Nature Reviews Neuroscience, 2018.',
+        sourceId: 'hastings-2018',
       },
     ],
     caveat: 'The pathway is simplified for teaching; several relay regions are grouped together.',
@@ -222,15 +224,15 @@ const NUCLEI: NucleusInfo[] = [
     evidence: [
       {
         claim: 'Histamine neurons are active during waking and quiet during sleep.',
-        source: 'Saper and colleagues, Nature, 2005.',
+        sourceId: 'saper-2005',
       },
       {
         claim: 'The wakefulness hub sends broad alerting signals through the brain.',
-        source: 'Haas and colleagues, Physiological Reviews, 2008.',
+        sourceId: 'haas-2008',
       },
       {
         claim: 'Orexin neurons help stabilize wake-promoting systems.',
-        source: 'Saper and colleagues, Nature, 2005.',
+        sourceId: 'saper-2005',
       },
     ],
     caveat: 'The broad cortex glow represents a diffuse alerting system, not a single wire-like tract.',
@@ -282,15 +284,15 @@ const NUCLEI: NucleusInfo[] = [
     evidence: [
       {
         claim: 'Sleep-active neurons in this region were identified in animal studies.',
-        source: 'Sherin and colleagues, Science, 1996.',
+        sourceId: 'sherin-1996',
       },
       {
         claim: 'The sleep switch inhibits wake-promoting systems.',
-        source: 'Saper and colleagues, Nature, 2005.',
+        sourceId: 'saper-2005',
       },
       {
         claim: 'Human postmortem work supports a similar sleep-promoting cell group.',
-        source: 'Gaus and colleagues, The Journal of Neuroscience, 2002.',
+        sourceId: 'gaus-2002',
       },
     ],
     caveat: 'The switch metaphor is simplified; real sleep control is distributed across several brain regions.',
@@ -318,6 +320,23 @@ const clampOverlayPoint = (point: { x: number; y: number }) => ({
   y: Math.min(86, Math.max(10, point.y)),
 });
 
+function applyBrainPalette(api: BrainSceneApi, element: HTMLElement) {
+  const styles = window.getComputedStyle(element);
+  const token = (name: string) => styles.getPropertyValue(name).trim();
+
+  api.setPalette({
+    cortex: token('--paper'),
+    white_matter: token('--muted'),
+    deep_grey: token('--ink'),
+    diencephalon: token('--cyan'),
+    brainstem: token('--coral'),
+    cerebellum: token('--green'),
+    ventricles: token('--paper-deep'),
+    arteries: token('--coral'),
+    veins_sinuses: token('--cyan'),
+  });
+}
+
 const pointsAreClose = (a?: ProjectedPoint, b?: ProjectedPoint) => {
   if (!a || !b) return false;
   return Math.abs(a.x - b.x) < 0.25 && Math.abs(a.y - b.y) < 0.25 && a.visible === b.visible;
@@ -327,6 +346,7 @@ const pointsAreClose = (a?: ProjectedPoint, b?: ProjectedPoint) => {
 /*  Component                                                         */
 /* ------------------------------------------------------------------ */
 export function InteractiveBrainMap() {
+  const { phase } = useCircadianTime();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const apiRef = useRef<BrainSceneApi | null>(null);
   const structureToNucleusRef = useRef(new Map<string, string>());
@@ -421,17 +441,7 @@ export function InteractiveBrainMap() {
 
             setLoading(false);
 
-            api.setPalette({
-              cortex: '#FCF8EE',
-              white_matter: '#9aa6bd',
-              deep_grey: '#1C2026',
-              diencephalon: '#4A8B7F',
-              brainstem: '#C05746',
-              cerebellum: '#5D8A54',
-              ventricles: '#2A303C',
-              arteries: '#C05746',
-              veins_sinuses: '#4A8B7F',
-            });
+            applyBrainPalette(api, canvas);
 
             api.setLayers({
               diencephalon: { visible: true, opacity: 0.4 },
@@ -584,6 +594,12 @@ export function InteractiveBrainMap() {
       apiRef.current = null;
     };
   }, []);
+
+  useEffect(() => {
+    const api = apiRef.current;
+    const canvas = canvasRef.current;
+    if (api && canvas) applyBrainPalette(api, canvas);
+  }, [phase]);
 
   /* ---- card interaction handlers ---- */
   const handleCardEnter = useCallback((nucleus: NucleusInfo) => {
@@ -825,7 +841,7 @@ export function InteractiveBrainMap() {
               <div
                 className="brain-map-hover-label"
                 style={{
-                  '--nucleus-color': hoverLabel.color ?? '#FCF8EE',
+                  '--nucleus-color': hoverLabel.color ?? 'var(--on-surface)',
                   left: hoverLabel.x,
                   top: hoverLabel.y,
                 } as React.CSSProperties}
@@ -942,10 +958,15 @@ export function InteractiveBrainMap() {
                           </tr>
                         </thead>
                         <tbody>
-                          {n.evidence.map((row) => (
+                          {n.evidence.map((row, rowIndex) => (
                             <tr key={row.claim}>
                               <td>{row.claim}</td>
-                              <td>{row.source}</td>
+                              <td>
+                                <CitationList
+                                  ids={[row.sourceId]}
+                                  contextPrefix={`brain-${n.id}-${rowIndex}`}
+                                />
+                              </td>
                             </tr>
                           ))}
                         </tbody>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, type PointerEvent } from "react";
+import { useMemo, useRef, useState, type PointerEvent } from "react";
 import {
   Clock3,
   Dna,
@@ -97,33 +97,33 @@ const stageCopy: Record<
   }
 > = {
   activation: {
-    eyebrow: "Positive arm",
-    title: "BMAL1:CLOCK opens the promoter.",
-    copy: "The activator complex sits on E-box DNA and starts the Per/Cry message wave.",
+    eyebrow: "Turn on",
+    title: "BMAL1:CLOCK starts the signal.",
+    copy: "The activator pair binds DNA and starts the Per and Cry message wave.",
     selectId: "ARNTL",
   },
   translation: {
-    eyebrow: "Message delay",
-    title: "Per mRNA and cytoplasmic PER build.",
-    copy: "The brake is still delayed: message and protein rise before nuclear repression catches up.",
+    eyebrow: "Build up",
+    title: "Messages and proteins rise.",
+    copy: "Per messages and PER protein build before the brake reaches the nucleus.",
     selectId: "PER2",
   },
   nuclearEntry: {
-    eyebrow: "Transport delay",
-    title: "PER/CRY moves back into the nucleus.",
-    copy: "Wang's delayed-feedback frame turns synthesis and transport time into a visible timing layer.",
+    eyebrow: "Build up",
+    title: "PER/CRY moves into the nucleus.",
+    copy: "The delay comes from making proteins and moving them between cell compartments.",
     selectId: "CRY1",
   },
   repression: {
-    eyebrow: "Negative arm",
-    title: "PER/CRY sequesters the activator.",
-    copy: "The repressor complex binds the positive arm and quiets the signal that produced it.",
+    eyebrow: "Turn down",
+    title: "PER/CRY applies the brake.",
+    copy: "The repressor pair binds the activator and quiets the signal that produced it.",
     selectId: "CRY1",
   },
   reset: {
     eyebrow: "Reset",
-    title: "Degradation exposes the activator again.",
-    copy: "Protein turnover clears the brake, allowing the next transcriptional cycle to begin.",
+    title: "The brake clears.",
+    copy: "Protein turnover exposes the activator so the next cycle can begin.",
     selectId: "CSNK1D",
   },
 };
@@ -340,22 +340,13 @@ function TimedLoopView({
   const annotation = activeAnnotation(hour);
   const stageText = stageCopy[stage];
   const currentX = hourToX(normalizeHour(hour));
-  const [paramsOpen, setParamsOpen] = useState(false);
-
-  useEffect(() => {
-    const media = window.matchMedia("(min-width: 1280px) and (min-height: 880px)");
-    const syncOpenState = () => setParamsOpen(media.matches);
-    syncOpenState();
-    media.addEventListener("change", syncOpenState);
-    return () => media.removeEventListener("change", syncOpenState);
-  }, []);
 
   return (
     <div className="network-layout timed-loop-layout">
       <section className="timed-loop-panel visual-panel">
         <div className="timed-loop-header">
           <div>
-            <p className="kicker">Timed molecular loop</p>
+              <p className="kicker">How the core loop works</p>
             <h3>{stageText.title}</h3>
             <p>{stageText.copy}</p>
           </div>
@@ -556,13 +547,18 @@ function TimedLoopView({
           <div className="model-timeline-panel">
             <div className="model-panel-heading">
               <div>
-                <p className="kicker">Wang 2024 model layer</p>
-                <h4>Delayed PER feedback in model units</h4>
+                <p className="kicker">Optional model detail</p>
+                <h4>Why the brake arrives late</h4>
                 <p className="model-panel-explainer">
                   Each state peaks later than the last because synthesis and transport delay the brake.
                 </p>
               </div>
-              <Waves size={20} aria-hidden="true" />
+              <div className="model-heading-state">
+                <Waves size={20} aria-hidden="true" />
+                <span>
+                  {formatMasterHour(hour)} · {annotation.label}
+                </span>
+              </div>
             </div>
 
             <svg
@@ -669,12 +665,6 @@ function TimedLoopView({
               <text className="model-peak-marker-label" x={hourToX(12)} y={timelinePlotBottom + 14}>
                 Delay shifts each peak
               </text>
-              <g className="model-now-badge" transform={`translate(${Math.min(currentX + 6, 390)} ${timelinePlotTop - 2})`}>
-                <rect x="0" y="-14" width="108" height="22" rx="6" />
-                <text x="8" y="0">
-                  {formatMasterHour(hour)} · {annotation.label}
-                </text>
-              </g>
               <text className="model-axis-label" x="54" y="22">
                 {molecularClockTimeline.units}
               </text>
@@ -695,12 +685,8 @@ function TimedLoopView({
               ))}
             </div>
 
-            <details
-              className="model-parameters-details"
-              open={paramsOpen}
-              onToggle={(event) => setParamsOpen(event.currentTarget.open)}
-            >
-              <summary>Model parameters (Wang 2024)</summary>
+            <details className="model-parameters-details">
+              <summary>How the model works</summary>
               <div className="model-parameter-grid">
                 {molecularClockTimeline.parameters.map((parameter) => (
                   <article key={parameter.label}>
@@ -738,7 +724,7 @@ function TimedLoopView({
             className="open-atlas-button"
             onClick={() => setTab("atlas")}
           >
-            Open atlas
+            Explore the curated atlas
           </button>
         </div>
       </section>
@@ -970,6 +956,9 @@ export function GeneNetwork() {
         />
       ) : (
         <div className="network-layout atlas-layout">
+          <p className="network-curated-note">
+            This is a curated teaching map, not a live database import.
+          </p>
           <section
             className="network-canvas visual-panel"
             aria-label="Interactive core clock gene network atlas"

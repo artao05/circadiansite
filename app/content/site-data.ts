@@ -95,7 +95,7 @@ export type OrganClock = {
 export type MedicineExample = {
   name: string;
   icon: LucideIcon;
-  visualMode: "interactive" | "planned";
+  visualMode: "interactive";
   labVariant?: "curve" | "acid-pump" | "day-runway" | "night-window";
   bodyTarget: {
     organ: string;
@@ -121,8 +121,7 @@ export type MedicineExample = {
   safetyCaveat: string;
   labelCue: string;
   whyTimingAppears: string;
-  morningLens: string;
-  eveningLens: string;
+  modelSummary: string;
   sourceId: string;
 };
 
@@ -484,86 +483,129 @@ export const citations: Citation[] = [
     note: "Translational caveat source showing that immune timing can differ across species.",
     url: "https://doi.org/10.1182/blood-2017-04-778779",
   },
+  {
+    id: "morin-allen-2006",
+    title: "The circadian visual system, 2005",
+    source: "Brain Research Reviews",
+    note: "Review source for the light pathway from the eyes to the suprachiasmatic nucleus.",
+    url: "https://pubmed.ncbi.nlm.nih.gov/16337005/",
+  },
+  {
+    id: "saper-2005",
+    title: "Hypothalamic regulation of sleep and circadian rhythms",
+    source: "Nature",
+    note: "Review source for the sleep-wake circuitry and hypothalamic relay framing in the brain map.",
+    url: "https://pubmed.ncbi.nlm.nih.gov/16251950/",
+  },
+  {
+    id: "hastings-2018",
+    title: "Generation of circadian rhythms in the suprachiasmatic nucleus",
+    source: "Nature Reviews Neuroscience",
+    note: "Review source for the SCN as the principal circadian clock and coordinator of daily physiology.",
+    url: "https://pubmed.ncbi.nlm.nih.gov/29934559/",
+  },
+  {
+    id: "haas-2008",
+    title: "Histamine in the nervous system",
+    source: "Physiological Reviews",
+    note: "Review source for the wake-active histamine system and its broad projections through the brain.",
+    url: "https://pubmed.ncbi.nlm.nih.gov/18626069/",
+  },
+  {
+    id: "sherin-1996",
+    title: "Activation of ventrolateral preoptic neurons during sleep",
+    source: "Science",
+    note: "Primary animal study identifying sleep-active neurons in the ventrolateral preoptic area.",
+    url: "https://pubmed.ncbi.nlm.nih.gov/8539624/",
+  },
+  {
+    id: "gaus-2002",
+    title:
+      "Ventrolateral preoptic nucleus contains sleep-active, galaninergic neurons in multiple mammalian species",
+    source: "Neuroscience",
+    note: "Comparative source supporting a related sleep-active cell group across mammalian species, including humans.",
+    url: "https://pubmed.ncbi.nlm.nih.gov/12401341/",
+  },
 ];
 
 export const chapters: Chapter[] = [
   {
     id: "opening",
     number: "00",
-    eyebrow: "Medicine in the 4th dimension",
-    title: "Your body is not the same body at every hour.",
-    dek: "A dose, meal, light pulse, or lab test can land in a different biological world depending on when it arrives.",
+    eyebrow: "Your body keeps time",
+    title: "Your body isn’t the same at every hour.",
+    dek: "A meal, light pulse, lab test, or dose can meet a different biological state depending on when it arrives.",
     navGroup: "foundations",
   },
   {
     id: "rhythm-lab",
     number: "01",
-    eyebrow: "What is a rhythm?",
-    title: "A rhythm is a shape in time.",
-    dek: "Period, amplitude, phase, baseline, and noise are the simple ingredients behind a surprisingly rich biological language.",
+    eyebrow: "Reading a rhythm",
+    title: "A rhythm is a repeating shape.",
+    dek: "Cycle length, swing size, peak time, average level, and variation describe how a biological rhythm moves.",
     navGroup: "foundations",
     videoExplainer: {
       title: "How to read a biological rhythm",
       duration: "2 min",
       summary:
-        "A short narrated figure caption for period, amplitude, phase, baseline, and noise before visitors experiment with the rhythm lab.",
+        "A quick guide to cycle length, swing size, peak time, average level, and variation before you try the rhythm lab.",
       transcript:
-        "A rhythm is a repeated shape in time. Period is how long one cycle takes. Amplitude is how large the daily swing is. Phase is where the peak or trough lands relative to a clock or cue. Baseline is the average level, and noise is the ordinary variation around the pattern.",
+        "A rhythm is a repeating shape. Cycle length, or period, is how long one cycle takes. Amplitude is the size of the swing. Phase tells you when the peak or trough lands. Baseline is the average level. Noise is ordinary variation around the pattern.",
       citationIds: ["arcascope-circadian", "forger-1999"],
     },
   },
   {
     id: "sync",
     number: "02",
-    eyebrow: "How clocks stay in sync",
-    title: "Light, sleep, meals, and activity all tug on time.",
-    dek: "Circadian time is not just a wall clock. It is a living estimate that updates from repeated signals.",
+    eyebrow: "Staying in sync",
+    title: "Your clock takes cues from daily life.",
+    dek: "Light leads, while sleep, meals, and activity add signals that can reinforce—or pull against—one another.",
     navGroup: "foundations",
   },
   {
     id: "brain",
     number: "03",
-    eyebrow: "The central clock",
-    title: "The SCN turns light into body time.",
-    dek: "A small brain clock receives light signals from the eyes and helps coordinate sleep, hormones, temperature, and downstream tissue clocks.",
+    eyebrow: "The brain clock",
+    title: "Light reaches the brain’s master clock.",
+    dek: "The master clock, or SCN, uses light from the eyes to help coordinate sleep, hormones, temperature, and tissue clocks.",
     navGroup: "clocks",
   },
   {
     id: "body-clocks",
     number: "04",
-    eyebrow: "The body is many clocks",
-    title: "One person, many daily schedules.",
-    dek: "The brain clock coordinates the day, while liver, gut, immune, cardiovascular, and metabolic tissues keep local time.",
+    eyebrow: "Clocks across the body",
+    title: "Your body keeps more than one schedule.",
+    dek: "The brain coordinates the day, while the liver, gut, heart, blood vessels, and immune system keep local time.",
     navGroup: "clocks",
   },
   {
     id: "clock-mechanics",
     number: "05",
-    eyebrow: "Molecular timekeeping",
-    title: "The clock is a feedback loop.",
-    dek: "Inside cells, activator and repressor proteins rise and fall in a daily circuit that turns timing into gene regulation.",
+    eyebrow: "Inside the cell",
+    title: "The clock runs on a feedback loop.",
+    dek: "Some proteins turn clock genes on. Others build up, switch the signal off, and reset the cycle.",
     navGroup: "clocks",
   },
   {
     id: "genes",
     number: "06",
     eyebrow: "Clock-gene network",
-    title: "The molecular clock is a web, not a list.",
-    dek: "Explore core clock genes, regulatory loops, rhythmic expression evidence, disease links, and source databases in one interactive map.",
+    title: "The clock is a network, not a gene list.",
+    dek: "Start with the core loop, then explore a curated atlas of genes, connections, tissues, and research sources.",
     navGroup: "clocks",
   },
   {
     id: "medicine",
     number: "07",
-    eyebrow: "When should you take medicines?",
-    title: "For some drugs, timing is part of the biology.",
-    dek: "Labels, side effects, absorption, metabolism, and target activity can all make time-of-day matter.",
+    eyebrow: "Medicine and time",
+    title: "For some medicines, timing changes the biology.",
+    dek: "Food, absorption, drug duration, side effects, and changing biological targets can all make the hour matter.",
     navGroup: "medicine",
     videoExplainer: {
       title: "Why drug timing is educational here",
       duration: "3 min",
       summary:
-        "A plain-language overview of why timing can affect drug exposure, targets, and side effects without turning the site into personal medication advice.",
+        "Why drug exposure, targets, and side effects can change with time—without turning the examples into personal advice.",
       transcript:
         "Medication timing can matter for several different reasons. The drug may be absorbed differently with food or sleep, the target may rise and fall across the day, or side effects may depend on when the body is more vulnerable. These examples explain the biology. They are not instructions to change a prescription schedule.",
       citationIds: ["smith-2019", "cederroth-2019", "klerman-2026"],
@@ -574,25 +616,25 @@ export const chapters: Chapter[] = [
   {
     id: "oxaliplatin",
     number: "08",
-    eyebrow: "Oxaliplatin and chronotherapy",
-    title: "A cancer drug story where timing changed the plot.",
-    dek: "Oxaliplatin became a landmark example of how chronopharmacology can change toxicity, efficacy, and clinical interpretation.",
+    eyebrow: "Oxaliplatin case study",
+    title: "A cancer drug made timing hard to ignore.",
+    dek: "Oxaliplatin studies showed how a treatment schedule can change toxicity, apparent benefit, and the questions a trial leaves behind.",
     navGroup: "medicine",
   },
   {
     id: "trial-simulator",
     number: "09",
     eyebrow: "Trial design lab",
-    title: "A timed drug can fail an untimed trial.",
-    dek: "Run a fictional clinical trial again and again to see how ignoring, standardizing, or personalizing timing can change the approval story.",
+    title: "The same drug can look different in a different trial.",
+    dek: "Run a fictional trial to see how ignoring, standardizing, or matching body time changes what the study can detect.",
     navGroup: "medicine",
   },
   {
     id: "sources",
     number: "10",
-    eyebrow: "Knowledge foundation",
-    title: "Claim matrix and sources",
-    dek: "The site keeps a public-friendly claim matrix so the visuals stay attached to evidence and caveats.",
+    eyebrow: "Evidence",
+    title: "What the report claims—and how sure we are.",
+    dek: "Each major claim stays connected to its evidence, uncertainty, caveats, and source.",
     navGroup: "evidence",
   },
 ];
@@ -609,7 +651,7 @@ export const claimMatrix: Claim[] = [
       "The paper found wide variation in caffeine sensitivity and tolerance. The sandbox shows one illustrative parameter profile, not a personal prediction or dosing recommendation.",
     visualUse: "Caffeine controls in the circadian sandbox",
     beginnerPhrasing:
-      "In the model, caffeine can hide some sleep pressure and make wakefulness more stable, so a larger or later dose can push predicted sleep later.",
+      "In the model, caffeine hides some sleep pressure and can push predicted sleep later.",
   },
   {
     claim:
@@ -622,7 +664,7 @@ export const claimMatrix: Claim[] = [
       "The sandbox is illustrative and not a quantitative fit to any individual participant.",
     visualUse: "Circadian sandbox forced-desynchrony scenario",
     beginnerPhrasing:
-      "Researchers can use a non-24-hour lab schedule to pull sleep debt and biological time apart.",
+      "A non-24-hour lab schedule can separate sleep debt from body time.",
   },
   {
     claim:
@@ -634,7 +676,7 @@ export const claimMatrix: Claim[] = [
       "The relevant direction and timing depend on the drug, patient, target, and label.",
     visualUse: "Medication timing comparison panel",
     beginnerPhrasing:
-      "For some medicines, the hour matters because the body is doing different jobs across the day.",
+      "For some medicines, the hour matters because the body changes across the day.",
   },
   {
     claim:
@@ -646,7 +688,7 @@ export const claimMatrix: Claim[] = [
       "Precise internal phase usually requires biomarkers or validated models.",
     visualUse: "Rhythm lab phase control and entrainment demo",
     beginnerPhrasing:
-      "Your phone may say morning, but your body clock can be early, late, or shifted.",
+      "Clock time and body time can disagree.",
   },
   {
     claim:
@@ -658,7 +700,7 @@ export const claimMatrix: Claim[] = [
       "The rhythm lab uses static generated scenarios for education; individual phase requires measurements or validated personal models.",
     visualUse: "Rhythm lab scenario and chronotype controls",
     beginnerPhrasing:
-      "The model curves show how light schedules can tug on the clock, not what any one visitor's body is doing.",
+      "Model curves show how light can tug on a clock, not what your body is doing.",
   },
   {
     claim:
@@ -670,7 +712,7 @@ export const claimMatrix: Claim[] = [
       "The rhythm lab uses this as an educational overlay; it does not diagnose HPA-axis function or aging status.",
     visualUse: "Rhythm lab aging cortisol overlay",
     beginnerPhrasing:
-      "A weaker-looking cortisol rhythm in aging does not necessarily mean lower cortisol levels.",
+      "A smaller cortisol swing with age doesn’t always mean lower levels.",
   },
   {
     claim:
@@ -682,7 +724,7 @@ export const claimMatrix: Claim[] = [
       "Clinical translation still requires personalization, careful trial context, and separation of prespecified findings from exploratory signals.",
     visualUse: "Oxaliplatin evidence timeline",
     beginnerPhrasing:
-      "A drug that looked too toxic in one schedule looked different when timing was designed into treatment.",
+      "Oxaliplatin looked different when timing became part of the schedule.",
   },
   {
     claim:
@@ -694,7 +736,7 @@ export const claimMatrix: Claim[] = [
       "This should be framed as a provocative unresolved research question, not a standard-of-care timing recommendation.",
     visualUse: "Oxaliplatin case-study framing",
     beginnerPhrasing:
-      "The hard question was not just whether timing mattered, but whether the same timing helped different groups equally.",
+      "One unresolved question is whether the same schedule affected groups differently.",
   },
   {
     claim:
@@ -706,7 +748,7 @@ export const claimMatrix: Claim[] = [
       "The site's trial lab is fictional and educational; it is not calibrated to any real drug or approval pathway.",
     visualUse: "Clinical trial simulation",
     beginnerPhrasing:
-      "A simulation can make the design problem visible: the same fictional drug can look better or worse depending on whether timing is measured.",
+      "A fictional drug can look different when a trial measures body time.",
   },
   {
     claim:
@@ -718,7 +760,7 @@ export const claimMatrix: Claim[] = [
       "These methods are improving, but clinical workflows and standards are still developing.",
     visualUse: "Closing workflow",
     beginnerPhrasing:
-      "Before medicine can reliably use biological time, medicine has to measure biological time.",
+      "Medicine has to measure body time before it can use it reliably.",
   },
   {
     claim:
@@ -732,7 +774,7 @@ export const claimMatrix: Claim[] = [
       "V1 is a curated human clock-gene network with database link-outs; live CircaKB/CircaDB dataset imports remain a v2 data pipeline.",
     visualUse: "Interactive clock-gene network",
     beginnerPhrasing:
-      "Clock genes talk to each other in loops: some turn rhythms on, some apply brakes, and others tune the timing.",
+      "Clock genes form loops that start, stop, and tune daily rhythms.",
   },
   {
     claim:
@@ -744,7 +786,7 @@ export const claimMatrix: Claim[] = [
       "This is a mechanistic modeling frame for education; it does not turn the v1 gene map into a quantitative live simulation of protein concentrations.",
     visualUse: "Molecular clock animation and core gene-network edges",
     beginnerPhrasing:
-      "The molecular clock is partly a balance problem: activator proteins and repressor proteins have to meet in the right proportions for a steady daily rhythm.",
+      "A steady molecular clock depends partly on the balance between activators and repressors.",
   },
   {
     claim:
@@ -757,7 +799,7 @@ export const claimMatrix: Claim[] = [
       "The values shown are model-scale concentrations and parameters for education, not measured human-cell molecule counts or a live quantitative simulator.",
     visualUse: "Timed molecular clock loop and model timeline",
     beginnerPhrasing:
-      "The brake does not appear instantly: messages and proteins build up, move compartments, and only later shut the signal down.",
+      "The brake arrives late because messages and proteins take time to build and move.",
   },
   {
     claim:
@@ -769,7 +811,7 @@ export const claimMatrix: Claim[] = [
       "Everyday glucose patterns also reflect meal timing, sleep, activity, and prior wakefulness.",
     visualUse: "Body clocks metabolism axis",
     beginnerPhrasing:
-      "The same meal can meet a different metabolic state depending on biological time.",
+      "The same meal can meet a different metabolic state at a different body time.",
   },
   {
     claim:
@@ -781,7 +823,7 @@ export const claimMatrix: Claim[] = [
       "Morning cardiovascular risk also depends on waking, posture, hormones, behavior, and underlying disease.",
     visualUse: "Body clocks cardiovascular axis",
     beginnerPhrasing:
-      "The cardiovascular system has daily timing in pressure, clotting balance, and vascular demand.",
+      "Blood pressure, clotting balance, and vascular demand change across the day.",
   },
   {
     claim:
@@ -793,7 +835,7 @@ export const claimMatrix: Claim[] = [
       "Many immune mechanisms are animal-heavy, and mouse timing should not be copied directly onto humans.",
     visualUse: "Body clocks immune axis",
     beginnerPhrasing:
-      "Immune cells do not patrol the body in the same pattern all day.",
+      "Immune cells don’t patrol the body the same way all day.",
   },
   {
     claim:
@@ -816,9 +858,9 @@ export const organClocks: OrganClock[] = [
     iconName: "Brain",
     tone: "light",
     summary:
-      "The brain clock is the coordinator: light reaches the SCN, and the SCN helps align sleep, hormones, temperature, and downstream tissue clocks.",
+      "Light reaches the master clock, which helps align sleep, hormones, temperature, and tissue clocks.",
     evidenceNote:
-      "Coordinator axis - not one of the three function axes below.",
+      "The body’s main coordinator",
     functions: [
       {
         label: "Light entrainment",
@@ -841,18 +883,18 @@ export const organClocks: OrganClock[] = [
     events: [
       {
         hour: 8,
-        label: "Cortisol peak & light entrainment",
-        copy: "Morning light provides the strongest timing cue, while cortisol peaks to support wakefulness.",
+        label: "Morning light and cortisol",
+        copy: "Morning light is a strong timing cue, while cortisol rises around waking.",
       },
       {
         hour: 14,
         label: "Mid-afternoon dip",
-        copy: "The central pacemaker exhibits a natural dip in alerting signals in the early afternoon.",
+        copy: "Alertness often dips in the early afternoon.",
       },
       {
         hour: 21,
-        label: "Melatonin onset (DLMO)",
-        copy: "Dim light melatonin onset signals the biological night, preparing the brain for sleep architecture.",
+        label: "Melatonin begins to rise",
+        copy: "Melatonin rising in dim light marks the start of biological night.",
       },
     ],
   },
@@ -862,9 +904,9 @@ export const organClocks: OrganClock[] = [
     iconName: "Activity",
     tone: "metabolic",
     summary:
-      "Metabolic tissues keep local time so nutrient handling, glucose control, liver processing, and gut rhythms are not identical across the day.",
+      "The liver and gut keep local time, so metabolism doesn’t work the same way all day.",
     evidenceNote:
-      "Strongest human anchor: glucose tolerance and insulin sensitivity. Liver and microbiome mechanisms are important but more animal- and model-heavy.",
+      "Strongest human evidence: glucose handling",
     functions: [
       {
         label: "Glucose handling",
@@ -896,17 +938,17 @@ export const organClocks: OrganClock[] = [
       {
         hour: 10,
         label: "Peak glucose handling",
-        copy: "Insulin sensitivity and glucose tolerance are generally highest in the first half of the day.",
+        copy: "Glucose handling is often better earlier in the biological day.",
       },
       {
         hour: 16,
-        label: "Peak drug metabolism",
-        copy: "Many liver enzymes, like CYP3A4, peak in the late afternoon, affecting how long drugs stay active.",
+        label: "Liver processing shifts",
+        copy: "Liver pathways change across the day, though exact human timing varies.",
       },
       {
         hour: 23,
-        label: "Fasting & repair mode",
-        copy: "The gut slows motility and the liver shifts from storing nutrients to mobilizing them for overnight maintenance.",
+        label: "Overnight fasting",
+        copy: "The gut and liver shift away from daytime nutrient handling overnight.",
       },
     ],
   },
@@ -916,9 +958,9 @@ export const organClocks: OrganClock[] = [
     iconName: "HeartPulse",
     tone: "cardio",
     summary:
-      "The cardiovascular system has daily structure in pressure, clotting balance, vascular tone, and cardiac workload.",
+      "Blood pressure, clotting balance, vascular tone, and heart workload all have daily patterns.",
     evidenceNote:
-      "Strongest controlled-human anchors: blood pressure, platelet activation, and PAI-1.",
+      "Strong controlled-human evidence",
     functions: [
       {
         label: "Blood pressure rhythm",
@@ -949,18 +991,18 @@ export const organClocks: OrganClock[] = [
     events: [
       {
         hour: 5,
-        label: "Pre-wake blood pressure ramp",
-        copy: "Blood pressure and heart rate surge before waking, which correlates with a morning peak in cardiovascular events.",
+        label: "Pre-wake pressure rise",
+        copy: "Blood pressure and heart rate begin rising around waking.",
       },
       {
         hour: 17,
-        label: "Peak athletic efficiency",
-        copy: "Cardiovascular efficiency and muscle strength often peak in the late afternoon.",
+        label: "Later-day performance",
+        copy: "Cardiovascular performance and muscle strength often improve later in the day.",
       },
       {
         hour: 2,
-        label: "Deep sleep blood pressure dip",
-        copy: "A healthy cardiovascular system exhibits a 10-20% drop in blood pressure during deep sleep.",
+        label: "Sleep pressure dip",
+        copy: "Blood pressure usually falls during sleep.",
       },
     ],
   },
@@ -970,9 +1012,9 @@ export const organClocks: OrganClock[] = [
     iconName: "Shield",
     tone: "immune",
     summary:
-      "Immune timing is not one rhythm. Different immune cells circulate, enter tissues, and respond to challenge on different schedules.",
+      "Immune cells circulate, enter tissues, and respond to threats on different schedules.",
     evidenceNote:
-      "Strong broad consensus, but cell type and species matter. Mouse immune timing should not be copied directly onto humans.",
+      "Cell type and species matter",
     functions: [
       {
         label: "Leukocyte trafficking",
@@ -1003,18 +1045,18 @@ export const organClocks: OrganClock[] = [
     events: [
       {
         hour: 8,
-        label: "Adaptive cellular patrol",
-        copy: "T-cells and other adaptive immune cells often peak in circulation in the morning, ready for encounters.",
+        label: "Immune cells in circulation",
+        copy: "Some adaptive immune cells are more common in blood around the morning.",
       },
       {
         hour: 20,
-        label: "Inflammatory tone shift",
-        copy: "Pro-inflammatory cytokines often rise in the evening, which is why fever and asthma symptoms can worsen at night.",
+        label: "Inflammation shifts",
+        copy: "Inflammatory signals can change toward evening and night.",
       },
       {
         hour: 2,
         label: "Tissue repair",
-        copy: "Innate immune cells move into tissues overnight to clear debris and promote repair while the body rests.",
+        copy: "Some innate immune cells move into tissues overnight.",
       },
     ],
   },
@@ -1048,7 +1090,7 @@ export const medicineExamples: MedicineExample[] = [
         halfLifeHours: 2.4,
         peakHours: 2,
         tailHours: 10,
-        copy: "Rises over a few hours and clears quickly in this simplified model.",
+        copy: "Rises over a few hours, then clears quickly.",
       },
       {
         id: "long",
@@ -1056,7 +1098,7 @@ export const medicineExamples: MedicineExample[] = [
         halfLifeHours: 8,
         peakHours: 3,
         tailHours: 22,
-        copy: "Stays active longer, making the exact clock time less visually sharp in this model.",
+        copy: "Stays active longer, so the exact hour matters less in the model.",
       },
     ],
     targetRhythm: {
@@ -1065,85 +1107,23 @@ export const medicineExamples: MedicineExample[] = [
       widthHours: 8,
       baseline: 0.08,
       amplitude: 0.92,
-      copy: "The target rhythm is shown as a nighttime wave, based on the beginner article's explanation that cholesterol synthesis rises during sleep.",
+      copy: "The nighttime wave represents cholesterol synthesis rising during sleep.",
     },
     overlapLabel: "Projected overlap with nighttime synthesis",
     interpretation: {
-      low: "Low overlap in this simplified model: the drug curve is mostly fading before the target rhythm rises.",
+      low: "The drug curve is mostly fading before the target rises.",
       medium:
-        "Moderate overlap in this simplified model: some active drug is present during the target window.",
-      high: "Higher overlap in this simplified model: active drug presence lines up with more of the target rhythm.",
+        "Some active drug remains during the target window.",
+      high: "More of the drug curve lines up with the target rhythm.",
     },
     sources: ["smith-2019"],
     safetyCaveat:
       "This illustrates label-based timing logic for some short-acting statins. It is not medication advice.",
-    labelCue: "Often discussed with bedtime dosing in label-based examples.",
+    labelCue: "Some short-acting statin labels use evening or bedtime timing.",
     whyTimingAppears:
       "Cholesterol synthesis tends to rise during sleep, while short-acting statins clear quickly.",
-    morningLens:
-      "A morning dose may miss part of the overnight synthesis window for some short-acting drugs.",
-    eveningLens:
-      "An evening or bedtime dose can better overlap with the target biology for some labels.",
-    sourceId: "smith-2019",
-  },
-  {
-    name: "Long-acting insulin",
-    icon: Activity,
-    visualMode: "planned",
-    bodyTarget: {
-      organ: "Pancreas / bloodstream",
-      action: "Overnight glucose coverage",
-      route: [
-        "injection",
-        "subcutaneous depot",
-        "bloodstream",
-        "glucose control",
-      ],
-    },
-    doseWindow: {
-      minHour: 6,
-      maxHour: 23,
-      defaultHour: 21,
-      presets: [
-        { label: "Morning", hour: 8 },
-        { label: "Last meal", hour: 19 },
-        { label: "Bedtime", hour: 22 },
-      ],
-    },
-    exposureProfiles: [
-      {
-        id: "basal",
-        label: "Basal coverage",
-        halfLifeHours: 12,
-        peakHours: 4,
-        tailHours: 24,
-        copy: "A future visual can show broad overnight coverage rather than a sharp peak.",
-      },
-    ],
-    targetRhythm: {
-      label: "Overnight glucose-control need",
-      peakHour: 3,
-      widthHours: 9,
-      baseline: 0.25,
-      amplitude: 0.55,
-      copy: "A future visual can show why overnight coverage matters for specific products and regimens.",
-    },
-    overlapLabel: "Projected overnight coverage",
-    interpretation: {
-      low: "Low modeled coverage.",
-      medium: "Moderate modeled coverage.",
-      high: "Higher modeled coverage.",
-    },
-    sources: ["smith-2019"],
-    safetyCaveat:
-      "Insulin timing is highly regimen-specific and must come from a clinician or label.",
-    labelCue: "Some once-daily instructions reference last meal or bedtime.",
-    whyTimingAppears:
-      "Glucose control continues through the night, so timing can shape overnight coverage.",
-    morningLens:
-      "Morning dosing may suit some regimens, but label and clinician guidance are decisive.",
-    eveningLens:
-      "Evening/bedtime examples aim at overnight glucose control in specific products.",
+    modelSummary:
+      "Move the dose to see how a short drug curve overlaps an overnight target.",
     sourceId: "smith-2019",
   },
   {
@@ -1173,7 +1153,7 @@ export const medicineExamples: MedicineExample[] = [
         halfLifeHours: 9,
         peakHours: 3,
         tailHours: 22,
-        copy: "This simplified curve rises after dosing and stays visible into the next morning.",
+        copy: "Rises after dosing and stays visible into the next morning.",
       },
     ],
     absorptionOptions: [
@@ -1181,13 +1161,13 @@ export const medicineExamples: MedicineExample[] = [
         id: "with-meal",
         label: "With meal",
         multiplier: 1,
-        copy: "The meal-linked setting shows stronger modeled absorption before the drug circulates.",
+        copy: "Shows stronger absorption before the drug enters circulation.",
       },
       {
         id: "lighter-absorption",
         label: "Lighter absorption",
         multiplier: 0.58,
-        copy: "The lighter setting lowers the curve to show how less absorption can reduce morning availability.",
+        copy: "Lowers the curve to show how absorption changes availability.",
       },
     ],
     targetRhythm: {
@@ -1196,25 +1176,23 @@ export const medicineExamples: MedicineExample[] = [
       widthHours: 5,
       baseline: 0.2,
       amplitude: 0.65,
-      copy: "The target rhythm is shown as a simplified morning window, not a personal risk prediction.",
+      copy: "The morning band is a teaching window, not a personal risk prediction.",
     },
     overlapLabel: "Projected morning availability",
     interpretation: {
-      low: "Low modeled morning availability: the exposure curve is weak or fading during the morning window.",
+      low: "The exposure curve is weak or fading in the morning window.",
       medium:
-        "Moderate modeled morning availability: some exposure carries into the morning window.",
-      high: "Higher modeled morning availability: exposure lines up with more of the morning window.",
+        "Some exposure carries into the morning window.",
+      high: "More exposure lines up with the morning window.",
     },
     sources: ["smith-2019"],
     safetyCaveat:
       "Anticoagulant timing depends on the exact product, meal instructions, and clinician guidance.",
-    labelCue: "Some labels pair dosing with the evening meal.",
+    labelCue: "Some labels pair the dose with an evening meal.",
     whyTimingAppears:
       "Meal timing can affect absorption, and morning cardiovascular risk is one reason timing is studied.",
-    morningLens:
-      "The central question is whether enough drug is active during a higher-risk morning window.",
-    eveningLens:
-      "Evening meal instructions can support absorption and overnight availability for some products.",
+    modelSummary:
+      "Change meal-linked absorption and watch how much modeled exposure reaches morning.",
     sourceId: "smith-2019",
   },
   {
@@ -1244,7 +1222,7 @@ export const medicineExamples: MedicineExample[] = [
         halfLifeHours: 5,
         peakHours: 0.75,
         tailHours: 9,
-        copy: "The first-meal model treats the pump window after fasting as the clearest timing target.",
+        copy: "Uses the first pump window after fasting as the main target.",
       },
       {
         id: "later-meal",
@@ -1252,7 +1230,7 @@ export const medicineExamples: MedicineExample[] = [
         halfLifeHours: 4,
         peakHours: 1.2,
         tailHours: 9,
-        copy: "The later-meal comparison lowers pump availability to show why the first meal after fasting is visually different.",
+        copy: "Uses a later meal to show how the pump window changes.",
       },
     ],
     targetRhythm: {
@@ -1261,25 +1239,23 @@ export const medicineExamples: MedicineExample[] = [
       widthHours: 4,
       baseline: 0.12,
       amplitude: 0.86,
-      copy: "For a PPI-style example, the target is active stomach-wall pumps around the first meal after fasting.",
+      copy: "The target is active stomach-wall pumps around the first meal after fasting.",
     },
     overlapLabel: "Projected pump-window readiness",
     interpretation: {
-      low: "Low pump-window readiness in this simplified model: the dose is not ready before many pumps activate.",
+      low: "The modeled drug is not ready before many pumps activate.",
       medium:
-        "Moderate pump-window readiness in this simplified model: some drug is ready near the pump window.",
-      high: "Higher pump-window readiness in this simplified model: drug presence is ready before more meal-triggered pumps activate.",
+        "Some modeled drug is ready near the pump window.",
+      high: "More modeled drug is ready before meal-triggered pumps activate.",
     },
     sources: ["smith-2019"],
     safetyCaveat:
       "Reflux medication timing differs by drug class and label; this site is educational.",
-    labelCue: "Often timed before the first meal in educational examples.",
+    labelCue: "Some labels tie the dose to the first meal.",
     whyTimingAppears:
       "For some proton-pump inhibitor labels, timing is tied to active stomach pumps around the first meal after fasting.",
-    morningLens:
-      "Before breakfast can place the drug before a concentrated first-meal pump window in this PPI-style example.",
-    eveningLens:
-      "Later timing is useful as a comparison because the first-meal pump window may already have passed.",
+    modelSummary:
+      "Move the dose and meal to see whether the drug is ready when pumps switch on.",
     sourceId: "smith-2019",
   },
   {
@@ -1309,7 +1285,7 @@ export const medicineExamples: MedicineExample[] = [
         halfLifeHours: 4,
         peakHours: 3,
         tailHours: 13,
-        copy: "The shorter-effect model fades earlier, making the sleep-boundary crossing easier to see.",
+        copy: "Fades earlier, making the sleep boundary easier to see.",
       },
       {
         id: "longer",
@@ -1317,7 +1293,7 @@ export const medicineExamples: MedicineExample[] = [
         halfLifeHours: 7,
         peakHours: 4,
         tailHours: 18,
-        copy: "The longer-effect model stretches farther into the evening in this simplified view.",
+        copy: "Stretches farther into the evening.",
       },
     ],
     targetRhythm: {
@@ -1326,26 +1302,24 @@ export const medicineExamples: MedicineExample[] = [
       widthHours: 8,
       baseline: 0.18,
       amplitude: 0.7,
-      copy: "The visual treats alerting effect as helpful in the daytime lane and increasingly awkward near the sleep boundary.",
+      copy: "The model places useful alerting effects in the day and spillover near sleep.",
     },
     overlapLabel: "Projected daytime alignment",
     interpretation: {
-      low: "Low daytime coverage in this simplified model: the effect misses much of the daytime lane.",
+      low: "The effect misses much of the daytime lane.",
       medium:
-        "Moderate daytime coverage in this simplified model: useful effect and sleep boundary are both in view.",
-      high: "Higher daytime coverage in this simplified model: effect sits mostly in the daytime lane.",
+        "Useful effect and the sleep boundary are both in view.",
+      high: "The effect sits mostly in the daytime lane.",
     },
     sources: ["smith-2019"],
     safetyCaveat:
       "ADHD medication timing depends on product formulation, symptoms, side effects, and prescriber guidance.",
     labelCue:
-      "Morning use can reduce insomnia risk for some stimulant medicines.",
+      "Some stimulant labels use morning timing to reduce sleep spillover.",
     whyTimingAppears:
       "A useful daytime effect can become a nighttime side effect if alerting action persists.",
-    morningLens:
-      "Morning dosing is a common strategy to keep wake-promoting effects away from bedtime.",
-    eveningLens:
-      "Evening dosing can be problematic for products that interfere with sleep.",
+    modelSummary:
+      "Move the dose to compare daytime coverage with spillover near sleep.",
     sourceId: "smith-2019",
   },
   {
@@ -1375,7 +1349,7 @@ export const medicineExamples: MedicineExample[] = [
         halfLifeHours: 3,
         peakHours: 1,
         tailHours: 8,
-        copy: "The shorter-tail model concentrates effect near the intended sleep window.",
+        copy: "Keeps the effect closer to the intended sleep window.",
       },
       {
         id: "longer-tail",
@@ -1383,7 +1357,7 @@ export const medicineExamples: MedicineExample[] = [
         halfLifeHours: 6,
         peakHours: 1.5,
         tailHours: 13,
-        copy: "The longer-tail model makes next-morning residue more visible.",
+        copy: "Makes next-morning residue easier to see.",
       },
     ],
     targetRhythm: {
@@ -1392,24 +1366,22 @@ export const medicineExamples: MedicineExample[] = [
       widthHours: 7,
       baseline: 0.08,
       amplitude: 0.88,
-      copy: "The visual treats the intended sleep window as the target and the morning zone as residue to notice.",
+      copy: "The target is the intended sleep window; the morning band shows residue.",
     },
     overlapLabel: "Projected sleep-window alignment",
     interpretation: {
-      low: "Low sleep-window alignment in this simplified model: the effect lands outside much of the intended sleep window.",
+      low: "The effect lands outside much of the intended sleep window.",
       medium:
-        "Moderate sleep-window alignment in this simplified model: some effect lands in the sleep window.",
-      high: "Higher sleep-window alignment in this simplified model: effect arrives close to the intended sleep window.",
+        "Some effect lands in the sleep window.",
+      high: "The effect arrives close to the intended sleep window.",
     },
     sources: ["smith-2019"],
     safetyCaveat:
       "Sleep-aid timing and next-day impairment warnings depend on the exact product label.",
-    labelCue: "The simple case: take before the intended sleep window.",
+    labelCue: "Some labels tie use to the intended sleep window.",
     whyTimingAppears: "The target effect is explicitly tied to sleep timing.",
-    morningLens:
-      "Morning use would usually conflict with the desired sleep window.",
-    eveningLens:
-      "Evening use is aligned with intended sleep for products whose labels say so.",
+    modelSummary:
+      "Move the dose to compare sleep-window alignment with next-morning residue.",
     sourceId: "smith-2019",
   },
 ];
@@ -2546,54 +2518,54 @@ export const workflowSteps: WorkflowStep[] = [
 export const oxaliplatinEvents = [
   {
     year: "1990",
-    title: "Toxicity problem",
-    copy: "Early development faced excessive toxicity in a phase I trial.",
+    title: "A toxicity problem",
+    copy: "An early phase I schedule produced too much toxicity.",
   },
   {
     year: "Early 1990s",
-    title: "Chronomodulated infusion",
-    copy: "Mouse timing studies helped guide clinical schedules with a peak delivery rate around 16:00.",
+    title: "Timing enters the schedule",
+    copy: "Mouse studies helped shape an infusion schedule that changed delivery across the day.",
   },
   {
     year: "1990s",
-    title: "Clinical signal",
-    copy: "Chronomodulated combinations reported lower severe mucosal toxicity and higher objective response in cited trials.",
+    title: "A promising signal",
+    copy: "Timed combinations reported less severe mucosal toxicity and better tumor response in cited trials.",
   },
   {
     year: "2006",
-    title: "Randomized trial complication",
-    copy: "A phase III trial compared chronomodulated delivery with conventional delivery and raised a difficult sex-specific survival signal.",
+    title: "The randomized trial complicates the story",
+    copy: "A phase III trial raised a difficult question about different survival effects by sex.",
   },
   {
     year: "2012",
-    title: "Follow-up, not closure",
-    copy: "A later meta-analysis argued that sex moderated survival effects. The safe public lesson is uncertainty: a real signal would deserve better trials, not bedside timing advice.",
+    title: "The question stays open",
+    copy: "A later meta-analysis supported the signal, but the result still called for better trials—not bedside timing advice.",
   },
 ];
 
 export const trialSimulationModes: TrialSimulationMode[] = [
   {
     id: "untimed",
-    label: "No timing consideration",
-    shortLabel: "Untimed",
-    strategy: "Clinic-time dosing",
-    copy: "Participants receive the fictional drug when visits happen. Early, typical, and late internal clocks are not measured, so the signal is spread across biological time.",
+    label: "Ignore body time",
+    shortLabel: "Ignore",
+    strategy: "Dose when visits happen",
+    copy: "Visits set the dose time. Different body clocks spread the drug across biological time.",
     accent: "var(--coral)",
   },
   {
     id: "population",
-    label: "Population-level best timing",
-    shortLabel: "Population",
-    strategy: "One best clock time",
-    copy: "Everyone is assigned the same clock-time schedule. It helps the average participant, but early and late clocks still receive the dose at different internal phases.",
+    label: "One time for everyone",
+    shortLabel: "One time",
+    strategy: "Use one wall-clock time",
+    copy: "Everyone gets the same clock time, but early and late body clocks still land at different internal times.",
     accent: "var(--amber)",
   },
   {
     id: "personalized",
-    label: "Personalized timing",
-    shortLabel: "Personalized",
-    strategy: "Dose by biological phase",
-    copy: "Each participant is scheduled by estimated internal phase, so different wall-clock appointments can land closer to the same biological target.",
+    label: "Match body time",
+    shortLabel: "Match",
+    strategy: "Dose by estimated body time",
+    copy: "Different appointment times aim for the same biological target.",
     accent: "var(--cyan)",
   },
 ];
@@ -2601,6 +2573,7 @@ export const trialSimulationModes: TrialSimulationMode[] = [
 export const roadmapItems = [
   "CircaKB/CircaDB gene rhythm import",
   "NCBI gene metadata enrichment",
+  "Regimen-specific insulin timing visual",
   "PubMed and OpenAlex citation graph",
   "Evidence confidence scoring",
   "Reviewer workflow for science skill validation",
@@ -2609,7 +2582,7 @@ export const roadmapItems = [
 export const heroStats = [
   { value: "24h", label: "daily biological frame" },
   { value: "5", label: "rhythm controls" },
-  { value: "6", label: "medicine examples" },
+  { value: "5", label: "medicine examples" },
   { value: "v2", label: "database-backed atlas" },
 ];
 

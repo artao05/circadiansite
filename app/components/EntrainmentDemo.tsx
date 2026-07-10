@@ -115,7 +115,7 @@ const signalDefinitions: SignalDefinition[] = [
     reference: referenceSchedule.lightOff,
     icon: SunMedium,
     color: "var(--amber)",
-    description: "Moves the light-tuned SCN rhythm most strongly.",
+    description: "The strongest cue for the brain’s master clock.",
   },
   {
     key: "sleepStart",
@@ -139,7 +139,7 @@ const signalDefinitions: SignalDefinition[] = [
     reference: referenceSchedule.sleepEnd,
     icon: Bed,
     color: "var(--green)",
-    description: "Acts as a morning anchor for the day rhythm.",
+    description: "Helps anchor the start of the day.",
   },
   {
     key: "lastMeal",
@@ -151,7 +151,7 @@ const signalDefinitions: SignalDefinition[] = [
     reference: referenceSchedule.lastMeal,
     icon: Utensils,
     color: "var(--coral)",
-    description: "Moves the food-tuned metabolic rhythm most strongly.",
+    description: "A strong cue for food-tuned tissue clocks.",
   },
   {
     key: "activityPeak",
@@ -163,7 +163,7 @@ const signalDefinitions: SignalDefinition[] = [
     reference: referenceSchedule.activityPeak,
     icon: Activity,
     color: "var(--cyan)",
-    description: "Adds timing evidence for active biological day.",
+    description: "Adds a cue for the active part of day.",
   },
 ];
 
@@ -233,7 +233,7 @@ const presets: Preset[] = [
     id: "aligned",
     label: "Aligned day",
     schedule: referenceSchedule,
-    copy: "Light, sleep, food, and movement all point to a similar day-night pattern.",
+    copy: "The cues point to the same day-night pattern.",
   },
   {
     id: "late-light",
@@ -245,7 +245,7 @@ const presets: Preset[] = [
       lastMeal: 19,
       activityPeak: 15,
     },
-    copy: "The light cue moves later while meal and activity signals stay close to the reference day.",
+    copy: "Light moves later while meals and activity stay put.",
   },
   {
     id: "late-meal",
@@ -257,7 +257,7 @@ const presets: Preset[] = [
       lastMeal: 22.5,
       activityPeak: 15,
     },
-    copy: "The food cue moves later while the light-tuned rhythm stays closer to the reference day.",
+    copy: "The last meal moves later while light stays put.",
   },
   {
     id: "mixed-cues",
@@ -269,7 +269,7 @@ const presets: Preset[] = [
       lastMeal: 22.5,
       activityPeak: 10,
     },
-    copy: "Light and food point later while activity points earlier, so the waves no longer crest together.",
+    copy: "Light and food move later while activity moves earlier.",
   },
   {
     id: "weekend-drift",
@@ -281,7 +281,7 @@ const presets: Preset[] = [
       lastMeal: 22,
       activityPeak: 18,
     },
-    copy: "Several cues move later together, like a small social time-zone shift.",
+    copy: "Several cues move later together, like a small time-zone shift.",
   },
 ];
 
@@ -461,47 +461,47 @@ function getStatus(
   if (coherenceScore >= 86 && Math.abs(meanShift) < 0.75) {
     return {
       tone: "aligned",
-      title: "Aligned wave overlap",
-      copy: "The waves crest together, so the simplified combined rhythm is tall and coherent.",
+      title: "Aligned",
+      copy: "The cues point to nearly the same body time.",
     };
   }
 
   if (coherenceScore >= 78) {
     return {
       tone: "shifted",
-      title: "Coherent but shifted",
-      copy: "Several cues move in the same direction, so the waves stay organized while the whole pattern shifts in time.",
+      title: "A little mixed",
+      copy: "The cues still agree, but the whole pattern has shifted.",
     };
   }
 
   if (mealAgainstScn > 1.25) {
     return {
       tone: "split",
-      title: "Late meal split",
-      copy: "Meals moved later, so the metabolic rhythm trails while the light-tuned SCN rhythm stays closer to the light schedule.",
+      title: "Out of sync",
+      copy: "The meal-tuned rhythm now trails the light-tuned rhythm.",
     };
   }
 
   if (lightAgainstMeal > 1.25) {
     return {
       tone: "split",
-      title: "Late light split",
-      copy: "Light moved later, so the SCN rhythm trails while the food-tuned rhythm stays nearer to the meal schedule.",
+      title: "Out of sync",
+      copy: "The light-tuned rhythm now trails the meal-tuned rhythm.",
     };
   }
 
   if (Math.abs(activityAgainstScn) > 1.15 || Math.abs(sleepAgainstScn) > 1.15) {
     return {
       tone: "mixed",
-      title: "Mixed timing evidence",
-      copy: "One rhythm is no longer cresting with the others, so the overlap shape becomes lower and broader.",
+      title: "Out of sync",
+      copy: "At least one cue now points away from the others.",
     };
   }
 
   return {
     tone: "mixed",
-    title: "Readable, slightly mixed",
-    copy: "The signals still mostly agree, but the crests are spread enough to soften the combined rhythm.",
+    title: "A little mixed",
+    copy: "The cues mostly agree, but their peaks have started to spread.",
   };
 }
 
@@ -579,15 +579,13 @@ export function EntrainmentDemo() {
       >
         <div className="signal-studio-header">
           <div>
-            <p className="kicker">Overlapping Rhythms Studio</p>
+            <p className="kicker">Daily cues</p>
             <h3 id={`${id}-studio-title`}>
-              Your body does not read the clock. It reads overlapping evidence.
+              See how daily cues pull your clock.
             </h3>
             <p className="microcopy">
-              Move light, sleep, food, and activity cues to see whether their
-              rhythm waves reinforce or split apart. This is an educational
-              model, not a measurement of circadian phase or a recommendation
-              to change sleep, meals, activity, or medication timing.
+              Move light, sleep, food, and activity to see when their timing
+              agrees—or pulls apart. This model doesn’t measure your body clock.
             </p>
           </div>
           <div className="studio-reset">
@@ -650,9 +648,9 @@ export function EntrainmentDemo() {
             </desc>
             <defs>
               <linearGradient id={`${id}-coherence-fill`} x1="0" x2="1">
-                <stop offset="0%" stopColor="rgba(84, 214, 194, 0.08)" />
-                <stop offset="48%" stopColor="rgba(84, 214, 194, 0.42)" />
-                <stop offset="100%" stopColor="rgba(247, 178, 103, 0.34)" />
+                <stop offset="0%" stopColor="var(--cyan)" stopOpacity="0.08" />
+                <stop offset="48%" stopColor="var(--cyan)" stopOpacity="0.42" />
+                <stop offset="100%" stopColor="var(--amber)" stopOpacity="0.34" />
               </linearGradient>
             </defs>
 
@@ -670,7 +668,8 @@ export function EntrainmentDemo() {
               width={timeToX(18) - timeToX(6)}
               height={waveAxis.height}
               rx="0"
-              fill="rgba(247, 178, 103, 0.12)"
+              fill="var(--amber)"
+              opacity="0.12"
             />
             {getSleepSegments(schedule).map((segment) => (
               <rect
@@ -739,7 +738,8 @@ export function EntrainmentDemo() {
             <path
               d={model.coherencePath}
               fill={`url(#${id}-coherence-fill)`}
-              stroke="rgba(84, 214, 194, 0.6)"
+              stroke="var(--cyan)"
+              strokeOpacity="0.6"
               strokeWidth="2"
             />
             <line
@@ -890,16 +890,17 @@ export function EntrainmentDemo() {
           <h3 data-tone={model.status.tone}>{model.status.title}</h3>
           <p>{model.status.copy}</p>
 
-          <div className="readout-details">
+          <details className="readout-details">
+            <summary>How the model works</summary>
             <div>
               <div className="meter-label">
-                <span>Wave coherence</span>
+                <span>Signal agreement</span>
                 <span>{model.coherenceScore}%</span>
               </div>
               <div
                 className="sandbox-meter"
                 role="meter"
-                aria-label="Rhythm wave coherence score"
+                aria-label="Timing signal agreement score"
                 aria-valuemin={0}
                 aria-valuemax={100}
                 aria-valuenow={model.coherenceScore}
@@ -920,16 +921,14 @@ export function EntrainmentDemo() {
             </dl>
 
             <p className="readout-note">
-              The filled shape is strongest where the wave crests overlap. When
-              one cue shifts away from the others, the product-like overlap
-              drops.
+              The filled shape grows where the rhythm peaks overlap. It shrinks
+              when one cue moves away.
             </p>
-          </div>
+          </details>
 
           <p className="readout-caveat">
-            Real circadian phase depends on light history, sleep, meals,
-            activity, and individual biology. This studio only shows why timing
-            evidence can agree, drift, or conflict.
+            Real body time depends on history and individual biology. This is a
+            teaching sketch, not a personal estimate.
           </p>
         </aside>
       </div>
