@@ -21,6 +21,7 @@ import {
   exposureWindowScore,
   formatClockHour,
   interpretOverlap,
+  targetAtHour,
 } from "../lib/drug-timing-model";
 import type { CurvePoint, DrugExposureProfile } from "../lib/drug-timing-model";
 import { useCircadianTime } from "./CircadianTimeProvider";
@@ -94,6 +95,7 @@ function bodyTargetKind(example: (typeof medicineExamples)[number]) {
 
 const visualExampleOrder = [
   "Short-acting statins",
+  "Long-acting insulin",
   "Anticoagulants",
   "ADHD medicines",
   "Sleep aids",
@@ -721,6 +723,309 @@ function NightWindowLab({
   );
 }
 
+function rhythmWavePath(
+  rhythm: (typeof medicineExamples)[number]["targetRhythm"],
+) {
+  const points = Array.from({ length: 25 }, (_, index) => ({
+    hour: index,
+    value: targetAtHour(index, rhythm),
+  }));
+
+  const xFor = (hour: number) => (hour / 24) * 100;
+  const yFor = (value: number) => 34 - value * 22;
+
+  return points
+    .map((point, index) => {
+      const command = index === 0 ? "M" : "L";
+      return `${command} ${xFor(point.hour).toFixed(2)} ${yFor(point.value).toFixed(2)}`;
+    })
+    .join(" ");
+}
+
+function mealChallengeScore(
+  mealHour: number,
+  rhythm: (typeof medicineExamples)[number]["targetRhythm"],
+  sizeMultiplier: number,
+) {
+  const handling = targetAtHour(mealHour, rhythm);
+  return Math.round(sizeMultiplier * (1.15 - handling) * 100);
+}
+
+function MealBasalLayersLab({
+  example,
+}: {
+  example: (typeof medicineExamples)[number];
+}) {
+  const mealLayers = example.mealLayers!;
+  const { hour: masterHour } = useCircadianTime();
+  const [mealHours, setMealHours] = useState(
+    mealLayers.meals.map((meal) => meal.defaultHour),
+  );
+  const [sizeId, setSizeId] = useState(
+    mealLayers.sizeOptions.find((option) => option.id === "standard")?.id ??
+      mealLayers.sizeOptions[0].id,
+  );
+  const [showMealCoverage, setShowMealCoverage] = useState(false);
+
+  const sizeOption =
+    mealLayers.sizeOptions.find((option) => option.id === sizeId) ??
+    mealLayers.sizeOptions[0];
+  const mealAssessments = mealLayers.meals.map((meal, index) => {
+    const mealHour = mealHours[index] ?? meal.defaultHour;
+    const handling = targetAtHour(mealHour, example.targetRhythm);
+    const challenge = mealChallengeScore(
+      mealHour,
+      example.targetRhythm,
+      sizeOption.multiplier,
+    );
+
+    return {
+      meal,
+      mealHour,
+      handling,
+      challenge,
+      lowerHandling: handling < 0.45,
+    };
+  });
+  const lowerHandlingCount = mealAssessments.filter(
+    (assessment) => assessment.lowerHandling,
+  ).length;
+  const rhythmScore = Math.round(
+    (lowerHandlingCount / Math.max(mealAssessments.length, 1)) * 100,
+  );
+  const interpretation = interpretOverlap(rhythmScore, example.interpretation);
+  const leadMeal = [...mealAssessments].sort(
+    (left, right) => right.challenge - left.challenge,
+  )[0];
+
+  const applyPattern = (hours: number[]) => {
+    setMealHours(
+      mealLayers.meals.map((meal, index) => hours[index] ?? meal.defaultHour),
+    );
+  };
+
+  const updateMealHour = (index: number, hour: number) => {
+    setMealHours((current) =>
+      current.map((currentHour, currentIndex) =>
+        currentIndex === index ? hour : currentHour,
+      ),
+    );
+  };
+
+  return (
+    <div className="variant-lab-grid meal-basal-lab">
+      <section className="visual-panel meal-basal-panel">
+        <div className="lab-panel-heading">
+          <div>
+            <p className="kicker">Meal + basal layers</p>
+            <h3>Meals on top of background support</h3>
+          </div>
+          <span>{example.overlapLabel}</span>
+        </div>
+
+        <div
+          className="meal-basal-track"
+          role="img"
+          aria-label="Interactive teaching model showing meal glucose pulses, daily glucose-handling rhythm, and conceptual basal coverage"
+        >
+          <div className="meal-basal-zones" aria-hidden="true">
+            <span className="night" />
+            <span className="morning" />
+            <span className="day" />
+            <span className="evening" />
+            <span className="night" />
+          </div>
+
+          <svg
+            className="meal-basal-wave"
+            viewBox="0 0 100 40"
+            preserveAspectRatio="none"
+            aria-hidden="true"
+          >
+            <path
+              d={rhythmWavePath(example.targetRhythm)}
+              fill="none"
+              stroke="var(--amber)"
+              strokeWidth="2"
+              vectorEffect="non-scaling-stroke"
+            />
+          </svg>
+
+          <div className="meal-basal-band" aria-hidden="true">
+            <span />
+          </div>
+
+          {mealAssessments.map(({ meal, mealHour, challenge }) => (
+            <div
+              key={meal.id}
+              className="meal-glucose-pulse"
+              style={{
+                left: timelinePercent(mealHour),
+                height: `${Math.min(74, 24 + challenge * 0.42)}%`,
+              }}
+              aria-hidden="true"
+            >
+              <span>{meal.label}</span>
+            </div>
+          ))}
+
+          {showMealCoverage
+            ? mealAssessments.map(({ meal, mealHour, challenge }) => (
+                <div
+                  key={`${meal.id}-coverage`}
+                  className="meal-coverage-peak"
+                  style={{
+                    left: timelinePercent(mealHour),
+                    height: `${Math.min(48, 16 + challenge * 0.24)}%`,
+                  }}
+                  aria-hidden="true"
+                />
+              ))
+            : null}
+
+          <span
+            className="meal-basal-marker body-time"
+            style={{ left: timelinePercent(masterHour) }}
+            aria-hidden="true"
+          >
+            body time
+          </span>
+
+          <div className="meal-basal-track-labels" aria-hidden="true">
+            <span>00</span>
+            <span>06</span>
+            <span>12</span>
+            <span>18</span>
+            <span>24</span>
+          </div>
+          <div className="meal-basal-layer-labels" aria-hidden="true">
+            <span className="wave-label">Daily glucose-handling rhythm</span>
+            <span className="pulse-label">Meal glucose pulse</span>
+            <span className="band-label">Conceptual basal coverage</span>
+            {showMealCoverage ? (
+              <span className="coverage-label">Meal-time coverage concept</span>
+            ) : null}
+          </div>
+        </div>
+
+        <div className="meal-basal-legend">
+          <span className="meal-basal-rhythm-key">daily rhythm</span>
+          <span className="meal-basal-pulse-key">meal pulse</span>
+          <span className="meal-basal-band-key">basal concept</span>
+          {showMealCoverage ? (
+            <span className="meal-basal-coverage-key">meal-time concept</span>
+          ) : null}
+        </div>
+      </section>
+
+      <section className="visual-panel meal-basal-meals-panel">
+        <div className="lab-panel-heading">
+          <div>
+            <p className="kicker">Meal timing</p>
+            <h3>Move the day’s meals</h3>
+          </div>
+          <Utensils size={24} aria-hidden="true" />
+        </div>
+
+        <div className="meal-pattern-toggle" role="group" aria-label="Meal pattern presets">
+          {mealLayers.patterns.map((pattern) => {
+            const selected = pattern.hours.every(
+              (hour, index) => hour === mealHours[index],
+            );
+
+            return (
+              <button
+                key={pattern.id}
+                type="button"
+                className={selected ? "selected" : ""}
+                onClick={() => applyPattern(pattern.hours)}
+              >
+                {pattern.label}
+              </button>
+            );
+          })}
+        </div>
+
+        {mealAssessments.map(({ meal, mealHour, challenge, lowerHandling }, index) => (
+          <div className="meal-control" key={meal.id}>
+            <div className="range-control">
+              <span>
+                {meal.label} <strong>{formatClockHour(mealHour)}</strong>
+              </span>
+              <input
+                type="range"
+                min={example.doseWindow.minHour}
+                max={example.doseWindow.maxHour}
+                step="1"
+                value={mealHour}
+                onChange={(event) =>
+                  updateMealHour(index, Number(event.currentTarget.value))
+                }
+                onInput={(event) =>
+                  updateMealHour(index, Number(event.currentTarget.value))
+                }
+                aria-label={`${meal.label} time`}
+              />
+            </div>
+            <p className="meal-control-note">
+              {lowerHandling
+                ? "Lands in a lower glucose-handling part of the model day."
+                : "Lands in a stronger glucose-handling part of the model day."}{" "}
+              Visible challenge: {challenge}%.
+            </p>
+          </div>
+        ))}
+      </section>
+
+      <section className="visual-panel lab-controls meal-basal-controls">
+        <div className="profile-toggle" role="group" aria-label="Meal size in model">
+          {mealLayers.sizeOptions.map((option) => (
+            <button
+              key={option.id}
+              type="button"
+              className={option.id === sizeId ? "selected" : ""}
+              onClick={() => setSizeId(option.id)}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
+        <p className="control-caption">{sizeOption.copy}</p>
+
+        <div className="meal-coverage-toggle">
+          <label>
+            <input
+              type="checkbox"
+              checked={showMealCoverage}
+              onChange={(event) => setShowMealCoverage(event.currentTarget.checked)}
+            />
+            <span>Show meal-time coverage concept</span>
+          </label>
+          <p className="control-caption">
+            Some real regimens add separate meal-related coverage. This toggle
+            shows that idea without recommending a product or dose.
+          </p>
+        </div>
+      </section>
+
+      <aside className="visual-panel lab-readout meal-basal-readout">
+        <Clock3 size={20} aria-hidden="true" />
+        <strong>What the model shows</strong>
+        <p>{interpretation}</p>
+        <p>
+          In this teaching model, {leadMeal.meal.label.toLowerCase()} creates
+          the largest visible meal challenge ({leadMeal.challenge}%).
+        </p>
+        <p>{example.targetRhythm.copy}</p>
+        <p>
+          Background coverage stays broad in this concept model. It does not
+          tell you when to inject insulin.
+        </p>
+      </aside>
+    </div>
+  );
+}
+
 const pumpNodes = [
   { x: 31, y: 32 },
   { x: 40, y: 27 },
@@ -923,6 +1228,9 @@ function InteractiveMedicineLab({
 }: {
   example: (typeof medicineExamples)[number];
 }) {
+  if (example.labVariant === "meal-basal-layers") {
+    return <MealBasalLayersLab key={example.name} example={example} />;
+  }
   if (example.labVariant === "acid-pump") {
     return <AcidPumpLab key={example.name} example={example} />;
   }

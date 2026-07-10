@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { clockMechanicsStructures } from "../content/site-data";
+import { CitationLink } from "./CitationLink";
 import {
   ClockMechanics,
   type ClockMechanicsState,
@@ -56,14 +58,16 @@ const moleculeCast = [
     id: "activator",
     label: "CLOCK/BMAL1",
     role: "Activator pair",
-    look: "teal + amber protein pair",
+    structureId: "clock-bmal",
+    look: "teal + amber backbone ribbons",
     copy: "binds DNA and turns clock genes on",
   },
   {
     id: "repressor",
     label: "PER/CRY",
     role: "Repressor pair",
-    look: "violet + cyan bead clusters",
+    structureId: "per-cry",
+    look: "violet + cyan backbone ribbons",
     copy: "builds up, returns, and turns the signal down",
   },
 ] as const;
@@ -126,6 +130,7 @@ export function ClockMechanicsSection({
   const frameRef = useRef<number | null>(null);
   const [timeState, setTimeState] =
     useState<ClockMechanicsState>("morning");
+  const [shouldRenderScene, setShouldRenderScene] = useState(false);
   const activeCopy = stateCopy[timeState];
   const activeMolecule = activeCast(timeState);
   const states = useMemo(
@@ -142,6 +147,9 @@ export function ClockMechanicsSection({
       const rect = section.getBoundingClientRect();
       const scrollable = Math.max(1, rect.height - window.innerHeight);
       const progress = Math.min(1, Math.max(0, -rect.top / scrollable));
+      if (rect.top < window.innerHeight * 1.2 && rect.bottom > -window.innerHeight) {
+        setShouldRenderScene(true);
+      }
       progressRef.current = progress;
       const nextState = stateFromProgress(progress);
       setTimeState((current) => (current === nextState ? current : nextState));
@@ -164,6 +172,25 @@ export function ClockMechanicsSection({
     };
   }, []);
 
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section || !("IntersectionObserver" in window)) {
+      setShouldRenderScene(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        setShouldRenderScene(true);
+        observer.disconnect();
+      },
+      { rootMargin: "120% 0px" },
+    );
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <section
       ref={sectionRef}
@@ -172,7 +199,9 @@ export function ClockMechanicsSection({
       aria-label={ariaLabel}
     >
       <div className="clock-mechanics-sticky" data-state={timeState}>
-        <ClockMechanics timeState={timeState} progressRef={progressRef} />
+        {shouldRenderScene ? (
+          <ClockMechanics timeState={timeState} progressRef={progressRef} />
+        ) : null}
 
         <div className="clock-mechanics-copy">
           <p className="kicker">{activeCopy.eyebrow}</p>
@@ -211,21 +240,37 @@ export function ClockMechanicsSection({
         </div>
 
         <div className="clock-molecule-key" aria-label="Molecular loop cast">
-          {moleculeCast.map((molecule) => (
-            <article
-              key={molecule.id}
-              className={activeMolecule === molecule.id ? "active" : ""}
-            >
-              <span className={`molecule-swatch ${molecule.id}`} />
-              <div>
-                <strong>{molecule.label}</strong>
-                <span>{molecule.role}</span>
-                <p>
-                  {molecule.look}; {molecule.copy}.
-                </p>
-              </div>
-            </article>
-          ))}
+          {moleculeCast.map((molecule) => {
+            const structure = clockMechanicsStructures.find(
+              ({ id }) => id === molecule.structureId,
+            );
+
+            return (
+              <article
+                key={molecule.id}
+                className={activeMolecule === molecule.id ? "active" : ""}
+              >
+                <span className={`molecule-swatch ${molecule.id}`} />
+                <div>
+                  <strong>{molecule.label}</strong>
+                  <span>{molecule.role}</span>
+                  <p>
+                    {molecule.look}; {molecule.copy}. {structure?.pdbId ? (
+                      <>
+                        Source geometry: PDB {structure.pdbId}{" "}
+                        <CitationLink
+                          id={structure.citationId}
+                          context={`clock-mechanics-${structure.id}`}
+                          label="source"
+                        />
+                        . {structure.note}
+                      </>
+                    ) : null}
+                  </p>
+                </div>
+              </article>
+            );
+          })}
           <article className={activeMolecule === "reset" ? "active reset" : "reset"}>
             <span className="molecule-swatch reset" />
             <div>

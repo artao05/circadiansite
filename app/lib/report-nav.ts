@@ -38,6 +38,7 @@ export const navGroupMeta: Record<
 
 const medicineSlugMap: Record<string, string> = {
   "Short-acting statins": "statins",
+  "Long-acting insulin": "insulin",
   Anticoagulants: "anticoagulants",
   "Acid reflux medicines": "acid-reflux",
   "ADHD medicines": "adhd",

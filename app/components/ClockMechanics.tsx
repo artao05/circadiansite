@@ -1,15 +1,19 @@
 "use client";
 
-import { MeshTransmissionMaterial, MeshWobbleMaterial } from "@react-three/drei";
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { Canvas, useFrame, useLoader, useThree } from "@react-three/fiber";
 import {
+  Suspense,
   useEffect,
   useMemo,
   useRef,
+  useState,
   type RefObject,
   type ReactNode,
 } from "react";
 import * as THREE from "three";
+import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { clockMechanicsStructures } from "../content/site-data";
 
 export type ClockMechanicsState = "morning" | "afternoon" | "night" | "dawn";
 
@@ -24,18 +28,20 @@ const reusableObject = new THREE.Object3D();
 
 function usePrefersReducedMotion() {
   const reducedRef = useRef(false);
+  const [reducedMotion, setReducedMotion] = useState(false);
 
   useEffect(() => {
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
     const update = () => {
       reducedRef.current = media.matches;
+      setReducedMotion(media.matches);
     };
     update();
     media.addEventListener("change", update);
     return () => media.removeEventListener("change", update);
   }, []);
 
-  return reducedRef;
+  return { reducedMotion, reducedRef };
 }
 
 function makeDnaCurve(phase: number) {
@@ -89,43 +95,12 @@ function createDissolveBuffers() {
   return buffers;
 }
 
-function clockOpacity(timeState: ClockMechanicsState) {
-  if (timeState === "night") return 0.36;
-  if (timeState === "afternoon") return 0.54;
-  if (timeState === "dawn") return 1;
-  return 0.86;
-}
-
-function perCryTarget(timeState: ClockMechanicsState) {
-  if (timeState === "morning") {
-    return {
-      left: [-3.2, 0.8, 0.9],
-      right: [3.2, -0.62, 0.8],
-      scale: 0.001,
-    };
-  }
-
-  if (timeState === "afternoon") {
-    return {
-      left: [-1.7, 0.7, 0.72],
-      right: [1.7, -0.46, 0.65],
-      scale: 0.78,
-    };
-  }
-
-  if (timeState === "night") {
-    return {
-      left: [-0.18, 0.18, 0.42],
-      right: [0.18, -0.16, 0.36],
-      scale: 1.04,
-    };
-  }
-
-  return {
-    left: [-0.1, 0.12, 0.48],
-    right: [0.1, -0.12, 0.42],
-    scale: 0.001,
-  };
+function segmentProgress(progress: number, start: number, end: number) {
+  return THREE.MathUtils.smoothstep(
+    THREE.MathUtils.clamp((progress - start) / (end - start), 0, 1),
+    0,
+    1,
+  );
 }
 
 function SceneCamera({
@@ -200,18 +175,66 @@ function DnaTrack() {
   );
 }
 
-function ClockBmalComplex({ timeState }: { timeState: ClockMechanicsState }) {
+function ProteinStructure({
+  path,
+  opacityRef,
+}: {
+  path: string;
+  opacityRef: RefObject<number>;
+}) {
+  const { scene } = useLoader(GLTFLoader, path, (loader) => {
+    const draco = new DRACOLoader();
+    draco.setDecoderPath("/vendor/draco/");
+    draco.setDecoderConfig({ type: "js" });
+    loader.setDRACOLoader(draco);
+  });
+  const model = useMemo(() => {
+    const clone = scene.clone(true);
+    clone.traverse((object) => {
+      if (!(object instanceof THREE.Mesh)) return;
+      object.material = Array.isArray(object.material)
+        ? object.material.map((material) => material.clone())
+        : object.material.clone();
+    });
+    return clone;
+  }, [scene]);
+
+  useFrame(() => {
+    const opacity = opacityRef.current;
+    model.traverse((object) => {
+      if (!(object instanceof THREE.Mesh)) return;
+      const materials = Array.isArray(object.material)
+        ? object.material
+        : [object.material];
+      materials.forEach((material) => {
+        material.transparent = opacity < 0.999;
+        material.opacity = opacity;
+        material.depthWrite = opacity > 0.96;
+      });
+    });
+  });
+
+  return <primitive object={model} />;
+}
+
+function ClockBmalComplex({
+  progressRef,
+}: {
+  progressRef: RefObject<number>;
+}) {
   const groupRef = useRef<THREE.Group>(null);
   const targetScale = useMemo(() => new THREE.Vector3(1, 1, 1), []);
   const targetPosition = useMemo(() => new THREE.Vector3(), []);
+  const opacityRef = useRef(1);
   const elapsedRef = useRef(0);
 
   useFrame((_, delta) => {
     if (!groupRef.current) return;
     elapsedRef.current += delta;
-    const scale = timeState === "morning" || timeState === "dawn" ? 1 : 0.74;
-    const y = timeState === "night" ? -0.16 : -0.2;
-    const z = timeState === "night" ? 0.2 : 0.34;
+    const docked = segmentProgress(progressRef.current, 0.55, 0.82);
+    const scale = THREE.MathUtils.lerp(0.96, 0.74, docked);
+    const y = THREE.MathUtils.lerp(-0.2, -0.16, docked);
+    const z = THREE.MathUtils.lerp(0.34, 0.2, docked);
     targetPosition.set(0, y, z);
     targetScale.set(scale, scale, scale);
     groupRef.current.position.lerp(targetPosition, Math.min(1, delta * 3));
@@ -219,119 +242,58 @@ function ClockBmalComplex({ timeState }: { timeState: ClockMechanicsState }) {
       targetScale,
       Math.min(1, delta * 3),
     );
-    groupRef.current.rotation.y = Math.sin(elapsedRef.current * 0.32) * 0.1;
+    groupRef.current.rotation.y =
+      Math.sin(elapsedRef.current * 0.32) * 0.07 - docked * 0.16;
     groupRef.current.rotation.z = Math.sin(elapsedRef.current * 0.2) * 0.04;
+    opacityRef.current = 1 - segmentProgress(progressRef.current, 0.88, 1) * 0.22;
   });
 
   return (
     <group ref={groupRef} position={[0, -0.2, 0.34]}>
-      <mesh position={[-0.28, 0.05, 0]} scale={[0.52, 0.44, 0.34]}>
-        <sphereGeometry args={[1, 40, 40]} />
-        <MeshWobbleMaterial
-          color="#54d6c2"
-          emissive="#25b7ad"
-          emissiveIntensity={clockOpacity(timeState)}
-          factor={0.12}
-          speed={0.5}
-          roughness={0.24}
-          metalness={0.04}
-        />
-      </mesh>
-      <mesh position={[0.26, -0.02, 0.02]} scale={[0.5, 0.42, 0.32]}>
-        <sphereGeometry args={[1, 40, 40]} />
-        <MeshWobbleMaterial
-          color="#f7b267"
-          emissive="#d8892b"
-          emissiveIntensity={clockOpacity(timeState)}
-          factor={0.12}
-          speed={0.46}
-          roughness={0.24}
-          metalness={0.04}
-        />
-      </mesh>
-      <mesh position={[0, -0.02, -0.02]} scale={[0.36, 0.16, 0.16]}>
-        <sphereGeometry args={[1, 24, 24]} />
-        <meshStandardMaterial
-          color="#fff1cc"
-          emissive="#f7b267"
-          emissiveIntensity={0.24}
-          transparent
-          opacity={0.48}
-        />
-      </mesh>
+      <ProteinStructure
+        path={clockMechanicsStructures[0].glbPath}
+        opacityRef={opacityRef}
+      />
     </group>
   );
 }
 
-function PerCryCluster({
-  side,
-  timeState,
+function PerCryComplex({
+  progressRef,
 }: {
-  side: "left" | "right";
-  timeState: ClockMechanicsState;
+  progressRef: RefObject<number>;
 }) {
   const groupRef = useRef<THREE.Group>(null);
   const targetVector = useMemo(() => new THREE.Vector3(), []);
-  const target = perCryTarget(timeState);
-  const targetPosition = side === "left" ? target.left : target.right;
-  const cluster = useMemo(
-    () =>
-      Array.from({ length: 11 }, (_, index) => {
-        const ring = index / 11;
-        const angle = ring * Math.PI * 2 + (side === "left" ? 0 : Math.PI / 5);
-        const radius = 0.34 + (index % 3) * 0.075;
-        return {
-          position: [
-            Math.cos(angle) * radius,
-            Math.sin(angle * 1.4) * 0.24,
-            Math.sin(angle) * radius,
-          ] as [number, number, number],
-          scale: 0.24 + (index % 4) * 0.045,
-        };
-      }),
-    [side],
-  );
+  const opacityRef = useRef(0);
 
   useFrame((_, delta) => {
     const group = groupRef.current;
     if (!group) return;
 
-    targetVector.set(targetPosition[0], targetPosition[1], targetPosition[2]);
-    group.position.lerp(
-      targetVector,
-      Math.min(1, delta * 3.2),
+    const arrive = segmentProgress(progressRef.current, 0.28, 0.55);
+    const dock = segmentProgress(progressRef.current, 0.55, 0.82);
+    const dissolve = segmentProgress(progressRef.current, 0.82, 1);
+    const x = THREE.MathUtils.lerp(-4.4, -0.85, arrive);
+    const y = THREE.MathUtils.lerp(0.95, 0.36, arrive);
+    const z = THREE.MathUtils.lerp(0.82, 0.58, arrive);
+    targetVector.set(
+      THREE.MathUtils.lerp(x, 0.25, dock),
+      THREE.MathUtils.lerp(y, 0.08, dock),
+      THREE.MathUtils.lerp(z, 0.42, dock),
     );
-
-    const currentScale = group.scale.x;
-    const nextScale = THREE.MathUtils.lerp(
-      currentScale,
-      target.scale,
-      Math.min(1, delta * 3.2),
-    );
-    group.scale.setScalar(nextScale);
+    group.position.lerp(targetVector, Math.min(1, delta * 4));
+    group.scale.setScalar(THREE.MathUtils.lerp(0.001, 0.92, arrive) * (1 - dissolve));
+    group.rotation.set(0.08 + dock * 0.24, -0.4 + dock * 0.52, dock * 0.16);
+    opacityRef.current = arrive * (1 - dissolve);
   });
 
   return (
-    <group ref={groupRef} position={targetPosition} scale={target.scale}>
-      {cluster.map((node, index) => (
-        <mesh key={index} position={node.position} scale={node.scale}>
-          <sphereGeometry args={[1, 24, 24]} />
-          <MeshTransmissionMaterial
-            color={side === "left" ? "#9f8cff" : "#6fe8ff"}
-            anisotropicBlur={0.28}
-            chromaticAberration={0.08}
-            distortion={0.1}
-            ior={1.2}
-            roughness={0.2}
-            samples={4}
-            resolution={96}
-            thickness={0.58}
-            transmission={0.72}
-            transparent
-            opacity={0.68}
-          />
-        </mesh>
-      ))}
+    <group ref={groupRef} position={[-4.4, 0.95, 0.82]} scale={0.001}>
+      <ProteinStructure
+        path={clockMechanicsStructures[1].glbPath}
+        opacityRef={opacityRef}
+      />
     </group>
   );
 }
@@ -483,8 +445,6 @@ function MolecularScene({
 }: ClockMechanicsProps & {
   reducedMotionRef: RefObject<boolean>;
 }) {
-  const target = perCryTarget(timeState);
-
   return (
     <>
       <color attach="background" args={["#050913"]} />
@@ -502,30 +462,14 @@ function MolecularScene({
 
       <ClockMechanicsRig timeState={timeState}>
         <DnaTrack />
-        <ClockBmalComplex timeState={timeState} />
+        <ClockBmalComplex progressRef={progressRef} />
         <TranscriptParticles
           timeState={timeState}
           reducedMotionRef={reducedMotionRef}
         />
-
-        {timeState !== "dawn" ? (
-          <>
-            <PerCryCluster side="left" timeState={timeState} />
-            <PerCryCluster side="right" timeState={timeState} />
-          </>
-        ) : null}
+        <PerCryComplex progressRef={progressRef} />
 
         <DawnDissolve timeState={timeState} reducedMotionRef={reducedMotionRef} />
-
-        <mesh position={[0, -0.06, 0.1]} scale={target.scale * 1.3}>
-          <sphereGeometry args={[1.12, 40, 40]} />
-          <meshBasicMaterial
-            color="#111c24"
-            transparent
-            opacity={timeState === "night" ? 0.22 : 0}
-            depthWrite={false}
-          />
-        </mesh>
       </ClockMechanicsRig>
     </>
   );
@@ -565,24 +509,37 @@ export function ClockMechanics({
   timeState,
   progressRef,
 }: ClockMechanicsProps) {
-  const reducedMotionRef = usePrefersReducedMotion();
+  const { reducedMotion, reducedRef: reducedMotionRef } = usePrefersReducedMotion();
+  const [isCompact, setIsCompact] = useState(false);
+
+  useEffect(() => {
+    const media = window.matchMedia("(max-width: 700px)");
+    const update = () => {
+      setIsCompact(media.matches);
+    };
+    update();
+    media.addEventListener("change", update);
+    return () => media.removeEventListener("change", update);
+  }, []);
 
   return (
     <Canvas
       className="clock-mechanics-canvas"
       camera={{ position: [0.2, 0.65, 6.8], fov: 46 }}
-      dpr={[1, 1.6]}
+      dpr={[1, isCompact || reducedMotion ? 1 : 1.6]}
       gl={{
         antialias: true,
         alpha: false,
         powerPreference: "high-performance",
       }}
     >
-      <MolecularScene
-        timeState={timeState}
-        progressRef={progressRef}
-        reducedMotionRef={reducedMotionRef}
-      />
+      <Suspense fallback={null}>
+        <MolecularScene
+          timeState={timeState}
+          progressRef={progressRef}
+          reducedMotionRef={reducedMotionRef}
+        />
+      </Suspense>
     </Canvas>
   );
 }

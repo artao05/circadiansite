@@ -3225,6 +3225,270 @@ meter {
   min-height: 0;
 }
 
+.meal-basal-panel,
+.meal-basal-meals-panel {
+  display: grid;
+  gap: 1rem;
+  padding: 1.1rem;
+  background: var(--visual-panel-bg);
+}
+
+.meal-basal-track {
+  position: relative;
+  min-height: 280px;
+  overflow: hidden;
+  border: 1px solid var(--surface-line);
+  border-radius: var(--radius);
+  background:
+    repeating-linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--ink) 7%, transparent) 0 1px,
+      transparent 1px calc(100% / 24)
+    ),
+    var(--surface-soft);
+}
+
+.meal-basal-zones {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr 2fr 1fr 1fr;
+}
+
+.meal-basal-zones span {
+  border-right: 1px solid color-mix(in srgb, var(--ink) 8%, transparent);
+}
+
+.meal-basal-zones .night {
+  background: color-mix(in srgb, var(--surface-strong) 12%, transparent);
+}
+
+.meal-basal-zones .morning {
+  background: color-mix(in srgb, var(--amber) 12%, transparent);
+}
+
+.meal-basal-zones .day {
+  background: color-mix(in srgb, var(--cyan) 10%, transparent);
+}
+
+.meal-basal-zones .evening {
+  background: color-mix(in srgb, var(--coral) 10%, transparent);
+}
+
+.meal-basal-wave {
+  position: absolute;
+  top: 3.4rem;
+  right: 5%;
+  left: 5%;
+  width: 90%;
+  height: 72px;
+  overflow: visible;
+  opacity: 0.92;
+}
+
+.meal-basal-band {
+  position: absolute;
+  top: 68%;
+  right: 7%;
+  left: 7%;
+  height: 1.35rem;
+  border: 1px solid color-mix(in srgb, var(--cyan) 78%, var(--surface-line));
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--cyan) 38%, var(--surface));
+  box-shadow: 0 0 20px color-mix(in srgb, var(--cyan) 28%, transparent);
+}
+
+.meal-basal-band span {
+  position: absolute;
+  inset: 0.35rem 6%;
+  border-radius: inherit;
+  background: color-mix(in srgb, var(--cyan) 62%, transparent);
+}
+
+.meal-glucose-pulse {
+  position: absolute;
+  bottom: 24%;
+  width: 2.4rem;
+  border: 1px solid color-mix(in srgb, var(--coral) 72%, var(--surface-line));
+  border-radius: 999px 999px 0.35rem 0.35rem;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--coral) 72%, transparent),
+    color-mix(in srgb, var(--coral) 24%, transparent)
+  );
+  transform: translateX(-50%);
+}
+
+.meal-glucose-pulse span {
+  position: absolute;
+  top: -1.45rem;
+  left: 50%;
+  color: var(--on-surface);
+  font-size: 0.68rem;
+  font-weight: 700;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+.meal-coverage-peak {
+  position: absolute;
+  bottom: 42%;
+  width: 1.35rem;
+  border: 1px solid color-mix(in srgb, var(--green) 72%, var(--surface-line));
+  border-radius: 999px 999px 0.2rem 0.2rem;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--green) 72%, transparent),
+    color-mix(in srgb, var(--green) 20%, transparent)
+  );
+  transform: translateX(-50%);
+}
+
+.meal-basal-marker {
+  position: absolute;
+  top: 1rem;
+  padding: 0.18rem 0.45rem;
+  border: 1px solid var(--surface-line);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--on-surface);
+  font-size: 0.68rem;
+  font-weight: 700;
+  transform: translateX(-50%);
+}
+
+.meal-basal-track-labels {
+  position: absolute;
+  right: 7%;
+  bottom: 0.75rem;
+  left: 7%;
+  display: flex;
+  justify-content: space-between;
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+.meal-basal-layer-labels {
+  position: absolute;
+  top: 0.85rem;
+  right: 7%;
+  left: 7%;
+  display: grid;
+  gap: 0.2rem;
+  color: var(--on-surface);
+  font-size: 0.74rem;
+  font-weight: 700;
+}
+
+.meal-basal-layer-labels .pulse-label {
+  margin-top: 4.8rem;
+}
+
+.meal-basal-layer-labels .band-label {
+  margin-top: 7.8rem;
+}
+
+.meal-basal-layer-labels .coverage-label {
+  color: var(--green);
+}
+
+.meal-basal-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem 1rem;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.meal-basal-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.meal-basal-legend span::before {
+  width: 0.8rem;
+  height: 0.8rem;
+  border-radius: 50%;
+  content: "";
+}
+
+.meal-basal-rhythm-key::before {
+  background: var(--amber);
+}
+
+.meal-basal-pulse-key::before {
+  background: var(--coral);
+}
+
+.meal-basal-band-key::before {
+  background: var(--cyan);
+}
+
+.meal-basal-coverage-key::before {
+  background: var(--green);
+}
+
+.meal-pattern-toggle {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.meal-pattern-toggle button {
+  border: 1px solid var(--surface-line);
+  border-radius: 999px;
+  background: var(--control-bg);
+  color: var(--on-surface);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.82rem;
+  padding: 0.42rem 0.72rem;
+}
+
+.meal-pattern-toggle button.selected {
+  background: var(--selected-bg);
+  color: var(--selected-fg);
+}
+
+.meal-control {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.meal-control-note {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+.meal-basal-controls .meal-coverage-toggle {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.meal-basal-controls .meal-coverage-toggle label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  color: var(--on-surface);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.meal-basal-readout p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.meal-basal-readout {
+  display: grid;
+  align-content: start;
+  gap: 0.7rem;
+}
+
 .runway-panel,
 .night-window-panel,
 .acid-pump-panel,
@@ -5816,6 +6080,8 @@ meter {
   .night-window-panel,
   .acid-pump-panel,
   .acid-meal-panel,
+  .meal-basal-panel,
+  .meal-basal-meals-panel,
   .wake-body-panel,
   .sleep-body-panel {
     padding: 0.82rem;
@@ -6445,6 +6711,21 @@ meter {
     min-height: 100svh;
   }
 
+  .clock-mechanics-sticky::before {
+    background:
+      linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--surface-strong) 88%, transparent),
+        color-mix(in srgb, var(--surface-strong) 74%, transparent) 42%,
+        transparent 70%
+      ),
+      radial-gradient(
+        circle at center,
+        transparent 0 46%,
+        color-mix(in srgb, var(--surface-strong) 52%, transparent) 82%
+      );
+  }
+
   .clock-mechanics-copy {
     left: 1rem;
     right: 1rem;
@@ -6696,7 +6977,8 @@ meter {
   }
 
   .runway-track,
-  .night-window-track {
+  .night-window-track,
+  .meal-basal-track {
     min-height: 245px;
   }
 

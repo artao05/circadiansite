@@ -40,12 +40,18 @@ describe("public v1 content integrity", () => {
   });
 
   it("publishes only complete curated medicine examples", () => {
-    expect(medicineExamples).toHaveLength(5);
-    expect(medicineExamples.some((example) => /insulin/i.test(example.name))).toBe(false);
+    expect(medicineExamples).toHaveLength(6);
+    expect(
+      medicineExamples.some((example) => example.name === "Long-acting insulin"),
+    ).toBe(true);
     medicineExamples.forEach((example) => {
       expect(example.visualMode).toBe("interactive");
       expect(example.labVariant).toBeTruthy();
       expect(example.modelSummary.length).toBeGreaterThan(20);
+      if (example.name === "Long-acting insulin") {
+        expect(example.labVariant).toBe("meal-basal-layers");
+        expect(example.mealLayers?.meals).toHaveLength(3);
+      }
     });
     expect(getChapterNavChildren("medicine")).toHaveLength(medicineExamples.length);
   });

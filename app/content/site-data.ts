@@ -92,11 +92,41 @@ export type OrganClock = {
   events: OrganClockEvent[];
 };
 
+export type MealLayerMeal = {
+  id: string;
+  label: string;
+  defaultHour: number;
+};
+
+export type MealLayerPattern = {
+  id: string;
+  label: string;
+  hours: number[];
+};
+
+export type MealLayerSizeOption = {
+  id: string;
+  label: string;
+  multiplier: number;
+  copy: string;
+};
+
+export type MealLayersConfig = {
+  meals: MealLayerMeal[];
+  patterns: MealLayerPattern[];
+  sizeOptions: MealLayerSizeOption[];
+};
+
 export type MedicineExample = {
   name: string;
   icon: LucideIcon;
   visualMode: "interactive";
-  labVariant?: "curve" | "acid-pump" | "day-runway" | "night-window";
+  labVariant?:
+    | "curve"
+    | "acid-pump"
+    | "day-runway"
+    | "night-window"
+    | "meal-basal-layers";
   bodyTarget: {
     organ: string;
     action: string;
@@ -110,6 +140,7 @@ export type MedicineExample = {
   };
   exposureProfiles: DrugExposureProfile[];
   absorptionOptions?: DrugAbsorptionOption[];
+  mealLayers?: MealLayersConfig;
   targetRhythm: TargetRhythmProfile;
   overlapLabel: string;
   interpretation: {
@@ -219,6 +250,15 @@ export type ClockGeneEdge = {
   description: string;
   sources: string[];
   pdbId?: string;
+};
+
+export type ClockMechanicsStructure = {
+  id: "clock-bmal" | "per-cry";
+  label: string;
+  pdbId: string;
+  glbPath: string;
+  citationId: string;
+  note: string;
 };
 
 export type CircadianDataSource = {
@@ -365,6 +405,20 @@ export const citations: Citation[] = [
     url: "https://doi.org/10.1038/msb.2012.62",
   },
   {
+    id: "pdb-4f3l",
+    title: "4F3L: CLOCK:BMAL1 transcriptional activator complex",
+    source: "RCSB Protein Data Bank",
+    note: "Mouse CLOCK:BMAL1 bHLH-PAS core structure used as the source geometry for the activator ribbon in the Chapter 5 visual.",
+    url: "https://www.rcsb.org/structure/4F3L",
+  },
+  {
+    id: "pdb-6of7",
+    title: "6OF7: CRY1–PER2 complex",
+    source: "RCSB Protein Data Bank",
+    note: "CRY1–PER2 core structure used as the source geometry for the repressor ribbon in the Chapter 5 visual.",
+    url: "https://www.rcsb.org/structure/6OF7",
+  },
+  {
     id: "wang-2024-oscillatory",
     title:
       "Oscillatory dynamics of the mammalian circadian clock induced by the core delayed negative feedback loop",
@@ -421,6 +475,14 @@ export const citations: Citation[] = [
     source: "Metabolism",
     note: "Review source for human metabolic rhythms, including glucose tolerance and insulin sensitivity.",
     url: "https://doi.org/10.1016/j.metabol.2017.11.017",
+  },
+  {
+    id: "ada-2026-pharmacologic",
+    title:
+      "Pharmacologic approaches to glycemic treatment: Standards of Care in Diabetes—2026",
+    source: "Diabetes Care",
+    note: "Clinical guideline source for individualized basal-insulin treatment and product-specific regimen decisions.",
+    url: "https://doi.org/10.2337/dc26-s009",
   },
   {
     id: "speksnijder-2024",
@@ -815,6 +877,18 @@ export const claimMatrix: Claim[] = [
   },
   {
     claim:
+      "Basal-insulin treatment is individualized; product selection, dosing, and timing depend on the prescribed regimen and clinical context.",
+    source: "ada-2026-pharmacologic",
+    evidenceType: "Clinical practice guideline",
+    confidence: "High",
+    caveat:
+      "Circadian glucose rhythms do not establish a universal insulin injection time. People should follow their prescription label and clinician or pharmacist guidance.",
+    visualUse: "Long-acting insulin meal-layer teaching visual",
+    beginnerPhrasing:
+      "Meals add glucose challenges on top of background insulin support.",
+  },
+  {
+    claim:
       "Blood pressure, platelet activation, and PAI-1 show circadian regulation in controlled human studies.",
     source: "shea-bp-2011; scheer-platelet-2011; scheer-pai-2014",
     evidenceType: "Controlled human circadian studies",
@@ -1127,6 +1201,95 @@ export const medicineExamples: MedicineExample[] = [
     sourceId: "smith-2019",
   },
   {
+    name: "Long-acting insulin",
+    icon: Activity,
+    visualMode: "interactive",
+    labVariant: "meal-basal-layers",
+    bodyTarget: {
+      organ: "Liver / bloodstream",
+      action: "Background support meeting meal glucose events",
+      route: [
+        "injection",
+        "subcutaneous depot",
+        "bloodstream",
+        "background coverage",
+      ],
+    },
+    doseWindow: {
+      minHour: 6,
+      maxHour: 22,
+      defaultHour: 8,
+      presets: [],
+    },
+    exposureProfiles: [
+      {
+        id: "conceptual-basal",
+        label: "Conceptual basal coverage",
+        halfLifeHours: 12,
+        peakHours: 4,
+        tailHours: 24,
+        copy: "A schematic band represents sustained background coverage; it is not a product pharmacokinetic curve.",
+      },
+    ],
+    mealLayers: {
+      meals: [
+        { id: "breakfast", label: "Breakfast", defaultHour: 8 },
+        { id: "lunch", label: "Lunch", defaultHour: 13 },
+        { id: "dinner", label: "Dinner", defaultHour: 19 },
+      ],
+      patterns: [
+        { id: "early", label: "Earlier meals", hours: [7, 12, 17] },
+        { id: "standard", label: "Standard day", hours: [8, 13, 19] },
+        { id: "late-dinner", label: "Late dinner", hours: [8, 13, 21] },
+      ],
+      sizeOptions: [
+        {
+          id: "light",
+          label: "Light meal",
+          multiplier: 0.65,
+          copy: "Smaller meal pulses in this teaching model.",
+        },
+        {
+          id: "standard",
+          label: "Standard meal",
+          multiplier: 1,
+          copy: "Baseline meal pulses in this teaching model.",
+        },
+        {
+          id: "large",
+          label: "Larger meal",
+          multiplier: 1.35,
+          copy: "Larger meal pulses in this teaching model.",
+        },
+      ],
+    },
+    targetRhythm: {
+      label: "Daily glucose-handling rhythm",
+      peakHour: 10,
+      widthHours: 10,
+      baseline: 0.28,
+      amplitude: 0.62,
+      copy: "The rhythm represents changing glucose-handling context across the day, not an insulin dose target.",
+    },
+    overlapLabel: "Meal challenge vs daily rhythm",
+    interpretation: {
+      low: "In this model, meals land mostly during stronger glucose-handling parts of the day.",
+      medium:
+        "In this model, at least one meal lands during a lower-handling part of the day.",
+      high: "In this model, several meals land during lower-handling parts of the day.",
+    },
+    sources: ["poggiogalle-2017", "ada-2026-pharmacologic"],
+    safetyCaveat:
+      "Insulin products, doses, and schedules are regimen-specific. Follow the prescription label and guidance from a clinician or pharmacist.",
+    labelCue:
+      "Move meals to explore how daily rhythm and meal timing interact with background coverage concepts.",
+    whyTimingAppears:
+      "Meals create glucose events across the day, while background insulin support and separate meal-time plans can play different roles.",
+    modelSummary:
+      "Move meals and compare a broad background band with optional meal-time coverage concepts.",
+    sourceId: "ada-2026-pharmacologic",
+  },
+  {
     name: "Anticoagulants",
     icon: HeartPulse,
     visualMode: "interactive",
@@ -1431,6 +1594,25 @@ export const geneCards: GeneCard[] = [
     amplitude: 0.6,
     copy: "The NLRP3 inflammasome axis is a useful example for showing that immune pathways can have daily structure.",
     evidence: "Emerging explainer example",
+  },
+];
+
+export const clockMechanicsStructures: ClockMechanicsStructure[] = [
+  {
+    id: "clock-bmal",
+    label: "CLOCK/BMAL1 activator",
+    pdbId: "4F3L",
+    glbPath: "/models/clock-bmal-4f3l.glb",
+    citationId: "pdb-4f3l",
+    note: "Core bHLH-PAS structure; the scroll movement is an authored educational sequence.",
+  },
+  {
+    id: "per-cry",
+    label: "PER/CRY repressor",
+    pdbId: "6OF7",
+    glbPath: "/models/per-cry-6of7.glb",
+    citationId: "pdb-6of7",
+    note: "CRY1–PER2 core structure; the docking pose is illustrative rather than molecular dynamics.",
   },
 ];
 
@@ -2582,7 +2764,7 @@ export const roadmapItems = [
 export const heroStats = [
   { value: "24h", label: "daily biological frame" },
   { value: "5", label: "rhythm controls" },
-  { value: "5", label: "medicine examples" },
+  { value: "6", label: "medicine examples" },
   { value: "v2", label: "database-backed atlas" },
 ];
 
