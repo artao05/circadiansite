@@ -47,7 +47,7 @@ export async function generateMetadata(): Promise<Metadata> {
           url: socialImage,
           width: 1200,
           height: 630,
-          alt: "Circadian Primer — Biology changes by the hour. Medicine should notice.",
+          alt: "Circadian Primer — Medicine in the 4th Dimension",
         },
       ],
     },

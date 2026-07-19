@@ -371,6 +371,8 @@ export function RhythmLab() {
     selectedCombination.metrics.lightRegularity;
   const regularityLabel =
     selectedCombination.metrics.esri === null ? "Light regularity" : "ESRI";
+  const clockControl = controls.find((control) => control.key === "phase")!;
+  const modelControls = controls.filter((control) => control.key !== "phase");
 
   return (
     <div className="interactive-block rhythm-lab">
@@ -631,6 +633,45 @@ export function RhythmLab() {
             </text>
           </g>
         </svg>
+
+        <label className="range-control rhythm-clock-control">
+          <span>
+            <span className="range-label">
+              {clockControl.label}
+              <span className="custom-tooltip">
+                <Info size={14} aria-hidden="true" />
+                <span className="tooltip-text">{clockControl.description}</span>
+              </span>
+            </span>
+            <strong>
+              {formatControlValue(clockControl, effectiveState.phase)}
+              {clockControl.unit}
+            </strong>
+          </span>
+          <input
+            type="range"
+            min={clockControl.min}
+            max={clockControl.max}
+            step={clockControl.step}
+            value={effectiveState.phase}
+            onChange={(event) => {
+              const value = Number(event.currentTarget.value);
+              setState((current) => ({
+                ...current,
+                phase: value,
+              }));
+              setHour(value);
+            }}
+            onInput={(event) => {
+              const value = Number(event.currentTarget.value);
+              setState((current) => ({
+                ...current,
+                phase: value,
+              }));
+              setHour(value);
+            }}
+          />
+        </label>
       </div>
 
       <div className="control-panel rhythm-controls" aria-label="Rhythm controls">
@@ -689,7 +730,7 @@ export function RhythmLab() {
           </div>
         </div>
 
-        {controls.map((control) => (
+        {modelControls.map((control) => (
           <label className="range-control" key={control.key}>
             <span>
               <span className="range-label">
@@ -716,7 +757,6 @@ export function RhythmLab() {
                   ...current,
                   [control.key]: value,
                 }));
-                if (control.key === "phase") setHour(value);
               }}
               onInput={(event) => {
                 const value = Number(event.currentTarget.value);
@@ -724,7 +764,6 @@ export function RhythmLab() {
                   ...current,
                   [control.key]: value,
                 }));
-                if (control.key === "phase") setHour(value);
               }}
             />
           </label>

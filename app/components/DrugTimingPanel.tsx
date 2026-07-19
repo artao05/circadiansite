@@ -1294,8 +1294,10 @@ export function DrugTimingPanel() {
               onClick={() => selectExample(item.name)}
               title={item.name}
             >
-              <ItemIcon size={18} aria-hidden="true" />
-              <span>{item.name}</span>
+              <span className="medicine-tab-icon" aria-hidden="true">
+                <ItemIcon size={16} strokeWidth={1.75} />
+              </span>
+              <span className="medicine-tab-label">{item.name}</span>
             </button>
           );
         })}
@@ -1322,10 +1324,6 @@ export function DrugTimingPanel() {
         <aside className="safety-note">
           <AlertTriangle size={20} aria-hidden="true" />
           <strong>Don’t change medication timing from this site.</strong>
-          <p>
-            These are simplified teaching models. Follow the label and guidance
-            from a pharmacist or clinician.
-          </p>
           <span>{example.safetyCaveat}</span>
         </aside>
       </div>

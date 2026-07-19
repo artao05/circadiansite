@@ -29,6 +29,7 @@ import {
   formatMasterHour,
   useCircadianTime,
 } from "./CircadianTimeProvider";
+import { CitationList } from "./CitationLink";
 import { GenePlayerCard } from "./GenePlayerCard";
 import { ModelNotation, SvgModelLabel } from "./ModelNotation";
 
@@ -281,11 +282,13 @@ function valueForVariable(
 }
 
 const timelineMaxValue = 2;
-const timelinePlotTop = 34;
+const timelinePlotTop = 28;
 const timelinePlotBottom = 166;
 const timelinePlotHeight = timelinePlotBottom - timelinePlotTop;
 const timelinePlotLeft = 44;
-const timelinePlotWidth = 412;
+const timelinePlotWidth = 400;
+const timelineLabelX = timelinePlotLeft + timelinePlotWidth + 10;
+const timelineEndLabelGap = 15;
 
 function hourToX(hour: number) {
   return timelinePlotLeft + (hour / 24) * timelinePlotWidth;
@@ -293,6 +296,45 @@ function hourToX(hour: number) {
 
 function yForValue(value: number) {
   return timelinePlotBottom - (value / timelineMaxValue) * timelinePlotHeight;
+}
+
+function staggerEndLabelYs(
+  entries: Array<{ id: MolecularClockVariableId; y: number }>,
+) {
+  const sorted = [...entries].sort((a, b) => a.y - b.y);
+  for (let index = 1; index < sorted.length; index += 1) {
+    sorted[index].y = Math.max(
+      sorted[index].y,
+      sorted[index - 1].y + timelineEndLabelGap,
+    );
+  }
+
+  const maxY = timelinePlotBottom - 2;
+  for (let index = sorted.length - 1; index >= 0; index -= 1) {
+    sorted[index].y = Math.min(sorted[index].y, maxY);
+    if (index < sorted.length - 1) {
+      sorted[index].y = Math.min(
+        sorted[index].y,
+        sorted[index + 1].y - timelineEndLabelGap,
+      );
+    }
+  }
+
+  const minY = timelinePlotTop + 2;
+  for (let index = 0; index < sorted.length; index += 1) {
+    sorted[index].y = Math.max(sorted[index].y, minY);
+    if (index > 0) {
+      sorted[index].y = Math.max(
+        sorted[index].y,
+        sorted[index - 1].y + timelineEndLabelGap,
+      );
+    }
+  }
+
+  return Object.fromEntries(sorted.map((entry) => [entry.id, entry.y])) as Record<
+    MolecularClockVariableId,
+    number
+  >;
 }
 
 function peakHourForVariable(id: MolecularClockVariableId) {
@@ -340,6 +382,14 @@ function TimedLoopView({
   const annotation = activeAnnotation(hour);
   const stageText = stageCopy[stage];
   const currentX = hourToX(normalizeHour(hour));
+  const endPoint =
+    molecularClockTimeline.points[molecularClockTimeline.points.length - 1];
+  const endLabelYs = staggerEndLabelYs(
+    molecularClockTimeline.variables.map((variable) => ({
+      id: variable.id,
+      y: yForValue(endPoint[timelineValueKeys[variable.id]]),
+    })),
+  );
 
   return (
     <div className="network-layout timed-loop-layout">
@@ -561,6 +611,16 @@ function TimedLoopView({
               </div>
             </div>
 
+            <div className="model-curve-legend" aria-label="Curve key">
+              {molecularClockTimeline.variables.map((variable) => (
+                <span key={variable.id}>
+                  <i style={{ background: variable.color }} aria-hidden="true" />
+                  <ModelNotation id={variable.notationId} />
+                  <em>{variable.label}</em>
+                </span>
+              ))}
+            </div>
+
             <svg
               className="model-curve"
               viewBox="0 0 500 220"
@@ -605,15 +665,6 @@ function TimedLoopView({
                 y1={timelinePlotTop - 4}
                 y2={timelinePlotBottom}
               />
-              <g className="model-curve-legend">
-                {molecularClockTimeline.variables.map((variable, index) => (
-                  <g key={variable.id} transform={`translate(300 ${timelinePlotTop + index * 18})`}>
-                    <rect x="0" y="-8" width="10" height="10" rx="2" fill={variable.color} />
-                    <SvgModelLabel id={variable.notationId} x="16" y="0" className="model-end-label" />
-                    <text x="36" y="0" className="model-end-label">{variable.label}</text>
-                  </g>
-                ))}
-              </g>
               {molecularClockTimeline.variables.map((variable) => {
                 const currentValue = valueForVariable(values, variable.id);
                 const peakHour = peakHourForVariable(variable.id);
@@ -621,8 +672,6 @@ function TimedLoopView({
                   interpolateTimeline(peakHour),
                   variable.id,
                 );
-                const endPoint = molecularClockTimeline.points[molecularClockTimeline.points.length - 1];
-                const endValue = endPoint[timelineValueKeys[variable.id]];
                 return (
                   <g key={variable.id}>
                     <path
@@ -639,10 +688,10 @@ function TimedLoopView({
                     />
                     <SvgModelLabel
                       id={variable.notationId}
-                      x={462}
-                      y={yForValue(endValue)}
+                      x={timelineLabelX}
+                      y={endLabelYs[variable.id]}
                       className="model-end-label"
-                      anchor="end"
+                      anchor="start"
                     />
                     <g className="model-peak-marker">
                       <line
@@ -665,7 +714,7 @@ function TimedLoopView({
               <text className="model-peak-marker-label" x={hourToX(12)} y={timelinePlotBottom + 14}>
                 Delay shifts each peak
               </text>
-              <text className="model-axis-label" x="54" y="22">
+              <text className="model-axis-label" x="54" y="18">
                 {molecularClockTimeline.units}
               </text>
             </svg>
@@ -685,19 +734,15 @@ function TimedLoopView({
               ))}
             </div>
 
-            <details className="model-parameters-details">
-              <summary>How the model works</summary>
-              <div className="model-parameter-grid">
-                {molecularClockTimeline.parameters.map((parameter) => (
-                  <article key={parameter.label}>
-                    <span>{parameter.label}</span>
-                    <strong>
-                      <ModelNotation id={parameter.notationId} />
-                    </strong>
-                  </article>
-                ))}
-              </div>
-            </details>
+            <p className="model-teaching-note">
+              Teaching curves from a delayed-feedback model: message, then
+              protein, then nuclear brake. That lag is why repression arrives
+              after the rise.{" "}
+              <CitationList
+                ids={molecularClockTimeline.sourceIds}
+                contextPrefix="timed-loop-model"
+              />
+            </p>
             <p className="model-caveat">{molecularClockTimeline.caveat}</p>
           </div>
         </div>

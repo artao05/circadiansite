@@ -913,7 +913,8 @@ main {
 
 .clock-mechanics-copy,
 .clock-mechanics-progress,
-.clock-network-reveal {
+.clock-network-reveal,
+.clock-model-details {
   position: absolute;
   z-index: 2;
 }
@@ -2166,6 +2167,12 @@ main {
   max-width: 100%;
 }
 
+.rhythm-clock-control {
+  margin-top: 0.85rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--surface-line);
+}
+
 .panel-heading,
 .medicine-title,
 .signal-row {
@@ -2357,16 +2364,14 @@ input[type="range"] {
   line-height: 1.65;
 }
 
-.signal-strip,
-.medicine-tabs {
+.signal-strip {
   display: flex;
   flex-wrap: wrap;
   gap: 0.55rem;
   margin-bottom: 1rem;
 }
 
-.signal-strip span,
-.medicine-tabs button {
+.signal-strip span {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
@@ -2377,13 +2382,67 @@ input[type="range"] {
   color: var(--ink);
 }
 
+.medicine-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.45rem;
+  margin-bottom: 1rem;
+}
+
 .medicine-tabs button {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 0.65rem;
+  min-height: 3.4rem;
+  border: 1px solid var(--surface-line);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--surface) 82%, transparent);
+  padding: 0.55rem 0.7rem;
+  color: var(--on-surface);
   cursor: pointer;
+  text-align: left;
+  transition:
+    background 220ms ease,
+    border-color 220ms ease,
+    color 220ms ease,
+    box-shadow 220ms ease;
+}
+
+.medicine-tabs button:hover {
+  border-color: color-mix(in srgb, var(--coral) 34%, var(--surface-line));
+  background: color-mix(in srgb, var(--coral) 8%, var(--surface));
 }
 
 .medicine-tabs button.selected {
-  background: var(--selected-bg);
-  color: var(--selected-fg);
+  border-color: color-mix(in srgb, var(--coral) 48%, var(--surface-line));
+  background: color-mix(in srgb, var(--coral) 14%, var(--surface));
+  color: var(--on-surface);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--coral) 18%, transparent);
+}
+
+.medicine-tab-icon {
+  display: grid;
+  width: 1.9rem;
+  height: 1.9rem;
+  flex-shrink: 0;
+  place-items: center;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--coral) 12%, var(--surface));
+  color: var(--coral);
+}
+
+.medicine-tabs button.selected .medicine-tab-icon {
+  background: color-mix(in srgb, var(--coral) 22%, var(--surface));
+  color: var(--coral);
+}
+
+.medicine-tab-label {
+  min-width: 0;
+  color: inherit;
+  font-size: 0.84rem;
+  font-weight: 650;
+  line-height: 1.25;
 }
 
 .entrainment-visual {
@@ -2723,12 +2782,6 @@ meter {
 
 .medicine-tabs {
   max-width: 1040px;
-}
-
-.medicine-tabs button span {
-  max-width: 145px;
-  white-space: normal;
-  text-align: left;
 }
 
 .medicine-main {
@@ -4984,9 +5037,34 @@ meter {
   font-size: 11px;
 }
 
-.model-curve-legend text {
-  text-anchor: start !important;
-  dominant-baseline: middle;
+.model-curve-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem 1rem;
+  margin: 0.55rem 0 0.35rem;
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 750;
+}
+
+.model-curve-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.model-curve-legend i {
+  display: block;
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 2px;
+}
+
+.model-curve-legend em {
+  color: var(--ink);
+  font-style: normal;
+  font-weight: 650;
 }
 
 .model-end-label {
@@ -5039,42 +5117,12 @@ meter {
   min-width: 0;
 }
 
-.model-parameters-details {
-  margin-top: 0.35rem;
-}
-
-.model-parameters-details summary {
-  cursor: pointer;
-  list-style: none;
-  color: var(--ink);
-  font-size: 0.84rem;
-  font-weight: 850;
-}
-
-.model-parameters-details summary::-webkit-details-marker {
-  display: none;
-}
-
-.model-parameters-details summary::after {
-  content: "▾";
-  display: inline-block;
-  margin-left: 0.35rem;
+.model-teaching-note {
+  max-width: 48ch;
+  margin: 0.55rem 0 0;
   color: var(--muted);
-  transition: transform 0.18s ease;
-}
-
-.model-parameters-details:not([open]) summary::after {
-  transform: rotate(-90deg);
-}
-
-.model-parameters-details .model-parameter-grid {
-  margin-top: 0.55rem;
-}
-
-@media (max-width: 720px) {
-  .model-parameters-details:not([open]) .model-parameter-grid {
-    display: none;
-  }
+  font-size: 0.8rem;
+  line-height: 1.5;
 }
 
 .model-variable-list {
@@ -6037,12 +6085,6 @@ meter {
     margin-bottom: 0.75rem;
   }
 
-  .medicine-tabs button {
-    min-height: 2rem;
-    padding: 0.42rem 0.62rem;
-    font-size: 0.78rem;
-  }
-
   .medicine-panel {
     display: grid;
     grid-template-columns: minmax(280px, 0.48fr) minmax(0, 1.52fr);
@@ -6742,6 +6784,13 @@ meter {
     font-size: 0.95rem;
   }
 
+  .clock-model-details {
+    left: 1rem;
+    right: auto;
+    bottom: 5.4rem;
+    max-width: min(100%, 18rem);
+  }
+
   .clock-balance-meter {
     max-width: min(100%, 23rem);
     padding: 0.62rem;
@@ -6972,8 +7021,23 @@ meter {
     grid-template-columns: 1fr;
   }
 
+  .medicine-tabs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .medicine-tabs button {
-    flex: 1 1 160px;
+    min-height: 3rem;
+    gap: 0.5rem;
+    padding: 0.45rem 0.55rem;
+  }
+
+  .medicine-tab-icon {
+    width: 1.7rem;
+    height: 1.7rem;
+  }
+
+  .medicine-tab-label {
+    font-size: 0.78rem;
   }
 
   .runway-track,
@@ -7045,7 +7109,6 @@ meter {
 .rhythm-model-details,
 .sandbox-details,
 .body-clock-details,
-.clock-model-details,
 .readout-details,
 .claim-row details {
   border: 1px solid var(--surface-line);
@@ -7057,7 +7120,6 @@ meter {
 .rhythm-model-details > summary,
 .sandbox-details > summary,
 .body-clock-details > summary,
-.clock-model-details > summary,
 .readout-details > summary,
 .claim-row details > summary {
   cursor: pointer;
@@ -7114,11 +7176,53 @@ meter {
 }
 
 .clock-model-details {
-  margin-top: 1rem;
+  left: clamp(1.2rem, 5vw, 5rem);
+  bottom: clamp(1.4rem, 4vh, 2.8rem);
+  display: grid;
+  max-width: min(280px, calc(100vw - 2.4rem));
+  gap: 0.55rem;
+  border: 0;
+  background: transparent;
+}
+
+.clock-model-details > summary {
+  width: fit-content;
+  list-style: none;
+  cursor: pointer;
+  padding: 0;
+  color: color-mix(in srgb, var(--on-surface-strong) 58%, transparent);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition: color 220ms ease;
+}
+
+.clock-model-details > summary::-webkit-details-marker {
+  display: none;
+}
+
+.clock-model-details > summary::before {
+  content: "+";
+  margin-right: 0.45rem;
+  color: var(--cyan);
+  font-weight: 850;
+}
+
+.clock-model-details[open] > summary {
+  color: color-mix(in srgb, var(--on-surface-strong) 82%, transparent);
+}
+
+.clock-model-details[open] > summary::before {
+  content: "–";
+}
+
+.clock-model-details > summary:hover {
+  color: var(--on-surface-strong);
 }
 
 .clock-model-details .clock-balance-meter {
-  margin: 0 0.75rem 0.75rem;
+  margin: 0;
 }
 
 .network-curated-note {

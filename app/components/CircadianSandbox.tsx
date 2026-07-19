@@ -423,8 +423,7 @@ export function CircadianSandbox() {
               </div>
             ) : null}
             <p className="sandbox-caffeine-note">
-              Paper-based teaching profile for a 75 kg example. It isn’t a
-              personal prediction. Source:{" "}
+              75kg example profile. Source:{" "}
               <CitationLink id="puckeridge-2011" context="caffeine-sandbox-profile" />.
             </p>
           </div>

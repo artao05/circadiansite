@@ -207,37 +207,38 @@ export function ClockMechanicsSection({
           <p className="kicker">{activeCopy.eyebrow}</p>
           <h2>{activeCopy.title}</h2>
           <p>{activeCopy.caption}</p>
-          <details className="clock-model-details">
-            <summary>How the model works</summary>
-            <div
-              className="clock-balance-meter"
-              aria-label="Illustrative activator and repressor balance"
-            >
-              <div>
-                <span>Activator</span>
-                <i>
-                  <b
-                    style={{ width: `${balanceCopy[timeState].activatorLevel}%` }}
-                  />
-                </i>
-              </div>
-              <div>
-                <span>Repressor</span>
-                <i>
-                  <b
-                    style={{ width: `${balanceCopy[timeState].repressorLevel}%` }}
-                  />
-                </i>
-              </div>
-              <strong>{balanceCopy[timeState].label}</strong>
-              <p>{balanceCopy[timeState].copy}</p>
-              <small>
-                Inspired by Kim & Forger 2012: robust timing through protein
-                balance.
-              </small>
-            </div>
-          </details>
         </div>
+
+        <details className="clock-model-details">
+          <summary>Model notes</summary>
+          <div
+            className="clock-balance-meter"
+            aria-label="Illustrative activator and repressor balance"
+          >
+            <div>
+              <span>Activator</span>
+              <i>
+                <b
+                  style={{ width: `${balanceCopy[timeState].activatorLevel}%` }}
+                />
+              </i>
+            </div>
+            <div>
+              <span>Repressor</span>
+              <i>
+                <b
+                  style={{ width: `${balanceCopy[timeState].repressorLevel}%` }}
+                />
+              </i>
+            </div>
+            <strong>{balanceCopy[timeState].label}</strong>
+            <p>{balanceCopy[timeState].copy}</p>
+            <small>
+              Inspired by Kim & Forger 2012: robust timing through protein
+              balance.
+            </small>
+          </div>
+        </details>
 
         <div className="clock-molecule-key" aria-label="Molecular loop cast">
           {moleculeCast.map((molecule) => {

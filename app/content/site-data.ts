@@ -611,6 +611,7 @@ export const chapters: Chapter[] = [
       duration: "2 min",
       summary:
         "A quick guide to cycle length, swing size, peak time, average level, and variation before you try the rhythm lab.",
+      youtubeId: "kmWSYv6ncwU",
       transcript:
         "A rhythm is a repeating shape. Cycle length, or period, is how long one cycle takes. Amplitude is the size of the swing. Phase tells you when the peak or trough lands. Baseline is the average level. Noise is ordinary variation around the pattern.",
       citationIds: ["arcascope-circadian", "forger-1999"],
@@ -629,7 +630,7 @@ export const chapters: Chapter[] = [
     number: "03",
     eyebrow: "The brain clock",
     title: "Light reaches the brain’s master clock.",
-    dek: "The master clock, or SCN, uses light from the eyes to help coordinate sleep, hormones, temperature, and tissue clocks.",
+    dek: "The master clock uses light that hits your eyeballs to coordinate sleep, hormones, temperature, and tissue clocks.",
     navGroup: "clocks",
   },
   {

@@ -89,7 +89,7 @@ export default function Home() {
           <DayNightCanvas />
           <div className="hero-copy" style={{ zIndex: 10 }}>
             <p className="kicker">Your body keeps time</p>
-            <h1>Biology changes by the hour. Medicine should notice.</h1>
+            <h1>Medicine in the 4th Dimension</h1>
             <p>
               Explore how body time shapes sleep, genes, organs, and the way
               medicines meet a changing biological system.
@@ -242,8 +242,7 @@ export default function Home() {
             <span>Educational circadian biology primer</span>
           </div>
           <p>
-            Educational only. Don’t change medication timing without a
-            clinician or pharmacist.
+            Don’t change medication timing without a clinician or pharmacist.
           </p>
           <div>
             <FlaskConical size={18} aria-hidden="true" />
