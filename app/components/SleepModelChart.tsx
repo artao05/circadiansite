@@ -78,7 +78,7 @@ function ChartTooltip({
       </span>
       {payload.map((entry) => (
         <p key={entry.name} style={{ color: entry.color }}>
-          {entry.name}: {entry.name === "Caffeine in body (ZC)"
+          {entry.name}: {entry.name === "Caffeine in body"
             ? `${(entry.value ?? 0).toFixed(2)} mg/kg`
             : `${Math.round(entry.value ?? 0)}%`}
         </p>
@@ -257,7 +257,7 @@ export function SleepModelChart({
               yAxisId="caffeine"
               type="monotone"
               dataKey="caffeineConcentration"
-              name="Caffeine in body (ZC)"
+              name="Caffeine in body"
               stroke={colors.caffeine}
               strokeWidth={2}
               dot={false}

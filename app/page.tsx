@@ -98,7 +98,6 @@ export default function Home() {
               <a href="#rhythm-lab">
                 Start exploring <ArrowDown size={18} aria-hidden="true" />
               </a>
-              <a href="#medicine">See medicine examples</a>
             </div>
           </div>
           <MasterCircadianClock />

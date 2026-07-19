@@ -55,7 +55,7 @@ export function MasterCircadianClock() {
       <div className="master-clock-header">
         <span>
           <Clock3 size={17} aria-hidden="true" />
-          Master biological time
+          TIME
         </span>
         <strong>{phaseLabel}</strong>
       </div>

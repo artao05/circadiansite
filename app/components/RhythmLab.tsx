@@ -57,7 +57,7 @@ const controls: Control[] = [
   },
   {
     key: "amplitude",
-    label: "Swing size (amplitude)",
+    label: "Amplitude",
     min: 55,
     max: 115,
     step: 1,
@@ -634,15 +634,6 @@ export function RhythmLab() {
       </div>
 
       <div className="control-panel rhythm-controls" aria-label="Rhythm controls">
-        <details className="rhythm-language">
-          <summary>Five words for reading a rhythm</summary>
-          <p>
-            <strong>Period</strong> is cycle length. <strong>Amplitude</strong>
-            is swing size. <strong>Phase</strong> is when a peak lands.{" "}
-            <strong>Baseline</strong> is the average level. <strong>Variation</strong>
-            is the ordinary noise around the pattern.
-          </p>
-        </details>
         <div className="rhythm-control-group">
           <p className="control-eyebrow">Schedule</p>
           <div className="segmented-control rhythm-choice" role="group">

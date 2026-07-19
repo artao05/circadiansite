@@ -306,7 +306,7 @@ export function CircadianSandbox() {
           <span style={{ color: sandboxChartColors.processC }}>Circadian wake drive</span>
           {!isForcedDesynchrony ? (
             <span style={{ color: sandboxChartColors.caffeine }}>
-              Caffeine in body (<ModelNotation id="caffeine-concentration-zc" />)
+              Caffeine in body
             </span>
           ) : null}
         </div>
