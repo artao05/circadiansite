@@ -13,35 +13,33 @@ recommendations, accounts, persistence, or live biomedical API calls.
 ## Full Stack
 
 - **Frontend/runtime:** Next 16, React 19, vinext, Vite, TypeScript.
-- **Hosting:** Sites-compatible Cloudflare Worker output via the bundled
-  `sites()` Vite plugin and `@cloudflare/vite-plugin`.
+- **Hosting:** Cloudflare Workers via `@cloudflare/vite-plugin`; deploy with
+  `npm run deploy`.
 - **Styling:** Tailwind CSS v4 plus custom CSS variables and editorial layout
   classes in `app/globals.css`.
 - **Interactive visuals:** React client components, SVG, CSS transforms, `d3`
-  for chart scales/math, `motion` for animation patterns, `lucide-react` for
-  iconography.
-- **Content/data:** structured TypeScript data for v1; MDX packages are
-  installed for future chapter authoring.
-- **Validation:** `npm run build`, `npm run lint`, Playwright browser review,
-  and later Vitest coverage for chart math/data transforms.
+  for chart scales/math, `recharts` for the sleep model chart, `three` /
+  `@react-three/fiber` for 3D scenes, `lucide-react` for iconography.
+- **Content/data:** structured TypeScript data for v1; MDX can be added for
+  future chapter authoring.
+- **Validation:** `npm run lint`, `npm run typecheck`, Vitest coverage for
+  model math/data transforms, `npm run build`, and Playwright browser review.
 
 ## Installed Package Groups
 
-Base starter:
+Base:
 
 ```bash
 next react react-dom vinext vite typescript tailwindcss
 @cloudflare/vite-plugin @vitejs/plugin-react @vitejs/plugin-rsc
 react-server-dom-webpack eslint eslint-config-next wrangler
-drizzle-orm drizzle-kit
 ```
 
 Added for this project:
 
 ```bash
-@next/mdx @mdx-js/loader @mdx-js/react remark-gfm rehype-slug
-d3 motion lucide-react clsx zod
-@types/d3 vitest jsdom @testing-library/react
+d3 recharts three @react-three/fiber lucide-react
+@types/d3 @types/three vitest jsdom @testing-library/react
 @testing-library/jest-dom @playwright/test prettier
 ```
 
@@ -71,8 +69,8 @@ d3 motion lucide-react clsx zod
 ## Implementation Phases
 
 1. **Scaffold and guardrails**
-   - Start from the bundled vinext Sites starter.
-   - Keep D1/R2 off in `.openai/hosting.json`.
+   - Start from the vinext starter.
+   - Keep persistence off: no D1/R2 bindings.
    - Add `AGENTS.md` and this plan.
 
 2. **Curated content foundation**

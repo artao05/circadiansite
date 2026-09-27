@@ -3,7 +3,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import type * as THREE from 'three';
 import { ChevronDown, LocateFixed, Minus, Plus, RotateCcw } from 'lucide-react';
-import { BrainScene } from './brain-scene';
 import { CitationList } from './CitationLink';
 import { useCircadianTime } from './CircadianTimeProvider';
 
@@ -347,8 +346,10 @@ const pointsAreClose = (a?: ProjectedPoint, b?: ProjectedPoint) => {
 /* ------------------------------------------------------------------ */
 export function InteractiveBrainMap() {
   const { phase } = useCircadianTime();
+  const viewportRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const apiRef = useRef<BrainSceneApi | null>(null);
+  const [nearViewport, setNearViewport] = useState(false);
   const structureToNucleusRef = useRef(new Map<string, string>());
   const nucleusToStructureIdsRef = useRef(new Map<string, string[]>());
   const connectionToStructureIdsRef = useRef(new Map<string, string[]>());
@@ -413,21 +414,43 @@ export function InteractiveBrainMap() {
     highlightNucleusRef.current = highlightNucleus;
   }, [highlightNucleus]);
 
+  /* ---- defer the 3D scene (three.js + ~5 MB model) until it's close ---- */
+  useEffect(() => {
+    const viewport = viewportRef.current;
+    if (!viewport || !('IntersectionObserver' in window)) {
+      setNearViewport(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        setNearViewport(true);
+        observer.disconnect();
+      },
+      { rootMargin: '100% 0px' },
+    );
+    observer.observe(viewport);
+    return () => observer.disconnect();
+  }, []);
+
   /* ---- 3D scene bootstrap ---- */
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!canvas || !nearViewport) return;
 
     let cancelled = false;
 
-    fetch('/models/manifest.json')
-      .then((res) => {
+    Promise.all([
+      fetch('/models/manifest.json').then((res) => {
         if (!res.ok) {
           throw new Error(`manifest fetch failed: ${res.status}`);
         }
-        return res.json();
-      })
-      .then((manifestData: BrainManifest) => {
+        return res.json() as Promise<BrainManifest>;
+      }),
+      import('./brain-scene'),
+    ])
+      .then(([manifestData, { BrainScene }]) => {
         if (cancelled || !canvas.isConnected) return;
 
         window.BRAIN = { nodes: manifestData.nodes };
@@ -519,7 +542,7 @@ export function InteractiveBrainMap() {
               api.addGlowingSphere(sleepSwitch.id, sleepSwitchPos, sleepSwitch.color, 0.003);
             }
 
-            api.focusCategory('diencephalon');
+            api.focusCategory?.('diencephalon');
             highlightNucleusRef.current(NUCLEI[0].id, { frame: true });
           },
           onHover: (nodeId: string | null, point?: { x: number; y: number }) => {
@@ -593,7 +616,7 @@ export function InteractiveBrainMap() {
       apiRef.current?.dispose();
       apiRef.current = null;
     };
-  }, []);
+  }, [nearViewport]);
 
   useEffect(() => {
     const api = apiRef.current;
@@ -724,7 +747,7 @@ export function InteractiveBrainMap() {
   return (
     <div className="brain-map-container">
       {/* 3D Canvas */}
-      <div className="brain-map-viewport">
+      <div className="brain-map-viewport" ref={viewportRef}>
         {loading && (
           <div className="brain-map-loader">
             <div className="brain-map-loader-pulse" />

@@ -12,14 +12,17 @@ when they take a medication.
 
 ## Stack
 
-- Framework: Next 16 + React 19 through the bundled `vinext` Sites starter.
-- Hosting target: Sites / Cloudflare Worker-compatible output.
+- Framework: Next 16 + React 19 through `vinext` (Vite).
+- Hosting: Cloudflare Workers. The Worker entry is `worker/index.ts`; its name
+  comes from `package.json`, so renaming the package deploys a new Worker.
 - Styling: Tailwind CSS v4 plus project CSS in `app/globals.css`.
 - Content: TypeScript data in `app/content/site-data.ts`; future long-form
   chapters may move to MDX.
 - Interactions: React client components with SVG/CSS, supported by `d3`,
-  `motion`, `lucide-react`, `clsx`, and `zod` where useful.
-- No v1 persistence: keep `.openai/hosting.json` D1/R2 bindings as `null`.
+  `recharts`, `three` / `@react-three/fiber`, and `lucide-react`.
+- No v1 persistence: no D1, R2, or KV bindings.
+- Keep first paint light: 3D scenes, three.js, and large images load when they
+  scroll near, and the hero loads one day/night photo per hour on demand.
 
 ## Commands
 
@@ -27,10 +30,14 @@ when they take a medication.
 - Develop: `npm run dev`
 - Build: `npm run build`
 - Lint: `npm run lint`
+- Typecheck: `npm run typecheck`
+- Test: `npm test`
+- Deploy: `npm run deploy` (build, then `wrangler deploy`)
 
-Use `npm run build` before considering site work complete. For frontend changes,
-also inspect desktop and mobile in a browser and verify that text does not
-overlap controls or visuals.
+Use `npm run build` before considering site work complete; CI runs lint,
+typecheck, tests, and build on pull requests. For frontend changes, also
+inspect desktop and mobile in a browser and verify that text does not overlap
+controls or visuals.
 
 ## Design Rules
 
@@ -54,6 +61,13 @@ and injects a full set of CSS custom properties as inline styles on the
 `.circadian-shell` wrapper (plus `data-circadian-phase`). `MasterCircadianClock`
 drives `hour` via its clock face and scrubber. `.circadian-shell` transitions
 `background`/`color`, so time changes cross-fade the page.
+
+The clock opens on the visitor's local hour. The server renders its best guess
+(a shared `?t=HH`, else the hour in Cloudflare's IP-based time zone, which
+`worker/index.ts` forwards as a request header), then the browser clock takes
+over. Any `setHour` call counts as the visitor moving the clock and is mirrored
+into `?t=` so the URL shares that view. Helpers live in
+`app/lib/circadian-hour.ts`.
 
 Critical: night inverts. In day phases `--ink` is dark and `--paper` is light;
 at night `--ink` becomes near-white and `--paper` becomes dark. A component that
@@ -154,6 +168,10 @@ h⁻¹, K<sub>d</sub>, P<sub>c</sub>) via `ModelNotation` and `SvgModelLabel` fr
 - `app/components/CitationLink.tsx`: inline citation links and return navigation.
 - `app/components/ModelNotation.tsx`: HTML and SVG math notation presets.
 - `app/lib/citations.ts`: citation anchor helpers and lookup utilities.
+- `app/lib/circadian-hour.ts`: `?t=` parsing and time-zone hour helpers.
+- `app/lib/site.ts`: site name/description and the public origin used for
+  canonical, Open Graph, robots, and sitemap URLs.
+- `worker/index.ts`: Cloudflare Worker entry; forwards the visitor time zone.
 - `.cursor/skills/site-citations/SKILL.md`: inline citations and bibliography.
 - `.cursor/skills/site-math-notation/SKILL.md`: math notation workflow.
 - `app/globals.css`: global visual system and responsive behavior.

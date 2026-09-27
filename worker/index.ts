@@ -1,10 +1,10 @@
-/** Cloudflare Worker entry point for the vinext-starter template. */
+/** Cloudflare Worker entry point. */
 import { handleImageOptimization, DEFAULT_DEVICE_SIZES, DEFAULT_IMAGE_SIZES } from "vinext/server/image-optimization";
 import handler from "vinext/server/app-router-entry";
+import { VISITOR_TIME_ZONE_HEADER } from "../app/lib/circadian-hour";
 
 interface Env {
-  ASSETS: Fetcher;
-  DB: D1Database;
+  ASSETS: { fetch(request: Request): Promise<Response> };
   IMAGES: {
     input(stream: ReadableStream): {
       transform(options: Record<string, unknown>): {
@@ -25,6 +25,19 @@ interface ExecutionContext {
 // dangerouslyAllowSVG: true in next.config.js and uncomment below:
 // const imageConfig: ImageConfig = { dangerouslyAllowSVG: true };
 
+// Hand Cloudflare's IP-based time zone to the app so the first render already
+// shows the visitor's local hour; the browser clock refines it after load.
+function withVisitorTimeZone(request: Request): Request {
+  const timeZone = (request as Request & { cf?: { timezone?: unknown } }).cf
+    ?.timezone;
+  const headers = new Headers(request.headers);
+  headers.delete(VISITOR_TIME_ZONE_HEADER);
+  if (typeof timeZone === "string") {
+    headers.set(VISITOR_TIME_ZONE_HEADER, timeZone);
+  }
+  return new Request(request, { headers });
+}
+
 const worker = {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
@@ -40,6 +53,9 @@ const worker = {
       }, allowedWidths);
     }
 
+    if (request.method === "GET") {
+      return handler.fetch(withVisitorTimeZone(request), env, ctx);
+    }
     return handler.fetch(request, env, ctx);
   },
 };

@@ -12,11 +12,11 @@ const oxaliplatinCitationIds = [
 ];
 
 const plates = [
-  "/oxaliplatin_neuropathy_1781491364986.jpg",
-  "/oxaliplatin_mouse_1781491376492.jpg",
-  "/oxaliplatin_chronomodulation_1781491386150.jpg",
-  "/oxaliplatin_personalization_1781491394151.jpg",
-  "/oxaliplatin_chronomodulation_1781491386150.jpg",
+  "/oxaliplatin/neuropathy.webp",
+  "/oxaliplatin/mouse.webp",
+  "/oxaliplatin/chronomodulation.webp",
+  "/oxaliplatin/personalization.webp",
+  "/oxaliplatin/chronomodulation.webp",
 ];
 
 export function OxaliplatinTimeline() {
@@ -31,7 +31,6 @@ export function OxaliplatinTimeline() {
             src={src}
             alt={`Oxaliplatin case study visual ${index + 1}`}
             fill
-            priority={index === 0}
             unoptimized
             sizes="(max-width: 720px) 100vw, 480px"
             style={{

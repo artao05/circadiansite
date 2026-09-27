@@ -2,12 +2,17 @@
 
 import {
   createContext,
+  useCallback,
   useContext,
+  useEffect,
   useMemo,
+  useRef,
   useState,
+  useSyncExternalStore,
   type CSSProperties,
   type ReactNode,
 } from "react";
+import { HOUR_PARAM, parseHourParam } from "../lib/circadian-hour";
 
 type CircadianPhase = "morning" | "midday" | "evening" | "night";
 
@@ -223,9 +228,57 @@ function getCircadianTheme(hour: number): CircadianTheme {
   };
 }
 
-export function CircadianTimeProvider({ children }: { children: ReactNode }) {
-  const [hour, setHourState] = useState(8);
+const subscribeToNothing = () => () => {};
+
+let browserStartHour: number | undefined;
+
+// The hour the page opens on in the browser: a shared ?t=HH, else local time.
+function getBrowserStartHour(): number | null {
+  browserStartHour ??=
+    parseHourParam(new URLSearchParams(window.location.search).get(HOUR_PARAM)) ??
+    new Date().getHours();
+  return browserStartHour;
+}
+
+function getServerStartHour(): number | null {
+  return null;
+}
+
+export function CircadianTimeProvider({
+  children,
+  initialHour,
+}: {
+  children: ReactNode;
+  /** Server's best guess: the shared ?t= hour, else the visitor's zone. */
+  initialHour: number;
+}) {
+  // Hydrates with the server's hour, then switches to the browser's own clock.
+  const startHour = useSyncExternalStore(
+    subscribeToNothing,
+    getBrowserStartHour,
+    getServerStartHour,
+  );
+  const [chosenHour, setChosenHour] = useState<number | null>(null);
+  const hour = chosenHour ?? startHour ?? normalizeHour(initialHour);
   const theme = useMemo(() => getCircadianTheme(hour), [hour]);
+  const hourChangedByVisitor = useRef(false);
+
+  // Once the visitor moves the clock, mirror it into ?t= so the URL shares
+  // this exact view. Debounced: browsers throttle rapid replaceState calls.
+  useEffect(() => {
+    if (!hourChangedByVisitor.current) return;
+    const timer = window.setTimeout(() => {
+      const url = new URL(window.location.href);
+      url.searchParams.set(HOUR_PARAM, String(hour));
+      window.history.replaceState(window.history.state, "", url);
+    }, 250);
+    return () => window.clearTimeout(timer);
+  }, [hour]);
+
+  const setHour = useCallback((nextHour: number) => {
+    hourChangedByVisitor.current = true;
+    setChosenHour(normalizeHour(nextHour));
+  }, []);
 
   const value = useMemo<CircadianTimeContextValue>(
     () => ({
@@ -233,9 +286,9 @@ export function CircadianTimeProvider({ children }: { children: ReactNode }) {
       phase: theme.phase,
       phaseLabel: theme.label,
       phaseCaption: theme.caption,
-      setHour: (nextHour) => setHourState(normalizeHour(nextHour)),
+      setHour,
     }),
-    [hour, theme.caption, theme.label, theme.phase],
+    [hour, setHour, theme.caption, theme.label, theme.phase],
   );
 
   return (

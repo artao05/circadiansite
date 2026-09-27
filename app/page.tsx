@@ -5,6 +5,7 @@ import {
   Microscope,
   Pill,
 } from "lucide-react";
+import { headers } from "next/headers";
 import { BodyClockTimeline } from "./components/BodyClockTimeline";
 import { ClinicalTrialSimulator } from "./components/ClinicalTrialSimulator";
 import { CircadianSandbox } from "./components/CircadianSandbox";
@@ -28,7 +29,27 @@ import { MasterCircadianClock } from "./components/MasterCircadianClock";
 import { DayNightCanvas } from "./components/DayNightCanvas";
 import { CitationList, CitationReturn } from "./components/CitationLink";
 import { ReportNav } from "./components/ReportNav";
+import {
+  DEFAULT_HOUR,
+  HOUR_PARAM,
+  VISITOR_TIME_ZONE_HEADER,
+  hourInTimeZone,
+  parseHourParam,
+} from "./lib/circadian-hour";
 import { sourceAnchor } from "./lib/citations";
+
+// Render the shared ?t= hour, else the visitor's local hour, so the first
+// paint is already in the right phase (no morning flash for night owls).
+async function getInitialHour(
+  searchParams: Promise<Record<string, string | string[] | undefined>>,
+) {
+  const sharedHour = parseHourParam((await searchParams)[HOUR_PARAM]);
+  if (sharedHour !== null) return sharedHour;
+
+  const timeZone = (await headers()).get(VISITOR_TIME_ZONE_HEADER);
+  const zoneHour = timeZone ? hourInTimeZone(timeZone) : null;
+  return zoneHour ?? DEFAULT_HOUR;
+}
 
 function ChapterIntro({
   id,
@@ -65,7 +86,12 @@ function ChapterIntro({
   );
 }
 
-export default function Home() {
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const initialHour = await getInitialHour(searchParams);
   const [
     opening,
     rhythm,
@@ -81,7 +107,7 @@ export default function Home() {
   ] = chapters;
 
   return (
-    <CircadianTimeProvider>
+    <CircadianTimeProvider initialHour={initialHour}>
       <main>
         <ReportNav />
 

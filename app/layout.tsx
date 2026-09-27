@@ -1,6 +1,6 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { headers } from "next/headers";
+import { getSiteOrigin, siteDescription, siteName, siteTitle } from "./lib/site";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -13,48 +13,41 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const title = "Circadian Primer: Biology Changes by the Hour";
-const description =
-  "Explore how body time shapes sleep, genes, organs, and the way medicines meet a changing biological system.";
+export const viewport: Viewport = {
+  themeColor: "#101820",
+};
 
 export async function generateMetadata(): Promise<Metadata> {
-  const requestHeaders = await headers();
-  const host =
-    requestHeaders.get("x-forwarded-host") ??
-    requestHeaders.get("host") ??
-    "localhost:3000";
-  const protocol =
-    requestHeaders.get("x-forwarded-proto") ??
-    (host.startsWith("localhost") ? "http" : "https");
-  const origin = new URL(`${protocol}://${host}`);
-  const socialImage = new URL("/og.png", origin).toString();
+  const socialImage = {
+    url: "/og.jpg",
+    width: 1200,
+    height: 630,
+    alt: "Circadian Primer — Medicine in the 4th Dimension",
+  };
 
   return {
-    metadataBase: origin,
-    title,
-    description,
+    metadataBase: await getSiteOrigin(),
+    title: siteTitle,
+    description: siteDescription,
+    alternates: {
+      canonical: "/",
+    },
     icons: {
       icon: "/favicon.svg",
       shortcut: "/favicon.svg",
     },
     openGraph: {
       type: "website",
-      url: origin,
-      title,
-      description,
-      images: [
-        {
-          url: socialImage,
-          width: 1200,
-          height: 630,
-          alt: "Circadian Primer — Medicine in the 4th Dimension",
-        },
-      ],
+      url: "/",
+      siteName,
+      title: siteTitle,
+      description: siteDescription,
+      images: [socialImage],
     },
     twitter: {
       card: "summary_large_image",
-      title,
-      description,
+      title: siteTitle,
+      description: siteDescription,
       images: [socialImage],
     },
   };

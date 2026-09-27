@@ -158,7 +158,6 @@ export function MasterCircadianClock() {
           step="1"
           value={hour}
           onChange={handleTimeInput}
-          onInput={handleTimeInput}
           aria-label="Set master biological time"
         />
       </label>

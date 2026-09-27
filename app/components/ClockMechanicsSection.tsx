@@ -1,12 +1,24 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import {
+  lazy,
+  Suspense,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
 import { clockMechanicsStructures } from "../content/site-data";
 import { CitationLink } from "./CitationLink";
-import {
-  ClockMechanics,
-  type ClockMechanicsState,
-} from "./ClockMechanics";
+import type { ClockMechanicsState } from "./ClockMechanics";
+
+// three.js only downloads once the section is near the viewport.
+const ClockMechanics = lazy(() =>
+  import("./ClockMechanics").then((module) => ({
+    default: module.ClockMechanics,
+  })),
+);
 
 const stateCopy: Record<
   ClockMechanicsState,
@@ -200,7 +212,9 @@ export function ClockMechanicsSection({
     >
       <div className="clock-mechanics-sticky" data-state={timeState}>
         {shouldRenderScene ? (
-          <ClockMechanics timeState={timeState} progressRef={progressRef} />
+          <Suspense fallback={null}>
+            <ClockMechanics timeState={timeState} progressRef={progressRef} />
+          </Suspense>
         ) : null}
 
         <div className="clock-mechanics-copy">
